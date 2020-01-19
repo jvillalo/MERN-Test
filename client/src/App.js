@@ -19,6 +19,9 @@ import Profiles from "./components/profiles/Profiles";
 import Posts from "./components/posts/Posts";
 import Profile from "./components/profile/Profile";
 import Post from "./components/posts/Post";
+import TestModel from "./components/TestModel";
+import MxGraphGridEditor from "./components/MxGraphGridEditor";
+
 if (localStorage.token) {
   setAuthToken(localStorage.token);
 }
@@ -34,13 +37,14 @@ const App = () => {
         <Fragment>
           <Navbar />
           <Route exact path="/" component={Landing} />
-          <section className="container">
+          <section className="container2">
             <Alert />
             <Switch>
               <Route exact path="/register" component={Register} />
               <Route exact path="/login" component={Login} />
               <Route exact path="/profiles" component={Profiles} />
               <Route exact path="/profile/:id" component={Profile} />
+
               <PrivateRoute exact path="/dashboard" component={Dashboard} />
               <PrivateRoute exact path="/posts/:id" component={Post} />
               <PrivateRoute
@@ -59,6 +63,7 @@ const App = () => {
                 component={EditProfile}
               />
               <PrivateRoute exact path="/posts" component={Posts} />
+              <Route exact path="/testmodel" component={TestModel} />
             </Switch>
           </section>
         </Fragment>

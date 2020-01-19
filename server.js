@@ -1,8 +1,40 @@
 const express = require("express");
 const connectDB = require("./config/db");
 const path = require("path");
+var model = '[{"name":"Model1","lockedByUser": 0,"levels":[]}]';
+var app = require("express")();
+var http = require("http").createServer(app);
+var io = require("socket.io")(http);
 
-const app = express();
+//const app = express();
+
+io.on("connection", function(socket) {
+  console.log("a user connected");
+
+  socket.on("disconnect", function() {
+    console.log("user disconnected");
+  });
+
+  socket.on("modelrequest", function(msg) {
+    console.log(msg);
+    io.emit("model", model);
+  });
+
+  socket.on("modelupdate", function(msg) {
+    console.log(msg);
+    model = msg;
+    io.emit("model", model);
+  });
+
+  socket.on("chat message", function(msg) {
+    if (msg === "name") {
+      io.emit("chat message", "Jorge");
+    } else {
+      io.emit("chat message", msg + " extra content");
+    }
+    //console.log('message: ' + msg);
+  });
+});
 
 // Connect Database
 connectDB();
@@ -26,6 +58,6 @@ if (process.env.NODE_ENV === "production") {
   });
 }
 
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 5001;
 
-app.listen(PORT, () => console.log(`Server started on port ${PORT}`));
+http.listen(PORT, () => console.log(`Server started on port ${PORT}`));
