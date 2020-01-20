@@ -54,7 +54,7 @@ import {
 } from "mxgraph-js";
 
 class TestModel extends Component {
-  constructor() {
+  constructor(props) {
     super();
 
     this.state = {
@@ -76,7 +76,8 @@ class TestModel extends Component {
   }
   componentDidMount() {
     this.loadGraph();
-    this.socket.emit("modelrequest", "pretty please?");
+
+    this.socket.emit("modelrequest",this.props.match.params.id);
     //socket.on("model", data => this.setState({ json: data }));
 
     this.socket.on("model", msg => {

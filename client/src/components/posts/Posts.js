@@ -20,7 +20,7 @@ const Posts = ({ getPosts, post: { posts, loading } }) => {
   );
 };
 
-PermissionStatus.propTypes = {
+Posts.propTypes = {
   getPosts: PropTypes.func.isRequired,
 
   post: PropTypes.object.isRequired

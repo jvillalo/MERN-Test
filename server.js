@@ -17,13 +17,20 @@ io.on("connection", function(socket) {
 
   socket.on("modelrequest", function(msg) {
     console.log(msg);
-    io.emit("model", model);
+    socket.room = msg;
+    socket.join(msg);
+    console.log(`new connection to model ${socket.room}`);
+    io.to(socket.room).emit("model", model);
+
+    //io.emit("model", model);
   });
 
   socket.on("modelupdate", function(msg) {
     console.log(msg);
     model = msg;
-    io.emit("model", model);
+    io.to(socket.room).emit("model", model);
+    console.log(`sent model to members of model model ${socket.room}`);
+    //io.emit("model", model);
   });
 
   socket.on("chat message", function(msg) {
@@ -47,7 +54,7 @@ app.use("/api/users", require("./routes/api/users"));
 app.use("/api/auth", require("./routes/api/auth"));
 app.use("/api/profile", require("./routes/api/profile"));
 app.use("/api/posts", require("./routes/api/posts"));
-
+app.use("/api/projects", require("./routes/api/projects"));
 // Serve static assets in production
 if (process.env.NODE_ENV === "production") {
   // Set static folder

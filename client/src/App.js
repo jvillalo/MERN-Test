@@ -21,7 +21,8 @@ import Profile from "./components/profile/Profile";
 import Post from "./components/posts/Post";
 import TestModel from "./components/TestModel";
 import MxGraphGridEditor from "./components/MxGraphGridEditor";
-
+import Projects from "./components/project/Projects";
+import Project from "./components/project/Project";
 if (localStorage.token) {
   setAuthToken(localStorage.token);
 }
@@ -63,7 +64,13 @@ const App = () => {
                 component={EditProfile}
               />
               <PrivateRoute exact path="/posts" component={Posts} />
-              <Route exact path="/testmodel" component={TestModel} />
+              <PrivateRoute exact path="/projects" component={Projects} />
+              <PrivateRoute exact path="/projects/:id" component={Project} />
+              <PrivateRoute
+                exact
+                path="/projects/models/:id"
+                component={TestModel}
+              />
             </Switch>
           </section>
         </Fragment>
