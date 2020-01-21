@@ -2,25 +2,65 @@ import React, { Fragment } from "react";
 import PropTypes from "prop-types";
 import Moment from "react-moment";
 import { connect } from "react-redux";
-import { deleteExperience } from "../../actions/profile";
+import { branchModel, commitModel, removeModel } from "../../actions/projects";
 import { Link } from "react-router-dom";
 
-const ProjectModels = ({ models }) => {
+const ProjectModels = ({
+  project,
+  id,
+  branchModel,
+  commitModel,
+  removeModel
+}) => {
+  const models = project.models;
   const mdls = models.map(mod => (
     <tr key={mod._id}>
       <td>{mod.name}</td>
-      <td className="hide-sm">{mod.id}</td>
 
-      <td>
-        <Link to={`models/${mod._id}`} className="btn btn-primary">
-          Go to model
-        </Link>
-      </td>
+      {mod.parent == null ? (
+        <td>
+          <Link to={`models/${mod._id}`} className="btn btn-primary">
+            View model
+          </Link>
+          <button
+            className="btn btn-danger"
+            onClick={() => branchModel(id, mod)}
+          >
+            Branch
+          </button>
+        </td>
+      ) : (
+        <td>
+          <Link to={`models/${mod._id}`} className="btn btn-primary">
+            Edit model
+          </Link>
+          <button
+            className="btn btn-danger"
+            onClick={() => commit(models, mod, project)}
+          >
+            Commit
+          </button>
+          <button
+            className="btn btn-danger"
+            onClick={() => branchModel(id, mod)}
+          >
+            Version
+          </button>
+        </td>
+      )}
+
       <td>
         <button className="btn btn-danger">Delete</button>
       </td>
     </tr>
   ));
+  const commit = (models, mod, project) => {
+    console.log(models);
+    console.log(mod);
+    console.log(project);
+    commitModel(models, mod, project._id);
+    removeModel(project._id, mod._id);
+  };
   return (
     <Fragment>
       <h2 className="my-2">Models</h2>
@@ -40,7 +80,11 @@ const ProjectModels = ({ models }) => {
 };
 
 ProjectModels.propTypes = {
-  project: PropTypes.object.isRequired
+  branchModel: PropTypes.func.isRequired,
+  commitModel: PropTypes.func.isRequired,
+  removeModel: PropTypes.func.isRequired
 };
 
-export default ProjectModels;
+export default connect(null, { branchModel, commitModel, removeModel })(
+  ProjectModels
+);

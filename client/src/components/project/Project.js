@@ -23,7 +23,7 @@ const Project = ({ getProject, projects: { project, loading }, match }) => {
         Back To Projects
       </Link>
       <ProjectUsers users={project.users} />
-      <ProjectModels models={project.models} />
+      <ProjectModels project={project} id={project._id} />
     </Fragment>
   );
 };

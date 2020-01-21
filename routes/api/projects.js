@@ -128,6 +128,43 @@ router.get("/:id/models", auth, async (req, res) => {
   }
 });
 
+router.put("/:id/models", auth, async (req, res) => {
+  try {
+    let proj = await Project.findOne({ _id: req.params.id });
+    if (proj) {
+      //console.log(`original: ${proj}`);
+
+      proj.models.map(async mod => {
+        if (mod._id == req.body._id) {
+          mod.name = req.body.name;
+          mod.json = req.body.json;
+          mod.parent = req.body.parent;
+        }
+        //const index=proj.models.indexOf({ _id: req.body._id })
+        //console.log(`====> ${index}`)
+        //proj.models[index].name =req.body.name
+        //proj.models[index].json = req.body.json
+        //roj.models[index].parent=req.body.parent
+
+        var proj2 = await Project.findOneAndUpdate(
+          { _id: req.params.id },
+          { $set: proj }
+        );
+      });
+
+      return res.json(proj);
+    }
+  } catch (err) {
+    if (err.kind === "ObjectId") {
+      console.error(err.message);
+      return res.status(404).json({ msg: "Project not found" });
+    }
+
+    console.error(err.message);
+    res.status(500).send("server error");
+  }
+});
+
 router.delete("/:id", auth, async (req, res) => {
   try {
     if (!req.params.id.match(/^[0-9a-fA-F]{24}$/)) {
@@ -179,7 +216,7 @@ router.post(
       };
       project.models.unshift(newModel);
       await project.save();
-      res.json(project.models);
+      res.json(project);
     } catch (err) {
       console.error(err.message);
       res.status(500).send("server error");
@@ -244,7 +281,7 @@ router.delete("/:id/users/:user_id", auth, async (req, res) => {
     project.users.splice(index, 1);
 
     await project.save();
-    res.json(project.users);
+    res.json(project);
   } catch (err) {
     console.error(err.message);
     res.status(500).send("server error");
@@ -253,7 +290,7 @@ router.delete("/:id/users/:user_id", auth, async (req, res) => {
 
 router.delete("/:id/models/:model_id", auth, async (req, res) => {
   try {
-    const project = await Post.findById(req.params.id);
+    const project = await Project.findById(req.params.id);
 
     const model = project.models.find(
       model => model.id === req.params.model_id
@@ -265,18 +302,18 @@ router.delete("/:id/models/:model_id", auth, async (req, res) => {
     }
 
     // Check user
-    if (project.user.toString() !== req.user.id) {
-      return res.status(401).json({ msg: "User not authorized" });
-    }
 
     const index = project.models
       .map(item => item.id)
-      .indexOf(req.params.user_id);
+      .indexOf(req.params.model_id);
+    
+
+    
 
     project.models.splice(index, 1);
 
     await project.save();
-    res.json(project.models);
+    res.json(project);
   } catch (err) {
     console.error(err.message);
     res.status(500).send("server error");

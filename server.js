@@ -28,10 +28,12 @@ io.on("connection", function(socket) {
     try {
       let pro = await Project.findOne({ _id: proj });
       if (pro) {
-        let modelToSend;
-        pro.models.map(mod =>
-          mod._id == msg.model ? (modelToSend = mod.json) : (modelToSend = "")
-        );
+        let modelToSend = "";
+        pro.models.map(mod => {
+          if (mod._id == msg.model) {
+            modelToSend = mod.json;
+          }
+        });
         io.to(socket.room).emit("model", modelToSend);
         console.log(`HERE!!!! ${modelToSend}`);
       } else {
