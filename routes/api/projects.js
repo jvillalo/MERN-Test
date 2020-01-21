@@ -158,10 +158,6 @@ router.post(
     [
       check("name", "name is required")
         .not()
-        .isEmpty(),
-
-      check("id", "id is required")
-        .not()
         .isEmpty()
     ]
   ],
@@ -178,7 +174,8 @@ router.post(
 
       const newModel = {
         name: req.body.name,
-        id: req.body.id
+        json: req.body.json,
+        parent: req.body.parent
       };
       project.models.unshift(newModel);
       await project.save();

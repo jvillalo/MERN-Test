@@ -5,7 +5,8 @@ var model = '[{"name":"Model1","lockedByUser": 0,"levels":[]}]';
 var app = require("express")();
 var http = require("http").createServer(app);
 var io = require("socket.io")(http);
-
+var proj;
+const Project = require("./models/Project");
 //const app = express();
 
 io.on("connection", function(socket) {
@@ -15,22 +16,66 @@ io.on("connection", function(socket) {
     console.log("user disconnected");
   });
 
-  socket.on("modelrequest", function(msg) {
+  socket.on("modelrequest", async function(msg) {
     console.log(msg);
-    socket.room = msg;
-    socket.join(msg);
+    proj = msg.project;
+    socket.room = msg.model;
+    socket.join(msg.model);
+    console.log(`Project: ${proj}`);
+    console.log(`USER: ${msg.user}`);
     console.log(`new connection to model ${socket.room}`);
-    io.to(socket.room).emit("model", model);
 
+    try {
+      let pro = await Project.findOne({ _id: proj });
+      if (pro) {
+        let modelToSend;
+        pro.models.map(mod =>
+          mod._id == msg.model ? (modelToSend = mod.json) : (modelToSend = "")
+        );
+        io.to(socket.room).emit("model", modelToSend);
+        console.log(`HERE!!!! ${modelToSend}`);
+      } else {
+        console.log("NOT WORKING");
+      }
+    } catch (err) {
+      console.error(err.message);
+      res.status(500).send("Server error");
+    }
     //io.emit("model", model);
   });
 
-  socket.on("modelupdate", function(msg) {
+  socket.on("modelupdate", async function(msg) {
     console.log(msg);
-    model = msg;
+    model = msg.updateModel;
     io.to(socket.room).emit("model", model);
-    console.log(`sent model to members of model model ${socket.room}`);
+    console.log(`sent model to members of model ${socket.room}`);
     //io.emit("model", model);
+    try {
+      let proj = await Project.findOne({ _id: msg.project });
+      if (proj) {
+        console.log(`original: ${proj}`);
+
+        proj.models.map(async mod => {
+          if (mod._id == msg.model) {
+            mod.json = msg.updateModel;
+          }
+          proj.models[proj.models.indexOf({ _id: msg.model })] =
+            msg.updateModel;
+
+          let proj2 = await Project.findOneAndUpdate(
+            { _id: msg.project },
+            { $set: proj }
+          );
+
+          console.log(`updated: ${proj2}`);
+        });
+
+        console.log("updated");
+      }
+    } catch (err) {
+      console.error(err.message);
+      res.status(500).send("Server error");
+    }
   });
 
   socket.on("chat message", function(msg) {

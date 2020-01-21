@@ -31,9 +31,11 @@ const ProjectSchema = new Schema({
         type: String,
         required: true
       },
-      id: {
-        type: String,
-        required: true
+      json: {
+        type: String
+      },
+      parent: {
+        type: String
       }
     }
   ],

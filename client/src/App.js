@@ -23,6 +23,8 @@ import TestModel from "./components/TestModel";
 import MxGraphGridEditor from "./components/MxGraphGridEditor";
 import Projects from "./components/project/Projects";
 import Project from "./components/project/Project";
+import Model from "./components/model/Model";
+
 if (localStorage.token) {
   setAuthToken(localStorage.token);
 }
@@ -69,7 +71,7 @@ const App = () => {
               <PrivateRoute
                 exact
                 path="/projects/models/:id"
-                component={TestModel}
+                component={Model}
               />
             </Switch>
           </section>

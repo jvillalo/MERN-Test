@@ -77,11 +77,16 @@ class TestModel extends Component {
   componentDidMount() {
     this.loadGraph();
 
-    this.socket.emit("modelrequest",this.props.match.params.id);
+    this.socket.emit("modelrequest", {
+      model: this.props.modelId,
+      user: this.props.userId,
+      project: this.props.projectId
+    });
     //socket.on("model", data => this.setState({ json: data }));
 
     this.socket.on("model", msg => {
       //this.setState({ selectedCell: graph.getSelectionCell().getId() });
+      //alert(`Model received: ${msg}`);
       var selected = 0;
       if (this.graph.getSelectionCell()) {
         selected = this.graph.getSelectionCell().getId();
@@ -115,18 +120,7 @@ class TestModel extends Component {
     //modelo.build();
   }
 
-  paint(graph) {
-    var parent = graph.getDefaultParent();
-    graph.getModel().beginUpdate();
-    try {
-      var v1 = graph.insertVertex(parent, null, "Hello,", 20, 20, 80, 30);
-      var v2 = graph.insertVertex(parent, null, "World!", 200, 150, 80, 30);
-      var e1 = graph.insertEdge(parent, null, "", v1, v2);
-    } finally {
-      // Updates the display
-      graph.getModel().endUpdate();
-    }
-  }
+  paint(graph) {}
 
   render() {
     /* if (this.state.reload) {
@@ -335,7 +329,12 @@ class TestModel extends Component {
 
       //this.setState({ json: modelo.toJSON(), reload: true });
 
-      that.socket.emit("modelupdate", that.modelo.toJSON());
+      that.socket.emit("modelupdate", {
+        model: that.props.modelId,
+        user: that.props.userId,
+        project: that.props.projectId,
+        updateModel: that.modelo.toJSON()
+      });
     });
   }
 
@@ -422,7 +421,14 @@ class TestModel extends Component {
 
       //this.setState({ json: modelo.toJSON(), reload: true });
 
-      this.socket.emit("modelupdate", this.modelo.toJSON());
+      //this.socket.emit("modelupdate", this.modelo.toJSON());
+      this.socket.emit("modelupdate", {
+        model: this.props.modelId,
+        user: this.props.userId,
+        project: this.props.projectId,
+        updateModel: this.modelo.toJSON()
+      });
+
       //modelo.fromJSON(this.state.json);
       //modelo.build();
       //toolbarWindow.setVisible(true);
@@ -486,7 +492,13 @@ class TestModel extends Component {
       var idInModel = that.modelo.getLevelById(levelId);
       that.modelo.updatePosition();
       that.modelo.levels[idInModel].addEntity(entity1);
-      that.socket.emit("modelupdate", that.modelo.toJSON());
+      //that.socket.emit("modelupdate", that.modelo.toJSON());
+      that.socket.emit("modelupdate", {
+        model: that.props.modelId,
+        user: that.props.userId,
+        project: that.props.projectId,
+        updateModel: that.modelo.toJSON()
+      });
       wnd.destroy();
     });
     var cancelButton = mxUtils.button("cancel", function(evt) {
