@@ -1,6 +1,11 @@
 import axios from "axios";
 import { setAlert } from "./alert";
-import { GET_PROJECTS, PROJECT_ERROR, GET_PROJECT } from "./types";
+import {
+  GET_PROJECTS,
+  PROJECT_ERROR,
+  GET_PROJECT,
+  COMMIT_MODEL
+} from "./types";
 
 export const getProjects = () => async dispatch => {
   try {
@@ -35,6 +40,10 @@ export const getProject = projectId => async dispatch => {
 
 export const branchModel = (projectId, model) => async dispatch => {
   try {
+    dispatch({
+      type: COMMIT_MODEL
+    });
+
     const config = {
       headers: {
         "Content-Type": "application/json"
@@ -57,7 +66,7 @@ export const branchModel = (projectId, model) => async dispatch => {
       type: GET_PROJECT,
       payload: res.data
     });
-    dispatch(setAlert("Post added", "success"));
+    dispatch(setAlert("Branch created", "success"));
   } catch (err) {
     dispatch({
       type: PROJECT_ERROR,
@@ -87,11 +96,24 @@ export const commitModel = (models, child, projectId) => async dispatch => {
       parent: null
     };
 
+    dispatch({
+      type: COMMIT_MODEL
+    });
     const res = await axios.put(
       `/api/projects/${projectId}/models`,
       postText,
       config
     );
+
+    const res2 = await axios.delete(
+      `/api/projects/${projectId}/models/${child._id}`
+    );
+
+    dispatch(setAlert("Branch commited", "success"));
+    dispatch({
+      type: GET_PROJECT,
+      payload: res2.data
+    });
   } catch (err) {
     dispatch({
       type: PROJECT_ERROR,
@@ -102,14 +124,10 @@ export const commitModel = (models, child, projectId) => async dispatch => {
 
 export const removeModel = (projectId, modelId) => async dispatch => {
   try {
+    alert(`/api/projects/${projectId}/models/${modelId}`);
     const res = await axios.delete(
       `/api/projects/${projectId}/models/${modelId}`
     );
-
-    dispatch({
-      type: GET_PROJECT,
-      payload: res.data
-    });
   } catch (err) {
     dispatch({
       type: PROJECT_ERROR,

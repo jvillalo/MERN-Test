@@ -59,7 +59,7 @@ const ProjectModels = ({
     console.log(mod);
     console.log(project);
     commitModel(models, mod, project._id);
-    removeModel(project._id, mod._id);
+    //removeModel(project._id, mod._id);
   };
   return (
     <Fragment>

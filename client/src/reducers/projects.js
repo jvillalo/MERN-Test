@@ -1,4 +1,9 @@
-import { GET_PROJECTS, PROJECT_ERROR, GET_PROJECT } from "../actions/types";
+import {
+  GET_PROJECTS,
+  PROJECT_ERROR,
+  GET_PROJECT,
+  COMMIT_MODEL
+} from "../actions/types";
 
 const initialState = {
   projects: [],
@@ -17,6 +22,13 @@ export default function(state = initialState, action) {
         projects: payload,
         project: null,
         loading: false
+      };
+
+    case COMMIT_MODEL:
+      return {
+        ...state,
+
+        loading: true
       };
 
     case GET_PROJECT:
