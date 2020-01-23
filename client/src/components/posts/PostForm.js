@@ -1,9 +1,19 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
-import { addPost } from "../../actions/post";
+import { addPost, getPosts } from "../../actions/post";
+import socketIOClient from "socket.io-client";
 
-const PostForm = ({ addPost }) => {
+const PostForm = ({ modelId, addPost, getPosts }) => {
+  const socket = socketIOClient();
+  useEffect(() => {
+    socket.on("chat", msg => {
+      console.log("received");
+      getPosts(modelId);
+      //getPosts(match.params.id);
+    });
+  }, []);
+
   const [text, setText] = useState("");
 
   return (
@@ -15,8 +25,11 @@ const PostForm = ({ addPost }) => {
         className="form my-1"
         onSubmit={e => {
           e.preventDefault();
-          addPost({ text });
+          addPost({ text }, modelId);
           setText("");
+
+          socket.emit("newmsg");
+          getPosts(modelId);
         }}
       >
         <textarea
@@ -35,7 +48,8 @@ const PostForm = ({ addPost }) => {
 };
 
 PostForm.propTypes = {
-  addPost: PropTypes.func.isRequired
+  addPost: PropTypes.func.isRequired,
+  getPosts: PropTypes.func.isRequired
 };
 
-export default connect(null, { addPost })(PostForm);
+export default connect(null, { addPost, getPosts })(PostForm);

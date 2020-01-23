@@ -37,9 +37,7 @@ const Project = ({ getProject, projects: { project, loading }, match }) => {
           </td>
           <td>
             <td>
-              <div>
-                <Posts />
-              </div>
+              <div></div>
             </td>
           </td>
         </tr>

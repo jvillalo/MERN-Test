@@ -6,11 +6,18 @@ import Spinner from "../layout/Spinner";
 import Posts from "../posts/Posts";
 //import CommentForm from '../post/CommentForm';
 //import CommentItem from '../post/CommentItem';
+import { getPosts } from "../../actions/post";
 import { getProject } from "../../actions/projects";
 import TestModel from "../TestModel";
 import "../../../src/App.css";
+import socketIOClient from "socket.io-client";
 
-const Model = ({ auth, projects: { project, loading }, match }) => {
+const Model = ({ auth, projects: { project, loading }, match, getPosts }) => {
+  var socket = socketIOClient();
+  socket.on("chat", msg => {
+    console.log("received");
+    getPosts(match.params.id);
+  });
   var authorized = false;
   project.users.map(usr => {
     if (usr.user == auth.user._id) {
@@ -50,6 +57,7 @@ const Model = ({ auth, projects: { project, loading }, match }) => {
                 modelId={match.params.id}
                 projectId={project._id}
                 editAuthorized={authorized}
+                getPosts={getPosts}
                 //editAuthorized={model.parent == null ? true : false}
               />
             </div>
@@ -57,14 +65,12 @@ const Model = ({ auth, projects: { project, loading }, match }) => {
           <td>
             <td>
               <div>
-                <Posts />
+                <Posts modelId={match.params.id} />
               </div>
             </td>
           </td>
           <td>
-            <div className="postsdiv4">
-
-            </div>
+            <div className="postsdiv4"></div>
           </td>
         </tr>
       </table>
@@ -76,7 +82,8 @@ const Model = ({ auth, projects: { project, loading }, match }) => {
 
 Model.propTypes = {
   projects: PropTypes.object.isRequired,
-  auth: PropTypes.object.isRequired
+  auth: PropTypes.object.isRequired,
+  getPosts: PropTypes.func.isRequired
 };
 
 const mapStateToProps = state => ({
@@ -84,4 +91,4 @@ const mapStateToProps = state => ({
   auth: state.auth
 });
 
-export default connect(mapStateToProps)(Model);
+export default connect(mapStateToProps, { getPosts })(Model);

@@ -14,7 +14,7 @@ import socketIOClient from "socket.io-client";
 import "./common.css";
 import "./mxgraph.css";
 import { Link } from "react-router-dom";
-
+import { getPosts } from "../actions/post";
 import {
   mxGraph,
   mxParallelEdgeLayout,
@@ -56,7 +56,7 @@ import {
 
 class TestModel extends Component {
   constructor(props) {
-    super();
+    super(props);
 
     this.state = {
       graph: {},
@@ -74,6 +74,7 @@ class TestModel extends Component {
     this.setGraphSetting = this.setGraphSetting.bind(this);
     this.createPopupMenu = this.createPopupMenu.bind(this);
     this.socket = socketIOClient();
+    //this.getPosts = this.getPosts.bind(this);
   }
   componentDidMount() {
     this.loadGraph();
@@ -98,6 +99,13 @@ class TestModel extends Component {
       });
 
       this.reload();
+    });
+
+    this.socket.on("chat", msg => {
+      //this.setState({ selectedCell: graph.getSelectionCell().getId() });
+      //alert(`Model received: ${msg}`);
+      console.log("RECEIVED");
+      //this.props.getPosts(this.props.modelId);
     });
   }
 

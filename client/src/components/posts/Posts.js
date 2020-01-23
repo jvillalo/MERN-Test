@@ -5,19 +5,21 @@ import PropTypes from "prop-types";
 import { getPosts } from "../../actions/post";
 import PostItem from "./PostItem";
 import PostForm from "./PostForm";
-const Posts = ({ getPosts, post: { posts, loading } }) => {
+const Posts = ({ modelId, getPosts, post: { post, loading } }) => {
   useEffect(() => {
-    getPosts();
+    getPosts(modelId);
   }, [getPosts]);
 
-  return (
+  return loading ? (
+    <Spinner />
+  ) : (
     <Fragment>
       <div className="postsdiv">
-        <PostForm />
+        <PostForm modelId={modelId} />
       </div>
       <div className="postsdiv2">
-        {posts.map(post => (
-          <PostItem key={post._id} post={post} showActions={true} />
+        {post.comments.map(post => (
+          <PostItem key={post._id} post={post} showActions={false} />
         ))}
 
         <br></br>

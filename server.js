@@ -16,6 +16,11 @@ io.on("connection", function(socket) {
     console.log("user disconnected");
   });
 
+  socket.on("newmsg", function() {
+    console.log("chat message emmited")
+    io.emit("chat");
+  });
+
   socket.on("modelrequest", async function(msg) {
     console.log(msg);
     proj = msg.project;
@@ -102,6 +107,7 @@ app.use("/api/auth", require("./routes/api/auth"));
 app.use("/api/profile", require("./routes/api/profile"));
 app.use("/api/posts", require("./routes/api/posts"));
 app.use("/api/projects", require("./routes/api/projects"));
+app.use("/api/chats", require("./routes/api/chat"));
 // Serve static assets in production
 if (process.env.NODE_ENV === "production") {
   // Set static folder

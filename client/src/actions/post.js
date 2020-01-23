@@ -1,4 +1,6 @@
 import axios from "axios";
+import socketIOClient from "socket.io-client";
+
 import { setAlert } from "./alert";
 import {
   GET_POSTS,
@@ -9,9 +11,10 @@ import {
   GET_POST
 } from "./types";
 
-export const getPosts = () => async dispatch => {
+export const getPosts = modelId => async dispatch => {
   try {
-    const res = await axios.get("/api/posts");
+    const res = await axios.get(`/api/chats/${modelId}`);
+
     dispatch({
       type: GET_POSTS,
       payload: res.data
@@ -86,7 +89,33 @@ export const deletePost = id => async dispatch => {
   }
 };
 
-export const addPost = postText => async dispatch => {
+export const createChat = (projectId, modelId) => async dispatch => {
+  try {
+    const config = {
+      headers: {
+        "Content-Type": "application/json"
+      }
+    };
+    const postText = {
+      project: projectId,
+      model: modelId
+    };
+
+    const res = await axios.post("/api/chats", postText, config);
+    dispatch({
+      type: ADD_POST,
+      payload: res.data
+    });
+    dispatch(setAlert("post added", "success"));
+  } catch (err) {
+    const errors = err.response.data.errors;
+    if (errors) {
+      errors.forEach(error => dispatch(setAlert(error.msg, "danger")));
+    }
+  }
+};
+
+export const addPost = (postText, modelId) => async dispatch => {
   try {
     const config = {
       headers: {
@@ -94,12 +123,16 @@ export const addPost = postText => async dispatch => {
       }
     };
 
-    const res = await axios.post("/api/posts", postText, config);
+    const res = await axios.post(
+      `/api/chats/comment/${modelId}`,
+      postText,
+      config
+    );
     dispatch({
       type: ADD_POST,
       payload: res.data
     });
-    dispatch(setAlert("Post added", "success"));
+    dispatch(setAlert("post added", "success"));
   } catch (err) {
     const errors = err.response.data.errors;
     if (errors) {

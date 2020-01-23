@@ -28,7 +28,7 @@ export default function(state = initialState, action) {
     case GET_POSTS:
       return {
         ...state,
-        posts: payload,
+        post: payload,
         loading: false
       };
 
