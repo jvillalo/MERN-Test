@@ -34,13 +34,14 @@ const Model = ({ auth, projects: { project, loading }, match }) => {
   }
 
   return (
-    <Fragment className="modelContainer">
+    <Fragment>
       <Link to={`/projects/${project._id}`} className="btn">
         Back To Project
       </Link>
       <br></br>
       <br></br>
-      <table>
+
+      <table cellpadding="10">
         <tr>
           <td>
             <div>
@@ -55,15 +56,19 @@ const Model = ({ auth, projects: { project, loading }, match }) => {
           </td>
           <td>
             <td>
-              <div className="postsdiv2">
+              <div>
                 <Posts />
               </div>
             </td>
           </td>
+          <td>
+            <div className="postsdiv4">
+
+            </div>
+          </td>
         </tr>
       </table>
-      <br></br>
-      <br></br>
+
       <br></br>
     </Fragment>
   );

@@ -47,7 +47,7 @@ img {
 .modelContainer {
   /*margin: auto;*/
   position: relative;
-  margin: auto;
+
   left: 0;
 }
 
@@ -465,24 +465,48 @@ button {
   background: var(--primary-color);
 }
 
+.contentdiv {
+  height: 95vh;
+  width: 90vw;
+}
+
 .postsdiv {
+  position: relative;
+  height: 30vh;
+  width: 40vw;
+  left: 0;
+  padding: 10;
+} 
+
+.modeldiv {
   overflow: scroll;
   position: relative;
-  height: 75vh;
-  width: 70vh;
+  height: 50vh;
+  width: 90vw;
   left: 0;
 }
+
 .postsdiv2 {
+  overflow: scroll;
   position: relative;
-  height: 75vh;
-  width: 70vh;
+  height: 40vh;
+  width: 40vw;
   left: 0;
+  margin: 2;
+}
+
+.postsdiv4 {
+  
+  position: relative;
+  height: 40vh;
+  width: 5vw;
+  
 }
 
 .postsdiv3 {
   position: relative;
   height: 75vh;
-  width: 120vh;
+  width: 80vw;
   left: 0;
 }
 

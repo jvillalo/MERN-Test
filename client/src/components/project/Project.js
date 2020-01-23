@@ -37,7 +37,7 @@ const Project = ({ getProject, projects: { project, loading }, match }) => {
           </td>
           <td>
             <td>
-              <div className="postsdiv2">
+              <div>
                 <Posts />
               </div>
             </td>
