@@ -25,7 +25,7 @@ export const getProjects = () => async dispatch => {
 export const getProject = projectId => async dispatch => {
   try {
     const res = await axios.get(`/api/projects/${projectId}`);
-    console.log(res.data);
+    //console.log(res.data);
     dispatch({
       type: GET_PROJECT,
       payload: res.data
@@ -75,45 +75,21 @@ export const branchModel = (projectId, model) => async dispatch => {
   }
 };
 
-export const commitModel = (models, child, projectId) => async dispatch => {
+export const commitModel = (projectId, modelId) => async dispatch => {
   try {
-    var parent = null;
-    models.map(mod => {
-      if (mod._id == child.parent) {
-        parent = mod;
-      }
-    });
-    const config = {
-      headers: {
-        "Content-Type": "application/json"
-      }
-    };
-
-    const postText = {
-      _id: parent._id,
-      name: parent.name,
-      json: child.json,
-      parent: null
-    };
-
     dispatch({
       type: COMMIT_MODEL
     });
-    const res = await axios.put(
-      `/api/projects/${projectId}/models`,
-      postText,
-      config
+    const res = await axios.get(
+      `/api/projects/${projectId}/commitmodel/${modelId}`
     );
 
-    const res2 = await axios.delete(
-      `/api/projects/${projectId}/models/${child._id}`
-    );
-
-    dispatch(setAlert("Branch commited", "success"));
     dispatch({
       type: GET_PROJECT,
-      payload: res2.data
+      payload: res.data
     });
+
+    dispatch(setAlert("Branch commited", "success"));
   } catch (err) {
     dispatch({
       type: PROJECT_ERROR,

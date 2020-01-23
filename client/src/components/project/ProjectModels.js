@@ -2,7 +2,12 @@ import React, { Fragment } from "react";
 import PropTypes from "prop-types";
 import Moment from "react-moment";
 import { connect } from "react-redux";
-import { branchModel, commitModel, removeModel } from "../../actions/projects";
+import {
+  branchModel,
+  commitModel,
+  removeModel,
+  getProject
+} from "../../actions/projects";
 import { Link } from "react-router-dom";
 
 const ProjectModels = ({
@@ -10,7 +15,8 @@ const ProjectModels = ({
   id,
   branchModel,
   commitModel,
-  removeModel
+  removeModel,
+  getProject
 }) => {
   const models = project.models;
   const mdls = models.map(mod => (
@@ -55,10 +61,7 @@ const ProjectModels = ({
     </tr>
   ));
   const commit = (models, mod, project) => {
-    console.log(models);
-    console.log(mod);
-    console.log(project);
-    commitModel(models, mod, project._id);
+    commitModel(project._id, mod._id);
     //removeModel(project._id, mod._id);
   };
   return (
@@ -82,9 +85,13 @@ const ProjectModels = ({
 ProjectModels.propTypes = {
   branchModel: PropTypes.func.isRequired,
   commitModel: PropTypes.func.isRequired,
-  removeModel: PropTypes.func.isRequired
+  removeModel: PropTypes.func.isRequired,
+  getProject: PropTypes.func.isRequired
 };
 
-export default connect(null, { branchModel, commitModel, removeModel })(
-  ProjectModels
-);
+export default connect(null, {
+  getProject,
+  branchModel,
+  commitModel,
+  removeModel
+})(ProjectModels);

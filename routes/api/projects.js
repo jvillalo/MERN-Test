@@ -288,6 +288,44 @@ router.delete("/:id/users/:user_id", auth, async (req, res) => {
   }
 });
 
+router.get("/:id/commitmodel/:modelid", auth, async (req, res) => {
+  try {
+    let project = await Project.findOne({ _id: req.params.id });
+    //console.log(res.data);
+    console.log("1");
+    var parent = null;
+    var child = null;
+    project.models.map(mod => {
+      if (mod._id == req.params.modelid) {
+        child = mod;
+      }
+    });
+    console.log("2");
+    project.models.map(mod => {
+      if (mod._id == child.parent) {
+        mod.json = child.json;
+      }
+    });
+    console.log("3");
+    var proj2 = await Project.findOneAndUpdate(
+      { _id: child.parent },
+      { $set: project }
+    );
+    console.log("4");
+    const index = project.models
+      .map(item => item.id)
+      .indexOf(req.params.modelid);
+    console.log("5");
+    project.models.splice(index, 1);
+    console.log("6");
+    await project.save();
+    res.json(project);
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send("server error");
+  }
+});
+
 router.delete("/:id/models/:model_id", auth, async (req, res) => {
   try {
     const project = await Project.findById(req.params.id);
@@ -306,9 +344,6 @@ router.delete("/:id/models/:model_id", auth, async (req, res) => {
     const index = project.models
       .map(item => item.id)
       .indexOf(req.params.model_id);
-    
-
-    
 
     project.models.splice(index, 1);
 
