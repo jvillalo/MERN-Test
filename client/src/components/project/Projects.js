@@ -21,7 +21,8 @@ const Projects = ({
     <Spinner />
   ) : (
     <Fragment>
-      <h1>Projects for {user && user.name} </h1>
+      <h2>Welcome {user && user.name}</h2>
+      <br></br>
 
       {projects !== null ? (
         <Fragment>

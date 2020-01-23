@@ -481,7 +481,7 @@ class Model {
 		var i,j,k,l,m;
 		var parent = this.graph.getDefaultParent();
 
-		var container = this.graph.insertVertex(parent, null, this.name, 300, 50, 1500, 500,'connection');
+		var container = this.graph.insertVertex(parent, null, this.name, 50, 50, 1500, 500,'connection');
 
 		for (i=0;i<this.levels.length;i++){
 

@@ -106,12 +106,12 @@ class TestModel extends Component {
     //container.style.position = "relative";
     //container.style.top = "400px";
     container.style.position = "relative";
-    container.style.height = "500px";
-    container.style.width = "1000px";
-    container.style.align = "left";
+    container.style.height = "75vh";
+    container.style.width = "120vh";
+    //container.style.align = "left";
     //container.style.overflow = "hidden";
     //container.style.left = "0px";
-    //container.style.top = "36px";
+    container.style.top = "0px";
     //container.style.right = "0px";
     //container.style.bottom = "36px";
     //container.style.background = 'url("images/grid.gif")';
@@ -158,7 +158,7 @@ class TestModel extends Component {
 
     graph.setHtmlLabels(true);
 
-    graph.centerZoom = true;
+    //graph.centerZoom = true;
     // Autosize labels on insert where autosize=1
     graph.autoSizeCellsOnAdd = true;
 

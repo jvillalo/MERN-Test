@@ -40,15 +40,16 @@ const App = () => {
         <Fragment>
           <Navbar />
           <Route exact path="/" component={Landing} />
-          <section className="container2">
-            <Alert />
-            <Switch>
+
+          <Alert />
+          <Switch>
+            <section className="container2">
               <Route exact path="/register" component={Register} />
               <Route exact path="/login" component={Login} />
               <Route exact path="/profiles" component={Profiles} />
               <Route exact path="/profile/:id" component={Profile} />
 
-              <PrivateRoute exact path="/dashboard" component={Dashboard} />
+              <PrivateRoute exact path="/dashboard" component={Projects} />
               <PrivateRoute exact path="/posts/:id" component={Post} />
               <PrivateRoute
                 exact
@@ -73,8 +74,8 @@ const App = () => {
                 path="/projects/models/:id"
                 component={Model}
               />
-            </Switch>
-          </section>
+            </section>
+          </Switch>
         </Fragment>
       </Router>
     </Provider>

@@ -22,8 +22,13 @@ const Project = ({ getProject, projects: { project, loading }, match }) => {
       <Link to="/projects" className="btn">
         Back To Projects
       </Link>
-      <ProjectUsers users={project.users} />
+      <br></br>
+      <br></br>
+      <br></br>
+      <h2>Project {project.name}</h2>
+
       <ProjectModels project={project} id={project._id} />
+      <ProjectUsers users={project.users} />
     </Fragment>
   );
 };

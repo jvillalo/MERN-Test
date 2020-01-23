@@ -24,36 +24,6 @@ const PostItem = ({
         <div>
           <p className="my-1">{text}</p>
           <p className="post-date">Posted on {date}</p>
-          {showActions && <Fragment>
-            <button
-            onClick={e => addLike(_id)}
-            type="button"
-            className="btn btn-light"
-          >
-            <i className="fas fa-thumbs-up"></i>
-            <span>{likes.length}</span>
-          </button>
-          <button
-            onClick={e => removeLike(_id)}
-            type="button"
-            className="btn btn-light"
-          >
-            <i className="fas fa-thumbs-down"></i>
-          </button>
-          <Link to={`/posts/${_id}`} className="btn btn-primary">
-            Discussion <span className="comment-count">{comments.length}</span>
-          </Link>
-          {!auth.loading && user === auth.user._id && (
-            <button
-              onClick={e => deletePost(_id)}
-              type="button"
-              className="btn btn-danger"
-            >
-              <i className="fas fa-times"></i>
-            </button>
-          )}
-              </Fragment>}
-          
         </div>
       </div>
     </Fragment>

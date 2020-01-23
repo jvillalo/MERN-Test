@@ -3,11 +3,12 @@ import PropTypes from "prop-types";
 import { Link } from "react-router-dom";
 import { connect } from "react-redux";
 import Spinner from "../layout/Spinner";
-
+import Posts from "../posts/Posts";
 //import CommentForm from '../post/CommentForm';
 //import CommentItem from '../post/CommentItem';
 import { getProject } from "../../actions/projects";
 import TestModel from "../TestModel";
+import "../../../src/App.css";
 
 const Model = ({ auth, projects: { project, loading }, match }) => {
   var authorized = false;
@@ -33,20 +34,37 @@ const Model = ({ auth, projects: { project, loading }, match }) => {
   }
 
   return (
-    <Fragment>
+    <Fragment className="modelContainer">
       <Link to={`/projects/${project._id}`} className="btn">
         Back To Project
       </Link>
-
       <br></br>
-
-      <TestModel
-        userId={auth.user._id}
-        modelId={match.params.id}
-        projectId={project._id}
-        editAuthorized={authorized}
-        //editAuthorized={model.parent == null ? true : false}
-      />
+      <br></br>
+      <table>
+        <tr>
+          <td>
+            <div>
+              <TestModel
+                userId={auth.user._id}
+                modelId={match.params.id}
+                projectId={project._id}
+                editAuthorized={authorized}
+                //editAuthorized={model.parent == null ? true : false}
+              />
+            </div>
+          </td>
+          <td>
+            <td>
+              <div className="postsdiv">
+                <Posts />
+              </div>
+            </td>
+          </td>
+        </tr>
+      </table>
+      <br></br>
+      <br></br>
+      <br></br>
     </Fragment>
   );
 };
