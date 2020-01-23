@@ -5,6 +5,7 @@ import { connect } from "react-redux";
 import Spinner from "../layout/Spinner";
 import ProjectModels from "./ProjectModels";
 import ProjectUsers from "./ProjectUsers";
+import Posts from "../posts/Posts";
 //import CommentForm from '../post/CommentForm';
 //import CommentItem from '../post/CommentItem';
 import { getProject } from "../../actions/projects";
@@ -19,16 +20,30 @@ const Project = ({ getProject, projects: { project, loading }, match }) => {
     <Spinner />
   ) : (
     <Fragment>
-      <Link to="/projects" className="btn">
-        Back To Projects
-      </Link>
-      <br></br>
-      <br></br>
-      <br></br>
-      <h2>Project {project.name}</h2>
-
-      <ProjectModels project={project} id={project._id} />
-      <ProjectUsers users={project.users} />
+      <table>
+        <tr>
+          <td>
+            <Link to="/projects" className="btn">
+              Back To Projects
+            </Link>
+            <br></br>
+            <br></br>
+            <br></br>
+            <h2>Project {project.name}</h2>
+            <div className="projdiv">
+              <ProjectModels project={project} id={project._id} />
+              <ProjectUsers users={project.users} />
+            </div>
+          </td>
+          <td>
+            <td>
+              <div className="postsdiv2">
+                <Posts />
+              </div>
+            </td>
+          </td>
+        </tr>
+      </table>
     </Fragment>
   );
 };

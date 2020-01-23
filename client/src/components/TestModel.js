@@ -107,7 +107,7 @@ class TestModel extends Component {
     //container.style.top = "400px";
     container.style.position = "relative";
     container.style.height = "75vh";
-    container.style.width = "120vh";
+    container.style.width = "130vh";
     //container.style.align = "left";
     //container.style.overflow = "hidden";
     //container.style.left = "0px";

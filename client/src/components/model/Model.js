@@ -55,7 +55,7 @@ const Model = ({ auth, projects: { project, loading }, match }) => {
           </td>
           <td>
             <td>
-              <div className="postsdiv">
+              <div className="postsdiv2">
                 <Posts />
               </div>
             </td>

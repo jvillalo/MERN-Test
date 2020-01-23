@@ -463,14 +463,33 @@ button {
 /* Posts Page */
 .post-form .post-form-header {
   background: var(--primary-color);
-  padding: 0.5rem;
 }
 
 .postsdiv {
   overflow: scroll;
   position: relative;
   height: 75vh;
-  width: 50vh;
+  width: 70vh;
+  left: 0;
+}
+.postsdiv2 {
+  position: relative;
+  height: 75vh;
+  width: 70vh;
+  left: 0;
+}
+
+.postsdiv3 {
+  position: relative;
+  height: 75vh;
+  width: 120vh;
+  left: 0;
+}
+
+.projdiv {
+  position: relative;
+
+  width: 120vh;
   left: 0;
 }
 
