@@ -12,7 +12,13 @@ import TestModel from "../TestModel";
 import "../../../src/App.css";
 import socketIOClient from "socket.io-client";
 
-const Model = ({ auth, projects: { project, loading }, match, getPosts }) => {
+const Model = ({
+  auth,
+  projects: { project, loading },
+  match,
+  getPosts,
+  post: { post }
+}) => {
   const socket = socketIOClient();
 
   var authorized = false;
@@ -50,12 +56,14 @@ const Model = ({ auth, projects: { project, loading }, match, getPosts }) => {
           <td>
             <div>
               <TestModel
+                user={auth.user}
                 userId={auth.user._id}
                 modelId={match.params.id}
                 projectId={project._id}
                 editAuthorized={authorized}
                 getPosts={getPosts}
                 socket={socket}
+                post={post}
                 //editAuthorized={model.parent == null ? true : false}
               />
             </div>
@@ -85,12 +93,14 @@ const Model = ({ auth, projects: { project, loading }, match, getPosts }) => {
 Model.propTypes = {
   projects: PropTypes.object.isRequired,
   auth: PropTypes.object.isRequired,
-  getPosts: PropTypes.func.isRequired
+  getPosts: PropTypes.func.isRequired,
+  post: PropTypes.object.isRequired
 };
 
 const mapStateToProps = state => ({
   projects: state.projects,
-  auth: state.auth
+  auth: state.auth,
+  post: state.post
 });
 
 export default connect(mapStateToProps, { getPosts })(Model);
