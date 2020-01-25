@@ -476,7 +476,7 @@ button {
   width: 40vw;
   left: 0;
   padding: 10;
-} 
+}
 
 .modeldiv {
   overflow: scroll;
@@ -496,11 +496,9 @@ button {
 }
 
 .postsdiv4 {
-  
   position: relative;
   height: 40vh;
   width: 5vw;
-  
 }
 
 .postsdiv3 {

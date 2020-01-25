@@ -54,7 +54,8 @@ io.on("connection", function(socket) {
 
   socket.on("chatrequest", async function(msg) {
     console.log(msg + "=========================================");
-
+    socket.room = msg;
+    socket.join(msg);
     //socket.room = msg;
     //socket.join(msg);
     //console.log(`Project: ${proj}`);
@@ -64,12 +65,10 @@ io.on("connection", function(socket) {
     try {
       let cht = await Chat.findOne({ model: msg });
       if (cht) {
-        let chatToSend = "";
-
-        io.emit("chat", cht);
-        //console.log(`HERE!!!! ${cht}`);
+        io.to(socket.room).emit("chat", cht);
       } else {
-        console.log("NOT WORKING");
+        io.to(socket.room).emit("chat", "no chat available");
+        //console.log(`HERE!!!! ${cht}`);
       }
     } catch (err) {
       console.error(err.message);
@@ -117,7 +116,7 @@ io.on("connection", function(socket) {
     //user = msg.user;
     //console.log(msg);
     cht = msg;
-    io.emit("chat", msg);
+    io.to(socket.room).emit("chat", msg);
     console.log(`sent chat to members of model ${socket.room}`);
     //io.emit("model", model);
     try {

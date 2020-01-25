@@ -32,13 +32,14 @@ const PostForm = ({
             text: text,
             name: user.name,
             avatar: user.avatar,
-            user: user._id
+            user: user._id,
+            date: Date.now()
           };
           var chats = post;
           chats.comments.unshift(newComment);
 
           socket.emit("chatupdate", chats);
-          getPosts(chat);
+          //getPosts(chat);
           setText("");
           //getPosts(modelId);
         }}

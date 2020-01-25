@@ -2,7 +2,7 @@ import React, { Fragment, useEffect } from "react";
 import { connect } from "react-redux";
 import Spinner from "../layout/Spinner";
 import PropTypes from "prop-types";
-import { getPosts, loadPosts } from "../../actions/post";
+import { getPosts, loadPosts, createChat } from "../../actions/post";
 import PostItem from "./PostItem";
 import PostForm from "./PostForm";
 import socketIOClient from "socket.io-client";
@@ -11,21 +11,29 @@ import { GET_POSTS } from "../../actions/types";
 const Posts = ({
   socket,
   modelId,
+  projectId,
   getPosts,
   post: { post, loading },
-  loadPosts
+  loadPosts,
+  createChat
 }) => {
   var chat = null;
 
   useEffect(() => {
     //getPosts(modelId);
+
     socket.emit("chatrequest", modelId);
 
     socket.on("chat", msg => {
       console.log("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-      console.log(msg);
+
       chat = msg;
-      loadPosts(msg);
+      if (msg != "no chat available") {
+        loadPosts(msg);
+      } else {
+        createChat(projectId, modelId);
+        socket.emit("chatrequest", modelId);
+      }
     });
   }, []);
 
@@ -52,11 +60,14 @@ const Posts = ({
 Posts.propTypes = {
   getPosts: PropTypes.func.isRequired,
 
-  post: PropTypes.object.isRequired
+  post: PropTypes.object.isRequired,
+  createChat: PropTypes.func.isRequired
 };
 
 const mapStateToProps = state => ({
   post: state.post
 });
 
-export default connect(mapStateToProps, { loadPosts, getPosts })(Posts);
+export default connect(mapStateToProps, { createChat, loadPosts, getPosts })(
+  Posts
+);

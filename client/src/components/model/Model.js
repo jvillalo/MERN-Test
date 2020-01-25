@@ -63,7 +63,11 @@ const Model = ({ auth, projects: { project, loading }, match, getPosts }) => {
           <td>
             <td>
               <div>
-                <Posts modelId={match.params.id} socket={socket} />
+                <Posts
+                  projectId={project._id}
+                  modelId={match.params.id}
+                  socket={socket}
+                />
               </div>
             </td>
           </td>

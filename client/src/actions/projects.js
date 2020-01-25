@@ -61,11 +61,13 @@ export const branchModel = (projectId, model) => async dispatch => {
       postText,
       config
     );
-    alert(res);
+    //alert(res);
+
     dispatch({
       type: GET_PROJECT,
       payload: res.data
     });
+
     dispatch(setAlert("Branch created", "success"));
   } catch (err) {
     dispatch({
