@@ -19,6 +19,7 @@ body {
   line-height: 1.6;
   background-color: #fff;
   color: #333;
+  overflow: hidden;
 }
 
 a {
@@ -473,7 +474,7 @@ button {
 .postsdiv {
   position: relative;
   height: 30vh;
-  width: 40vw;
+  /* width: 40vw;*/
   left: 0;
   padding: 10;
 }
@@ -490,15 +491,21 @@ button {
   overflow: scroll;
   position: relative;
   height: 40vh;
-  width: 40vw;
-  left: 0;
-  margin: 2;
+  /*width: 40vw;*/
+  orientation: 0;
 }
 
 .postsdiv4 {
   position: relative;
   height: 40vh;
   width: 5vw;
+}
+
+.chat {
+  display: grid;
+  grid-template-rows: 1fr 3fr;
+
+  position: relative;
 }
 
 .postsdiv3 {
@@ -515,6 +522,13 @@ button {
   left: 0;
 }
 
+.mod {
+  display: grid;
+  grid-template-columns: 3fr 2fr;
+  align-items: left;
+  overflow: hidden;
+}
+
 .post {
   display: grid;
   grid-template-columns: 1fr 4fr;
@@ -527,7 +541,7 @@ button {
 }
 
 .post img {
-  width: 100px;
+  width: 75px;
 }
 
 .post .comment-count {

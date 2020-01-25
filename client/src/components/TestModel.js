@@ -378,7 +378,7 @@ class TestModel extends Component {
           case "level":
             menu.addItem("New Entity", "images/properties.gif", function() {
               that.newEntity();
-            });
+            }); 
             menu.addItem("New Connection", "images/properties.gif", function() {
               that.newConnection(graph, model);
             });

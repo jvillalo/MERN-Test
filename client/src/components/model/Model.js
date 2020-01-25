@@ -45,39 +45,23 @@ const Model = ({ auth, projects: { project, loading }, match, getPosts }) => {
       <br></br>
       <br></br>
 
-      <table cellpadding="10">
-        <tr>
-          <td>
-            <div>
-              <TestModel
-                userId={auth.user._id}
-                modelId={match.params.id}
-                projectId={project._id}
-                editAuthorized={authorized}
-                getPosts={getPosts}
-                socket={socket}
-                //editAuthorized={model.parent == null ? true : false}
-              />
-            </div>
-          </td>
-          <td>
-            <td>
-              <div>
-                <Posts
-                  projectId={project._id}
-                  modelId={match.params.id}
-                  socket={socket}
-                />
-              </div>
-            </td>
-          </td>
-          <td>
-            <div className="postsdiv4"></div>
-          </td>
-        </tr>
-      </table>
+      <div className="mod">
+        <TestModel
+          userId={auth.user._id}
+          modelId={match.params.id}
+          projectId={project._id}
+          editAuthorized={authorized}
+          getPosts={getPosts}
+          socket={socket}
+          //editAuthorized={model.parent == null ? true : false}
+        />
 
-      <br></br>
+        <Posts
+          projectId={project._id}
+          modelId={match.params.id}
+          socket={socket}
+        />
+      </div>
     </Fragment>
   );
 };
