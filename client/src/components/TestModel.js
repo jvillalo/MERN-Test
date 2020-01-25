@@ -1,3 +1,5 @@
+
+  
 import React, { Component } from "react";
 import ReactDOM from "react-dom";
 import Model from "./Classes/Model";
@@ -445,17 +447,6 @@ class TestModel extends Component {
         updateModel: this.modelo.toJSON()
       });
 
-      const newComment = {
-        text: `<<< Level created >>>`,
-        name: this.props.user.name,
-        avatar: this.props.user.avatar,
-        user: this.props.user._id,
-        date: Date.now()
-      };
-      var chats = this.props.post;
-      chats.comments.unshift(newComment);
-
-      this.props.socket.emit("chatupdate", chats);
       //modelo.fromJSON(this.state.json);
       //modelo.build();
       //toolbarWindow.setVisible(true);
@@ -620,3 +611,4 @@ class TestModel extends Component {
 }
 
 export default TestModel;
+
