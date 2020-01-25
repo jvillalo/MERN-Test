@@ -27,6 +27,22 @@ export const getPosts = modelId => async dispatch => {
   }
 };
 
+export const loadPosts = payload => async dispatch => {
+  try {
+    //const res = await axios.get(`/api/chats/${modelId}`);
+
+    dispatch({
+      type: GET_POSTS,
+      payload: payload
+    });
+  } catch (err) {
+    dispatch({
+      type: POST_ERROR,
+      payload: { msg: err.response.statusText, status: err.response.status }
+    });
+  }
+};
+
 export const getPost = id => async dispatch => {
   try {
     const res = await axios.get(`/api/posts/${id}`);

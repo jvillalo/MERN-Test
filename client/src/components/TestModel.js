@@ -73,20 +73,21 @@ class TestModel extends Component {
     this.loadGraph = this.loadGraph.bind(this);
     this.setGraphSetting = this.setGraphSetting.bind(this);
     this.createPopupMenu = this.createPopupMenu.bind(this);
-    this.socket = socketIOClient();
+    //this.socket = socketIOClient();
     //this.getPosts = this.getPosts.bind(this);
   }
   componentDidMount() {
     this.loadGraph();
 
-    this.socket.emit("modelrequest", {
+    this.props.socket.emit("modelrequest", {
       model: this.props.modelId,
       user: this.props.userId,
       project: this.props.projectId
     });
+
     //socket.on("model", data => this.setState({ json: data }));
 
-    this.socket.on("model", msg => {
+    this.props.socket.on("model", msg => {
       //this.setState({ selectedCell: graph.getSelectionCell().getId() });
       //alert(`Model received: ${msg}`);
       var selected = 0;
@@ -99,13 +100,6 @@ class TestModel extends Component {
       });
 
       this.reload();
-    });
-
-    this.socket.on("chat", msg => {
-      //this.setState({ selectedCell: graph.getSelectionCell().getId() });
-      //alert(`Model received: ${msg}`);
-      console.log("RECEIVED");
-      //this.props.getPosts(this.props.modelId);
     });
   }
 
@@ -351,7 +345,7 @@ class TestModel extends Component {
 
       //this.setState({ json: modelo.toJSON(), reload: true });
 
-      that.socket.emit("modelupdate", {
+      that.props.socket.emit("modelupdate", {
         model: that.props.modelId,
         user: that.props.userId,
         project: that.props.projectId,
@@ -444,7 +438,7 @@ class TestModel extends Component {
       //this.setState({ json: modelo.toJSON(), reload: true });
 
       //this.socket.emit("modelupdate", this.modelo.toJSON());
-      this.socket.emit("modelupdate", {
+      this.props.socket.emit("modelupdate", {
         model: this.props.modelId,
         user: this.props.userId,
         project: this.props.projectId,
@@ -515,7 +509,7 @@ class TestModel extends Component {
       that.modelo.updatePosition();
       that.modelo.levels[idInModel].addEntity(entity1);
       //that.socket.emit("modelupdate", that.modelo.toJSON());
-      that.socket.emit("modelupdate", {
+      that.props.socket.emit("modelupdate", {
         model: that.props.modelId,
         user: that.props.userId,
         project: that.props.projectId,

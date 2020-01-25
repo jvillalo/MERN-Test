@@ -2,20 +2,39 @@ import React, { Fragment, useEffect } from "react";
 import { connect } from "react-redux";
 import Spinner from "../layout/Spinner";
 import PropTypes from "prop-types";
-import { getPosts } from "../../actions/post";
+import { getPosts, loadPosts } from "../../actions/post";
 import PostItem from "./PostItem";
 import PostForm from "./PostForm";
-const Posts = ({ modelId, getPosts, post: { post, loading } }) => {
+import socketIOClient from "socket.io-client";
+import { GET_POSTS } from "../../actions/types";
+
+const Posts = ({
+  socket,
+  modelId,
+  getPosts,
+  post: { post, loading },
+  loadPosts
+}) => {
+  var chat = null;
+
   useEffect(() => {
-    getPosts(modelId);
-  }, [getPosts]);
+    //getPosts(modelId);
+    socket.emit("chatrequest", modelId);
+
+    socket.on("chat", msg => {
+      console.log("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+      console.log(msg);
+      chat = msg;
+      loadPosts(msg);
+    });
+  }, []);
 
   return loading ? (
     <Spinner />
   ) : (
     <Fragment>
       <div className="postsdiv">
-        <PostForm modelId={modelId} />
+        <PostForm modelId={modelId} socket={socket} chat={chat} />
       </div>
       <div className="postsdiv2">
         {post.comments.map(post => (
@@ -30,7 +49,6 @@ const Posts = ({ modelId, getPosts, post: { post, loading } }) => {
     </Fragment>
   );
 };
-
 Posts.propTypes = {
   getPosts: PropTypes.func.isRequired,
 
@@ -41,4 +59,4 @@ const mapStateToProps = state => ({
   post: state.post
 });
 
-export default connect(mapStateToProps, { getPosts })(Posts);
+export default connect(mapStateToProps, { loadPosts, getPosts })(Posts);

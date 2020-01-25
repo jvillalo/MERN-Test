@@ -3,17 +3,17 @@ import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import { addPost, getPosts } from "../../actions/post";
 import socketIOClient from "socket.io-client";
-
-const PostForm = ({ modelId, addPost, getPosts }) => {
-  const socket = socketIOClient();
-  useEffect(() => {
-    socket.on("chat", msg => {
-      console.log("received");
-      getPosts(modelId);
-      //getPosts(match.params.id);
-    });
-  }, []);
-
+import axios from "axios";
+import { GET_POSTS } from "../../actions/types";
+const PostForm = ({
+  modelId,
+  addPost,
+  getPosts,
+  auth: { user },
+  post: { post },
+  socket,
+  chat
+}) => {
   const [text, setText] = useState("");
 
   return (
@@ -25,11 +25,22 @@ const PostForm = ({ modelId, addPost, getPosts }) => {
         className="form my-1"
         onSubmit={e => {
           e.preventDefault();
-          addPost({ text }, modelId);
-          setText("");
+          //chat.chats.unshift()
+          //addPost({ text }, modelId);
 
-          socket.emit("newmsg");
-          getPosts(modelId);
+          const newComment = {
+            text: text,
+            name: user.name,
+            avatar: user.avatar,
+            user: user._id
+          };
+          var chats = post;
+          chats.comments.unshift(newComment);
+
+          socket.emit("chatupdate", chats);
+          getPosts(chat);
+          setText("");
+          //getPosts(modelId);
         }}
       >
         <textarea
@@ -52,4 +63,9 @@ PostForm.propTypes = {
   getPosts: PropTypes.func.isRequired
 };
 
-export default connect(null, { addPost, getPosts })(PostForm);
+const matchStateToProps = state => ({
+  auth: state.auth,
+  post: state.post
+});
+
+export default connect(matchStateToProps, { addPost, getPosts })(PostForm);

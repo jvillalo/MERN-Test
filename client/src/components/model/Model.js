@@ -13,11 +13,8 @@ import "../../../src/App.css";
 import socketIOClient from "socket.io-client";
 
 const Model = ({ auth, projects: { project, loading }, match, getPosts }) => {
-  var socket = socketIOClient();
-  socket.on("chat", msg => {
-    console.log("received");
-    getPosts(match.params.id);
-  });
+  const socket = socketIOClient();
+
   var authorized = false;
   project.users.map(usr => {
     if (usr.user == auth.user._id) {
@@ -58,6 +55,7 @@ const Model = ({ auth, projects: { project, loading }, match, getPosts }) => {
                 projectId={project._id}
                 editAuthorized={authorized}
                 getPosts={getPosts}
+                socket={socket}
                 //editAuthorized={model.parent == null ? true : false}
               />
             </div>
@@ -65,7 +63,7 @@ const Model = ({ auth, projects: { project, loading }, match, getPosts }) => {
           <td>
             <td>
               <div>
-                <Posts modelId={match.params.id} />
+                <Posts modelId={match.params.id} socket={socket} />
               </div>
             </td>
           </td>

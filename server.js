@@ -7,6 +7,7 @@ var http = require("http").createServer(app);
 var io = require("socket.io")(http);
 var proj;
 const Project = require("./models/Project");
+const Chat = require("./models/Chat");
 //const app = express();
 
 io.on("connection", function(socket) {
@@ -17,7 +18,7 @@ io.on("connection", function(socket) {
   });
 
   socket.on("newmsg", function() {
-    console.log("chat message emmited")
+    console.log("chat message emmited");
     io.emit("chat");
   });
 
@@ -47,6 +48,32 @@ io.on("connection", function(socket) {
     } catch (err) {
       console.error(err.message);
       res.status(500).send("Server error");
+    }
+    //io.emit("model", model);
+  });
+
+  socket.on("chatrequest", async function(msg) {
+    console.log(msg + "=========================================");
+
+    //socket.room = msg;
+    //socket.join(msg);
+    //console.log(`Project: ${proj}`);
+    //console.log(`USER: ${msg.user}`);
+    console.log(`new chat connection to model ${socket.room}`);
+
+    try {
+      let cht = await Chat.findOne({ model: msg });
+      if (cht) {
+        let chatToSend = "";
+
+        io.emit("chat", cht);
+        //console.log(`HERE!!!! ${cht}`);
+      } else {
+        console.log("NOT WORKING");
+      }
+    } catch (err) {
+      console.error(err.message);
+      //res.status(500).send("Server error");
     }
     //io.emit("model", model);
   });
@@ -82,6 +109,27 @@ io.on("connection", function(socket) {
     } catch (err) {
       console.error(err.message);
       res.status(500).send("Server error");
+    }
+  });
+
+  socket.on("chatupdate", async function(msg) {
+    console.log("------------------------------------");
+    //user = msg.user;
+    //console.log(msg);
+    cht = msg;
+    io.emit("chat", msg);
+    console.log(`sent chat to members of model ${socket.room}`);
+    //io.emit("model", model);
+    try {
+      let cht2 = await Chat.findOneAndUpdate(
+        { model: msg.model },
+        { $set: msg }
+      );
+
+      //console.log(`updated: ${cht2}`);
+    } catch (err) {
+      console.error(err.message);
+      //res.status(500).send("Server error");
     }
   });
 
