@@ -74,6 +74,13 @@
 }
 div.mxPopupMenu {
   background: #fff;
+  -webkit-box-shadow: 3px 3px 6px #c0c0c0;
+  -moz-box-shadow: 3px 3px 6px #c0c0c0;
+  box-shadow: 3px 3px 6px #c0c0c0;
+  overflow: scroll;
+  position: absolute;
+  border: 3px solid #e7e7e7;
+  padding: 3px;
 }
 .taskTitle {
   display: inline-block;

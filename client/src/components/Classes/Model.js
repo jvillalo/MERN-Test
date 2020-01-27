@@ -38,6 +38,7 @@ class Model {
 		alert("WORKS");
 	}
 	getObjectById(id){
+		
 		if (this.getLevel(id)!=null){return this.getLevel(id);}
 		if (this.getEntityById(id)!=null){return this.getEntityById(id);}
 		if (this.getAttributeById(id)!=null){return this.getAttributeById(id);}
@@ -46,7 +47,8 @@ class Model {
 		if (this.getInheritanceById(id)!=null){return this.getInheritanceById(id);}
 		if (this.getSupertypesById(id)!=null){return this.getSupertypesById(id);}
 		if (this.getSubtypesById(id)!=null){return this.getSubtypesById(id);}
-
+		//alert("none")
+		return false
 	}
 
 
@@ -98,11 +100,13 @@ class Model {
 	}
 
 	getEntityById(id){
-
+		
 		var i,j;
 		for (i=0;i<this.levels.length;i++){
 			for (j=0;j<this.levels[i].entities.length;j++){
+				
 				if (this.levels[i].entities[j].id==id){
+					
 					return this.levels[i].entities[j];
 				}
 			}

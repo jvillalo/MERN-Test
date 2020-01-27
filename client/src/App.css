@@ -19,9 +19,7 @@ body {
   line-height: 1.6;
   background-color: #fff;
   color: #333;
-  overflow-y: hidden;
-  overflow-x: auto;
-  white-space: nowrap;
+  overflow: scroll;
 }
 
 a {
@@ -493,7 +491,7 @@ button {
   overflow: scroll;
   position: relative;
   height: 40vh;
-  /*width: 40vw;*/
+  *width: 40vw;
   orientation: 0;
 }
 

@@ -23,12 +23,12 @@ io.on("connection", function(socket) {
   });
 
   socket.on("modelrequest", async function(msg) {
-    console.log(msg);
+    //console.log(msg);
     proj = msg.project;
     socket.room = msg.model;
     socket.join(msg.model);
-    console.log(`Project: ${proj}`);
-    console.log(`USER: ${msg.user}`);
+    //console.log(`Project: ${proj}`);
+    //console.log(`USER: ${msg.user}`);
     console.log(`new connection to model ${socket.room}`);
 
     try {
@@ -41,7 +41,7 @@ io.on("connection", function(socket) {
           }
         });
         io.to(socket.room).emit("model", modelToSend);
-        console.log(`HERE!!!! ${modelToSend}`);
+        //console.log(`HERE!!!! ${modelToSend}`);
       } else {
         console.log("NOT WORKING");
       }
@@ -53,7 +53,7 @@ io.on("connection", function(socket) {
   });
 
   socket.on("chatrequest", async function(msg) {
-    console.log(msg + "=========================================");
+    //console.log(msg + "=========================================");
     socket.room = msg;
     socket.join(msg);
     //socket.room = msg;
@@ -78,7 +78,7 @@ io.on("connection", function(socket) {
   });
 
   socket.on("modelupdate", async function(msg) {
-    console.log(msg);
+    //console.log(msg);
     model = msg.updateModel;
     io.to(socket.room).emit("model", model);
     console.log(`sent model to members of model ${socket.room}`);
@@ -86,7 +86,7 @@ io.on("connection", function(socket) {
     try {
       let proj = await Project.findOne({ _id: msg.project });
       if (proj) {
-        console.log(`original: ${proj}`);
+        //console.log(`original: ${proj}`);
 
         proj.models.map(async mod => {
           if (mod._id == msg.model) {
@@ -100,10 +100,10 @@ io.on("connection", function(socket) {
             { $set: proj }
           );
 
-          console.log(`updated: ${proj2}`);
+          //console.log(`updated: ${proj2}`);
         });
 
-        console.log("updated");
+        //console.log("updated");
       }
     } catch (err) {
       console.error(err.message);
@@ -112,12 +112,12 @@ io.on("connection", function(socket) {
   });
 
   socket.on("chatupdate", async function(msg) {
-    console.log("------------------------------------");
+    //console.log("------------------------------------");
     //user = msg.user;
     //console.log(msg);
     cht = msg;
     io.to(socket.room).emit("chat", msg);
-    console.log(`sent chat to members of model ${socket.room}`);
+    //console.log(`sent chat to members of model ${socket.room}`);
     //io.emit("model", model);
     try {
       let cht2 = await Chat.findOneAndUpdate(
