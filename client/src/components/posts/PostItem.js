@@ -18,11 +18,11 @@ const PostItem = ({
         <div>
           <Link to={`profile/${user}`}>
             <img className="round-img" src={avatar} alt="" />
-            <h4>{name}</h4>
+            <h5>{name}</h5>
           </Link>
         </div>
         <div>
-          <p className="my-1">{text}</p>
+          <p className="postText my-1">{text}</p>
           <p className="post-date">Posted on {date}</p>
         </div>
       </div>

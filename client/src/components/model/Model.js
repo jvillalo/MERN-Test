@@ -10,10 +10,16 @@ import { getPosts } from "../../actions/post";
 import { getProject } from "../../actions/projects";
 import TestModel from "../TestModel";
 import "../../../src/App.css";
-import socketIOClient from "socket.io-client";
+import io from "socket.io-client";
 
 const Model = ({ auth, projects: { project, loading }, match, getPosts }) => {
-  const socket = socketIOClient();
+  const socket = io();
+  useEffect(() => {
+    //getPosts(modelId);
+    socket.on("reconn", msg => {
+      socket.emit("reconnection", match.params.id);
+    });
+  }, []);
 
   var authorized = false;
   project.users.map(usr => {

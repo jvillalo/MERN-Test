@@ -38,13 +38,6 @@ class Supertype {
     };
 
     // Redirects selection to parent
-    graph.selectCellForEvent = function(cell) {
-      if (this.isPart(cell)) {
-        cell = this.model.getParent(cell);
-      }
-
-      mxGraph.prototype.selectCellForEvent.apply(this, arguments);
-    };
 
     var parent = graph.getDefaultParent();
     graph.getModel().beginUpdate();

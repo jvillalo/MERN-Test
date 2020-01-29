@@ -52,13 +52,6 @@ class ConnectionEnd {
     };
 
     // Redirects selection to parent
-    graph.selectCellForEvent = function(cell) {
-      if (this.isPart(cell)) {
-        cell = this.model.getParent(cell);
-      }
-
-      mxGraph.prototype.selectCellForEvent.apply(this, arguments);
-    };
 
     var parent = graph.getDefaultParent();
     graph.getModel().beginUpdate();
@@ -87,11 +80,10 @@ class ConnectionEnd {
         "labelConn",
         true
       );
-      v11.geometry.offset = new mxPoint(1, 1);
+      //v11.geometry.offset = new mxPoint(1, 1);
 
       if (this.x != null && !(this.x == 0 && this.y == 0)) {
         //this.edge.geometry.points[];
-        this.edge.getGeometry().points = [new mxPoint(this.x, this.y)];
       }
       //var v16 = graph.insertVertex(this.edge, null, '1', 1, 1, 1, 1, 'labelConn;align=left;verticalAlign=top;fillColor=red;rounded=1', true);
       //v16.geometry.offset = new mxPoint(0, 0);

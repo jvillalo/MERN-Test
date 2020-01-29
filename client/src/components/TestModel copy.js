@@ -11,7 +11,7 @@ import Inheritance from "./Classes/Inheritance";
 import Subtype from "./Classes/Subtype";
 import Supertype from "./Classes/Supertype";
 import socketIOClient from "socket.io-client";
-import properties from "./images/properties.gif"
+import properties from "./images/properties.gif";
 import "./common.css";
 import "./mxgraph.css";
 import { Link } from "react-router-dom";
@@ -151,9 +151,15 @@ class TestModel extends Component {
     const that = this;
     graph.gridSize = 30;
     graph.setPanning(true);
+    graph.setMultigraph(true);
+    graph.recursiveResize = true;
+    graph.foldingEnabled = true;
     graph.setTooltips(true);
+    graph.setDropEnabled(false);
     graph.setConnectable(true);
+    graph.setCellsDisconnectable(false);
     graph.setCellsEditable(true);
+    graph.setAllowLoops(true);
     graph.setEnabled(that.props.editAuthorized);
     graph.graphHandler.setRemoveCellsFromParent(false);
 
@@ -478,6 +484,7 @@ class TestModel extends Component {
     this.graph.getView().setScale(0.6);
 
     //this.graph.setSelectionCells(this.graph.getModel().getCell(12));
+
     this.graph.selectCellForEvent(
       this.graph.getModel().getCell(this.state.selectedCell)
     );
@@ -571,6 +578,113 @@ class TestModel extends Component {
 
     wnd.setVisible(true);
   };
+
+
+
+  newQuickConnection=(idInModel,entity1,entity2)=> {
+    const that=this
+    var testw=document.createElement('div');
+		testw.style.position = 'absolute';
+		testw.style.overflow = 'hidden';
+		//outline.style.left = '60px';
+		testw.style.top = '0px';
+		testw.style.left = '0px';
+		testw.style.width = '200px';
+		testw.style.height = '500px';
+		var wnd=null;
+		//var countryList=document.createElement("select");
+		//var countryOption = new Option ("jjjj", "jjj");
+		//countryList.options.add (countryOption);
+		var nameField = document.createElement("input");
+		var labelField = document.createElement("input");
+		var potencyField = document.createElement("input");
+		var directTypeField = document.createElement("input");
+
+
+
+		var okbutton = mxUtils.button('ok', function(evt) {
+
+			conn1 = new Connection(nameField.value,potencyField.value,directTypeField.value,labelField.value);
+			var cell = that.graph.getSelectionCells();
+
+
+			var levelId = entity1.levelNo;
+
+			that.modelo.updatePosition();
+			that.modelo.levels[levelId].addConnection(conn1);
+			let end1 = new ConnectionEnd("", entity1, conn1,"",1,1,1);
+			that.modelo.levels[levelId].addConnectionEnd(end1);
+			let end2 = new ConnectionEnd("", entity2, conn1,"",1,1,1);
+			that.modelo.levels[levelId].addConnectionEnd(end2);
+
+
+
+
+			that.modelo.build();
+			wnd.destroy();
+
+
+
+
+			return conn1;
+
+		});
+		var cancelButton = mxUtils.button('cancel', function(evt) {
+			wnd.destroy();
+		});
+
+		testw.appendChild(document.createTextNode("Name: "));
+		testw.appendChild(nameField);
+		testw.appendChild(document.createElement("br"));
+		testw.appendChild(document.createTextNode("Label: "));
+		testw.appendChild(labelField);
+		testw.appendChild(document.createElement("br"));
+		testw.appendChild(document.createTextNode("Potency: "));
+		testw.appendChild(potencyField);
+		testw.appendChild(document.createElement("br"));
+		testw.appendChild(document.createTextNode("Direct type: "));
+		testw.appendChild(directTypeField);
+		testw.appendChild(document.createElement("br"));
+		testw.appendChild(okbutton);
+		testw.appendChild(cancelButton);
+		var x = Math.max(0, document.body.scrollWidth / 2 - 200 / 2);
+		var y = Math.max(10, (document.body.scrollHeight ||
+				document.documentElement.scrollHeight) / 2 - 200 * 2 / 3);
+		wnd = new mxWindow('New Connection', testw, x, y, 200, 200, true, true);
+		wnd.setMaximizable(false);
+		wnd.setMinimizable(false);
+		wnd.setResizable(true);
+		wnd.setVisible(true);
+		wnd.setResizable(false);
+
+
+		var background = document.createElement('div');
+		background.style.position = 'absolute';
+		background.style.left = '0px';
+		background.style.top = '0px';
+		background.style.right = '0px';
+		background.style.bottom = '0px';
+		background.style.background = 'black';
+		mxUtils.setOpacity(background, 50);
+		document.body.appendChild(background);
+
+
+
+		// Fades the background out after after the window has been closed
+		wnd.addListener(mxEvent.DESTROY, function(evt) {
+			mxEffects.fadeOut(background, 50, true,
+					10, 30, true);
+		});
+
+		wnd.setVisible(true);
+	};
+
+
+
+
+
+
+
 
   newConnection = () => {
     const that = this;

@@ -21,6 +21,7 @@
     "gravatar": "^1.8.0",
     "jsonwebtoken": "^8.5.1",
     "mongoose": "^5.7.12",
+    "mxgraph": "^4.1.0",
     "mxgraph-js": "^1.0.1",
     "mxgraph-js-dt": "^1.0.4",
     "redux": "^4.0.5",

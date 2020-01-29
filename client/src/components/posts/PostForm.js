@@ -19,7 +19,7 @@ const PostForm = ({
   return (
     <div className="post-form">
       <div className="bg-primary p">
-        <h3>Application Forum</h3>
+        <h5>Application Forum</h5>
       </div>
       <form
         className="form my-1"
@@ -46,8 +46,8 @@ const PostForm = ({
       >
         <textarea
           name="text"
-          cols="20"
-          rows="2"
+          cols="40"
+          rows="1"
           placeholder="Comment something"
           value={text}
           onChange={e => setText(e.target.value)}

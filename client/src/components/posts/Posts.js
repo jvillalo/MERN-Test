@@ -49,11 +49,6 @@ const Posts = ({
           {post.comments.map(post => (
             <PostItem key={post._id} post={post} showActions={false} />
           ))}
-
-          <br></br>
-          <br></br>
-          <br></br>
-          <br></br>
         </div>
       </div>
     </Fragment>

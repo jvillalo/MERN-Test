@@ -139,7 +139,7 @@ img {
   background: var(--light-color);
   color: #333;
   padding: 0.4rem 1.3rem;
-  font-size: 1rem;
+  font-size: 0.8rem;
   border: none;
   cursor: pointer;
   margin-right: 0.5rem;
@@ -260,9 +260,9 @@ img {
 .form select,
 .form textarea {
   display: block;
-  width: 50%;
+  width: 100%;
   padding: 0.4rem;
-  font-size: 1.2rem;
+  font-size: 0.8rem;
   border: 1px solid #ccc;
 }
 
@@ -473,25 +473,31 @@ button {
 
 .postsdiv {
   position: relative;
-  height: 30vh;
+  height: 22vh;
   /* width: 40vw;*/
   left: 0;
   padding: 10;
+}
+
+.postText {
+  overflow-wrap: break-word;
+
+  font-size: 0.7rem;
 }
 
 .modeldiv {
   overflow: scroll;
   position: relative;
   height: 50vh;
-  width: 90vw;
+
   left: 0;
 }
 
 .postsdiv2 {
   overflow: scroll;
   position: relative;
-  height: 40vh;
-  *width: 40vw;
+  height: 50vh;
+
   orientation: 0;
 }
 
@@ -503,7 +509,8 @@ button {
 
 .chat {
   display: grid;
-  grid-template-rows: 1fr 3fr;
+
+  grid-template-rows: 1fr 9fr;
 
   position: relative;
 }
@@ -524,16 +531,16 @@ button {
 
 .mod {
   display: grid;
-  grid-template-columns: 3fr 2fr;
+  grid-template-columns: 3fr 1fr;
   align-items: left;
   overflow: hidden;
 }
 
 .post {
   display: grid;
-  grid-template-columns: 1fr 4fr;
+  grid-template-columns: 1fr 9fr;
   grid-gap: 2rem;
-  align-items: center;
+  align-items: left;
 }
 
 .post > div:first-child {
@@ -541,7 +548,7 @@ button {
 }
 
 .post img {
-  width: 75px;
+  width: 50px;
 }
 
 .post .comment-count {
@@ -552,9 +559,14 @@ button {
   font-size: 0.8rem;
 }
 
+.post .post-text {
+  margin-bottom: 0.5rem;
+  font-size: 0.5rem;
+}
+
 .post .post-date {
   color: #aaa;
-  font-size: 0.8rem;
+  font-size: 0.4rem;
   margin-bottom: 0.5rem;
 }
 

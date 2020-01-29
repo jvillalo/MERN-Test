@@ -12,7 +12,7 @@ const Chat = require("./models/Chat");
 
 io.on("connection", function(socket) {
   console.log("a user connected");
-
+  socket.emit("reconn");
   socket.on("disconnect", function() {
     console.log("user disconnected");
   });
@@ -76,6 +76,25 @@ io.on("connection", function(socket) {
     }
     //io.emit("model", model);
   });
+
+
+
+  socket.on("reconnection", async function(msg) {
+    //console.log(msg + "=========================================");
+    socket.room = msg;
+    socket.join(msg);
+    //socket.room = msg;
+    //socket.join(msg);
+    //console.log(`Project: ${proj}`);
+    //console.log(`USER: ${msg.user}`);
+    console.log(`new chat connection to model ${socket.room}`);
+
+   
+    //io.emit("model", model);
+  });
+
+
+
 
   socket.on("modelupdate", async function(msg) {
     //console.log(msg);
