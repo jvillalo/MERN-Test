@@ -11,7 +11,7 @@ import Inheritance from "./Inheritance";
 import Subtype from "./Subtype";
 import Supertype from "./Supertype";
 import mxGraph from "mxgraph-js";
-import mxPoint from "mxgraph-js";
+import { mxPoint } from "mxgraph-js";
 
 class ConnectionEnd {
   constructor(name, entity, connection, roleName, navigableFrom, lower, upper) {
@@ -84,6 +84,7 @@ class ConnectionEnd {
 
       if (this.x != null && !(this.x == 0 && this.y == 0)) {
         //this.edge.geometry.points[];
+        this.edge.getGeometry().points = [new mxPoint(this.x, this.y)];
       }
       //var v16 = graph.insertVertex(this.edge, null, '1', 1, 1, 1, 1, 'labelConn;align=left;verticalAlign=top;fillColor=red;rounded=1', true);
       //v16.geometry.offset = new mxPoint(0, 0);

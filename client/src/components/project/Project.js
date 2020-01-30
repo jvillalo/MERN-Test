@@ -32,6 +32,9 @@ const Project = ({ getProject, projects: { project, loading }, match }) => {
             <h2>Project {project.name}</h2>
             <div className="projdiv">
               <ProjectModels project={project} id={project._id} />
+              <Link to="/users" className="btn">
+              Add New Participants
+            </Link>
               <ProjectUsers users={project.users} />
             </div>
           </td>

@@ -24,7 +24,8 @@ import MxGraphGridEditor from "./components/MxGraphGridEditor";
 import Projects from "./components/project/Projects";
 import Project from "./components/project/Project";
 import Model from "./components/model/Model";
-
+import NewProject from "./components/project/NewProject";
+import Users from "./components/users/Users";
 if (localStorage.token) {
   setAuthToken(localStorage.token);
 }
@@ -48,7 +49,12 @@ const App = () => {
               <Route exact path="/login" component={Login} />
               <Route exact path="/profiles" component={Profiles} />
               <Route exact path="/profile/:id" component={Profile} />
-
+              <PrivateRoute
+                exact
+                path="/create-project"
+                component={NewProject}
+              />
+              <PrivateRoute exact path="/users" component={Users} />
               <PrivateRoute exact path="/dashboard" component={Projects} />
               <PrivateRoute exact path="/posts/:id" component={Post} />
               <PrivateRoute

@@ -180,7 +180,7 @@ class TestModel extends Component {
     graph.setDropEnabled(false);
     graph.setCellsDisconnectable(false);
     graph.setAllowLoops(true);
-    //mxEdgeHandler.prototype.snapToTerminals = true;
+    mxEdgeHandler.prototype.snapToTerminals = true;
 
     
 
@@ -459,6 +459,33 @@ class TestModel extends Component {
         updateModel: that.modelo.toJSON()
       });
     });
+
+    graph.addListener(mxEvent.EDITING_STOPPED, function(sender, evt) {
+      alert("vorteile")
+    });
+
+    graph.addListener(mxEvent.MOUSE_UP, function(sender, evt) {
+      alert("nachteile")
+    });
+
+    graph.addListener(mxEvent.CELLS_RESIZED, function(sender, evt) {
+      if(graph.getSelectionCell()){
+      that.setState({ selectedCell: graph.getSelectionCell().getId() });
+      }
+      that.modelo.updatePosition();
+
+      //this.setState({ json: modelo.toJSON(), reload: true });
+      
+      that.props.socket.emit("modelupdate", {
+        model: that.props.modelId,
+        user: that.props.userId,
+        project: that.props.projectId,
+        updateModel: that.modelo.toJSON()
+      });
+      
+    });
+
+
   }
 
   createPopupMenu(graph, menu, cell, evt, model) {
@@ -875,7 +902,7 @@ class TestModel extends Component {
 
     var parent = this.graph.getDefaultParent();
 
-    wnd = this.showModalWindow("New Level", form.table, 240, 240);
+    wnd = this.showModalWindow("New Level", form.table, 240, 240,true,true);
   }
 
   reload = () => {
@@ -1962,7 +1989,7 @@ editEntity=()=>{
 			ent.styleText=imageField.value;
 			if (ent.levelNo<(that.modelo.levels.length-1)){
 				var i;
-				for(i=0;i<that.odelo.levels[ent.levelNo+1].entities.length;i++){
+				for(i=0;i<that.modelo.levels[ent.levelNo+1].entities.length;i++){
 					if (that.modelo.levels[ent.levelNo+1].entities[i].directType==pname){
 						that.modelo.levels[ent.levelNo+1].entities[i].directType=ent.name;
 					}
@@ -2174,7 +2201,7 @@ editEntity=()=>{
 		var cancelButton = mxUtils.button('cancel', function(evt) {
 			wnd.destroy();
 		});
-		var inh1=that.odelo.getObjectById(that.graph.getSelectionCells()[0].getId());
+		var inh1=that.modelo.getObjectById(that.graph.getSelectionCells()[0].getId());
 		testw.appendChild(document.createTextNode("Name: "));
 		nameField.value=inh1.name;
 		testw.appendChild(nameField);
@@ -2458,7 +2485,8 @@ editEntity=()=>{
     );
     var wnd = new mxWindow(title, content, x, y, width, height, true, true);
 
-    wnd.setClosable(true);
+    wnd.setClosable(false);
+    wnd.setMinimizable(false);
 
     // Fades the background out after after the window has been closed
     wnd.addListener(mxEvent.DESTROY, function(evt) {

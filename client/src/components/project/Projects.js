@@ -30,12 +30,12 @@ const Projects = ({
         </Fragment>
       ) : (
         <Fragment>
-          <p>You have not yet set up a profile</p>
-          <Link to="/create-profile" className="btn btn-primary my-1">
-            Create Profile
-          </Link>
+          <p>You don't have any projects yet</p>
         </Fragment>
       )}
+      <Link to="/create-project" className="btn btn-primary my-1">
+        Create New Project
+      </Link>
     </Fragment>
   );
 };

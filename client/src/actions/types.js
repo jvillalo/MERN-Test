@@ -28,3 +28,6 @@ export const PROJECT_ERROR = "PROJECT_ERROR";
 export const GET_PROJECT = "GET_PROJECT";
 export const BRANCH_MODEL = "BRANCH_MODEL";
 export const COMMIT_MODEL = "COMMIT_MODEL";
+export const GET_USERS = "GET_USERS";
+export const USERS_ERROR="USERS_ERROR"
+export const SET_LOADING="SET_LOADING"
