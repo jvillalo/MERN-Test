@@ -11,7 +11,7 @@ import Method from "./Method";
 import Inheritance from "./Inheritance";
 import Subtype from "./Subtype";
 import mxGraph from "mxgraph-js";
-import mxPoint from "mxgraph-js";
+import { mxPoint } from "mxgraph-js";
 
 class Supertype {
   constructor(name, entity, inheritance) {

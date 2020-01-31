@@ -107,6 +107,45 @@ export const branchModel = (projectId, model) => async dispatch => {
   }
 };
 
+export const createModel = (projectId, name, json) => async dispatch => {
+  try {
+    dispatch({
+      type: COMMIT_MODEL
+    });
+
+    const config = {
+      headers: {
+        "Content-Type": "application/json"
+      }
+    };
+
+    const postText = {
+      name: name,
+      json: json,
+      parent: null
+    };
+
+    const res = await axios.post(
+      `/api/projects/${projectId}/models`,
+      postText,
+      config
+    );
+    //alert(res);
+
+    dispatch({
+      type: GET_PROJECT,
+      payload: res.data
+    });
+
+    dispatch(setAlert("Branch created", "success"));
+  } catch (err) {
+    dispatch({
+      type: PROJECT_ERROR,
+      payload: { msg: err.response.statusText, status: err.response.status }
+    });
+  }
+};
+
 export const commitModel = (projectId, modelId) => async dispatch => {
   try {
     dispatch({

@@ -6,7 +6,8 @@ import {
   branchModel,
   commitModel,
   removeModel,
-  getProject
+  getProject,
+  createModel
 } from "../../actions/projects";
 import { Link } from "react-router-dom";
 
@@ -16,50 +17,66 @@ const ProjectModels = ({
   branchModel,
   commitModel,
   removeModel,
-  getProject
+  getProject,
+  createModel,
+  publishModel
 }) => {
   const models = project.models;
-  const mdls = models.map(mod => (
-    <tr key={mod._id}>
-      <td>{mod.name}</td>
 
-      {mod.parent == null ? (
-        <td>
-          <Link to={`models/${mod._id}`} className="btn btn-primary">
-            View model
-          </Link>
-          <button
-            className="btn btn-danger"
-            onClick={() => branchModel(id, mod)}
-          >
-            Branch
-          </button>
-        </td>
-      ) : (
-        <td>
-          <Link to={`models/${mod._id}`} className="btn btn-primary">
-            Edit model
-          </Link>
-          <button
-            className="btn btn-danger"
-            onClick={() => commit(models, mod, project)}
-          >
-            Commit
-          </button>
-          <button
-            className="btn btn-danger"
-            onClick={() => branchModel(id, mod)}
-          >
-            Version
-          </button>
-        </td>
-      )}
+  const mdls = models
+    .slice(0)
+    .reverse()
+    .map((mod, index) => (
+      <tr key={mod._id}>
+        <td>{mod.name}</td>
 
-      <td>
-        <button className="btn btn-danger">Delete</button>
-      </td>
-    </tr>
-  ));
+        {index + 1 !== models.length ? (
+          <td>
+            <Link to={`models/${mod._id}`} className="btn btn-primary">
+              View model
+            </Link>
+            <button
+              className="btn btn-danger"
+              onClick={() => publishModel("Mod1", "Lorem ipsum", id, mod.json)}
+            >
+              Publish
+            </button>
+          </td>
+        ) : (
+          <td>
+            <Link to={`models/${mod._id}`} className="btn btn-primary">
+              Edit model
+            </Link>
+            <button
+              className="btn btn-danger"
+              onClick={() => branchModel(id, mod)}
+            >
+              Branch
+            </button>
+            {mod.parent != null ? (
+              <button
+                className="btn btn-danger"
+                onClick={() => commit(models, mod, project)}
+              >
+                Commit
+              </button>
+            ) : (
+              ""
+            )}
+            <button
+              className="btn btn-danger"
+              onClick={() => branchModel(id, mod)}
+            >
+              Discard
+            </button>
+          </td>
+        )}
+
+        <td>
+          <button className="btn btn-danger">Delete</button>
+        </td>
+      </tr>
+    ));
   const commit = (models, mod, project) => {
     commitModel(project._id, mod._id);
     //removeModel(project._id, mod._id);
@@ -67,17 +84,43 @@ const ProjectModels = ({
   return (
     <Fragment>
       <h2 className="my-2">Models</h2>
-      <table className="table">
-        <thead>
-          <tr>
-            <th>Name</th>
-            <th className="hide-sm">Id</th>
+      {project.models.length === 0 ? (
+        <div>
+          <button
+            className="btn btn-danger"
+            onClick={() =>
+              createModel(
+                id,
+                "mod1",
+                `[{"name":"mod1","lockedByUser": 0,"levels":[]}]`
+              )
+            }
+          >
+            New Model
+          </button>
+          <Link to="/models" className="btn">
+            Import Model
+          </Link>
+        </div>
+      ) : (
+        ""
+      )}
 
-            <th />
-          </tr>
-        </thead>
-        <tbody>{mdls}</tbody>
-      </table>
+      {project.models.length > 0 ? (
+        <table className="table">
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th className="hide-sm">Id</th>
+
+              <th />
+            </tr>
+          </thead>
+          <tbody>{mdls}</tbody>
+        </table>
+      ) : (
+        ""
+      )}
     </Fragment>
   );
 };
@@ -86,12 +129,14 @@ ProjectModels.propTypes = {
   branchModel: PropTypes.func.isRequired,
   commitModel: PropTypes.func.isRequired,
   removeModel: PropTypes.func.isRequired,
-  getProject: PropTypes.func.isRequired
+  getProject: PropTypes.func.isRequired,
+  createModel: PropTypes.func.isRequired
 };
 
 export default connect(null, {
   getProject,
   branchModel,
   commitModel,
-  removeModel
+  removeModel,
+  createModel
 })(ProjectModels);

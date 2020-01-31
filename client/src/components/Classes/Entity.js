@@ -125,7 +125,7 @@ class Entity {
       for (i = 0; i < this.attributes.length; i++) {
         var text =
           " " +
-          this.attributes[i].getType() +
+          this.attributes[i].type +
           ": " +
           this.attributes[i].getName() +
           "<sup>" +

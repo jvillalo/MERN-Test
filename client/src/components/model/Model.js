@@ -31,6 +31,7 @@ const Model = ({ auth, projects: { project, loading }, match, getPosts }) => {
       }
     }
   });
+  /*
   if (authorized) {
     project.models.map(mod => {
       if (mod._id == match.params.id) {
@@ -41,7 +42,7 @@ const Model = ({ auth, projects: { project, loading }, match, getPosts }) => {
         }
       }
     });
-  }
+  }*/
 
   return (
     <Fragment>

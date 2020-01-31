@@ -182,7 +182,22 @@ class TestModel extends Component {
     graph.setAllowLoops(true);
     mxEdgeHandler.prototype.snapToTerminals = true;
 
-    
+    graph.isPart = function(cell) {
+      var state = this.view.getState(cell);
+      var style = (state != null) ? state.style : this.getCellStyle(cell);
+
+      return style['constituent'] == '1';
+    };
+
+    // Redirects selection to parent
+    graph.selectCellForEvent = function(cell) {
+      if (this.isPart(cell)) {
+        cell = this.model.getParent(cell);
+      }
+
+      mxGraph.prototype.selectCellForEvent.apply(this, arguments);
+    };
+
 
     mxConnectionHandler.prototype.isConnectableCell = function(cell)
     {
@@ -460,13 +475,9 @@ class TestModel extends Component {
       });
     });
 
-    graph.addListener(mxEvent.EDITING_STOPPED, function(sender, evt) {
-      alert("vorteile")
-    });
+    
 
-    graph.addListener(mxEvent.MOUSE_UP, function(sender, evt) {
-      alert("nachteile")
-    });
+    
 
     graph.addListener(mxEvent.CELLS_RESIZED, function(sender, evt) {
       if(graph.getSelectionCell()){

@@ -26,6 +26,8 @@ import Project from "./components/project/Project";
 import Model from "./components/model/Model";
 import NewProject from "./components/project/NewProject";
 import Users from "./components/users/Users";
+import Models from "./components/model/Models";
+
 if (localStorage.token) {
   setAuthToken(localStorage.token);
 }
@@ -57,6 +59,7 @@ const App = () => {
               <PrivateRoute exact path="/users" component={Users} />
               <PrivateRoute exact path="/dashboard" component={Projects} />
               <PrivateRoute exact path="/posts/:id" component={Post} />
+              <PrivateRoute exact path="/models" component={Models} />
               <PrivateRoute
                 exact
                 path="/add-experience"

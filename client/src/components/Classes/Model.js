@@ -186,9 +186,13 @@ class Model {
 
 		var i,j;
 		for (i=0;i<this.levels.length;i++){
-			for (j=0;j<this.levels[i].connectionEnds.length;j++){
+			let x=this.levels[i].connectionEnds.length
+			for (j=0;j<this.levels[i].connectionEnds.length;j){
+				alert("here " + this.levels[i].connectionEnds.length)
 				if ((this.levels[i].connectionEnds[j].entity.id==id)||(this.levels[i].connectionEnds[j].connection.id==id)){
 					this.levels[i].connectionEnds.splice(j,1);
+				}else{
+					j++
 				}
 			}
 		}
@@ -960,7 +964,7 @@ class Model {
 			for (j=0;j<model[0].levels[i].entities.length;j++){
 				for (k=0;k<model[0].levels[i].entities[j].attributes.length;k++){
 
-					let att1 = new Attribute(model[0].levels[i].entities[j].attributes[k].name, model[0].levels[i].entities[j].attributes[k].atype, model[0].levels[i].entities[j].attributes[k].value,model[0].levels[i].entities[j].attributes[k].durability,model[0].levels[i].entities[j].attributes[k].mutability);
+					let att1 = new Attribute(model[0].levels[i].entities[j].attributes[k].name, model[0].levels[i].entities[j].attributes[k].type, model[0].levels[i].entities[j].attributes[k].value,model[0].levels[i].entities[j].attributes[k].durability,model[0].levels[i].entities[j].attributes[k].mutability);
 					this.levels[i].entities[j].addAttribute(att1);
 				}
 			}

@@ -8,6 +8,7 @@ var io = require("socket.io")(http);
 var proj;
 const Project = require("./models/Project");
 const Chat = require("./models/Chat");
+const Model = require("./models/Model");
 //const app = express();
 
 io.on("connection", function(socket) {
@@ -77,8 +78,6 @@ io.on("connection", function(socket) {
     //io.emit("model", model);
   });
 
-
-
   socket.on("reconnection", async function(msg) {
     //console.log(msg + "=========================================");
     socket.room = msg;
@@ -89,12 +88,8 @@ io.on("connection", function(socket) {
     //console.log(`USER: ${msg.user}`);
     console.log(`new chat connection to model ${socket.room}`);
 
-   
     //io.emit("model", model);
   });
-
-
-
 
   socket.on("modelupdate", async function(msg) {
     //console.log(msg);
@@ -174,6 +169,8 @@ app.use("/api/profile", require("./routes/api/profile"));
 app.use("/api/posts", require("./routes/api/posts"));
 app.use("/api/projects", require("./routes/api/projects"));
 app.use("/api/chats", require("./routes/api/chat"));
+app.use("/api/models", require("./routes/api/models"));
+
 // Serve static assets in production
 if (process.env.NODE_ENV === "production") {
   // Set static folder

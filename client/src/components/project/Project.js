@@ -9,8 +9,14 @@ import Posts from "../posts/Posts";
 //import CommentForm from '../post/CommentForm';
 //import CommentItem from '../post/CommentItem';
 import { getProject } from "../../actions/projects";
+import { publishModel } from "../../actions/models";
 
-const Project = ({ getProject, projects: { project, loading }, match }) => {
+const Project = ({
+  publishModel,
+  getProject,
+  projects: { project, loading },
+  match
+}) => {
   useEffect(() => {
     console.log(match.params.id);
     getProject(match.params.id);
@@ -26,15 +32,20 @@ const Project = ({ getProject, projects: { project, loading }, match }) => {
             <Link to="/projects" className="btn">
               Back To Projects
             </Link>
+
             <br></br>
             <br></br>
             <br></br>
             <h2>Project {project.name}</h2>
             <div className="projdiv">
-              <ProjectModels project={project} id={project._id} />
+              <ProjectModels
+                project={project}
+                id={project._id}
+                publishModel={publishModel}
+              />
               <Link to="/users" className="btn">
-              Add New Participants
-            </Link>
+                Add New Participants
+              </Link>
               <ProjectUsers users={project.users} />
             </div>
           </td>
@@ -51,11 +62,12 @@ const Project = ({ getProject, projects: { project, loading }, match }) => {
 
 Project.propTypes = {
   getProject: PropTypes.func.isRequired,
-  projects: PropTypes.object.isRequired
+  projects: PropTypes.object.isRequired,
+  publishModel: PropTypes.func.isRequired
 };
 
 const mapStateToProps = state => ({
   projects: state.projects
 });
 
-export default connect(mapStateToProps, { getProject })(Project);
+export default connect(mapStateToProps, { publishModel, getProject })(Project);

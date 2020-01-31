@@ -37,7 +37,7 @@ const Posts = ({
     });
   }, []);
 
-  return loading ? (
+  return loading || post === null ? (
     <Spinner />
   ) : (
     <Fragment>
