@@ -1,4 +1,5 @@
 import React, { Fragment, useEffect } from "react";
+import { Link, withRouter } from "react-router-dom";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import ModelItem from "./ModelItem";
@@ -11,7 +12,7 @@ const Models = ({
   addUsers,
   getModels,
   publishModel,
-createModel,
+  createModel,
   projects: { project },
   models: { models, loading }
 }) => {
@@ -26,6 +27,9 @@ createModel,
       ) : (
         <Fragment>
           <h1>Models</h1>
+          <Link to={`/projects/${project._id}`} className="btn">
+            Back To Project
+          </Link>
           <div className="profiles">
             {models.length > 0 ? (
               models.map(model => (
@@ -55,7 +59,7 @@ Models.propTypes = {
   projects: PropTypes.object.isRequired,
   getModels: PropTypes.func.isRequired,
   publishModel: PropTypes.func.isRequired,
-  createModel:PropTypes.func.isRequired
+  createModel: PropTypes.func.isRequired
 };
 
 const mapStateToProps = state => ({

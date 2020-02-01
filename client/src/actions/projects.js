@@ -107,7 +107,12 @@ export const branchModel = (projectId, model) => async dispatch => {
   }
 };
 
-export const createModel = (projectId, name, json) => async dispatch => {
+export const createModel = (
+  projectId,
+  name,
+  json,
+  history
+) => async dispatch => {
   try {
     dispatch({
       type: COMMIT_MODEL
@@ -130,13 +135,14 @@ export const createModel = (projectId, name, json) => async dispatch => {
       postText,
       config
     );
+    history.push(`projects/${projectId}`);
     //alert(res);
 
     dispatch({
       type: GET_PROJECT,
       payload: res.data
     });
-
+    history.push(`/projects/${projectId}`);
     dispatch(setAlert("Branch created", "success"));
   } catch (err) {
     dispatch({

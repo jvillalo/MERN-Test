@@ -21,6 +21,26 @@ export const getModels = () => async dispatch => {
   }
 };
 
+
+export const getModelById = (ModelId) => async dispatch => {
+  try {
+    dispatch({
+      type: SET_LOADING
+    });
+    const res = await axios.get(`/api/models/${ModelId}`);
+    dispatch({
+      type: GET_MODEL,
+      payload: res.data
+    });
+  } catch (err) {
+    dispatch({
+      type: USERS_ERROR,
+      payload: { msg: err.response.statusText, status: err.response.status }
+    });
+  }
+};
+
+
 export const publishModel = (
   name,
   description,

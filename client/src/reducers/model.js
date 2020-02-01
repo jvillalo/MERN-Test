@@ -1,7 +1,8 @@
-import { SET_LOADING, GET_MODELS, USERS_ERROR } from "../actions/types";
+import { SET_LOADING, GET_MODELS, USERS_ERROR, GET_MODEL } from "../actions/types";
 
 const initialState = {
   models: [],
+  model:null,
   loading: true,
   error: {}
 };
@@ -23,6 +24,12 @@ export default function(state = initialState, action) {
         loading: false
       };
 
+      case GET_MODEL:
+      return {
+        ...state,
+        model: payload,
+        loading: false
+      };
     case USERS_ERROR:
       return {
         ...state,

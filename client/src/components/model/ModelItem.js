@@ -1,15 +1,18 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, withRouter } from "react-router-dom";
 import PropTypes from "prop-types";
 
-const ModelItem = ({ model, projectId, createModel }) => {
+const ModelItem = ({ model, projectId, createModel, history }) => {
   return (
-    <div>
+    <div className="profile">
       <h2>{model.name}</h2>
+      <Link to={`/models/${model._id}`} className="btn">
+        View Model
+      </Link>
       <button
         className="btn btn-danger"
         onClick={() => {
-          createModel(projectId, model.name, model.json);
+          createModel(projectId, model.name, model.json, history);
         }}
       >
         Add to project
@@ -18,4 +21,4 @@ const ModelItem = ({ model, projectId, createModel }) => {
   );
 };
 
-export default ModelItem;
+export default withRouter(ModelItem);

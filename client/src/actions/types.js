@@ -32,4 +32,4 @@ export const GET_USERS = "GET_USERS";
 export const USERS_ERROR="USERS_ERROR"
 export const SET_LOADING="SET_LOADING"
 export const GET_MODELS = "GET_MODELS";
-export const GET_MODEL = "GET_MODELS";
+export const GET_MODEL = "GET_MODEL";

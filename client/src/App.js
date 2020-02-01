@@ -27,7 +27,7 @@ import Model from "./components/model/Model";
 import NewProject from "./components/project/NewProject";
 import Users from "./components/users/Users";
 import Models from "./components/model/Models";
-
+import DisplayModel from "./components/model/DisplayModel";
 if (localStorage.token) {
   setAuthToken(localStorage.token);
 }
@@ -44,13 +44,14 @@ const App = () => {
           <Navbar />
           <Route exact path="/" component={Landing} />
 
-          <Alert />
           <Switch>
             <section className="container2">
+              <Alert />
               <Route exact path="/register" component={Register} />
               <Route exact path="/login" component={Login} />
               <Route exact path="/profiles" component={Profiles} />
               <Route exact path="/profile/:id" component={Profile} />
+              <Route exact path="/models/:id" component={DisplayModel} />
               <PrivateRoute
                 exact
                 path="/create-project"
