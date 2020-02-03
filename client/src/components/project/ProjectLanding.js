@@ -51,7 +51,7 @@ const ProjectLanding = ({
           socket.disconnect();
         }}
       >
-        Back to Dashboard
+        Back To Projects
       </button>
       <br></br>
       <br></br>
@@ -86,6 +86,4 @@ const mapStateToProps = state => ({
   auth: state.auth
 });
 
-export default connect(mapStateToProps, { getPosts })(
-  withRouter(ProjectLanding)
-);
+export default connect(mapStateToProps, { getPosts })(ProjectLanding);

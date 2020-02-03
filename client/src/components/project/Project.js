@@ -27,8 +27,8 @@ const Project = ({
   useEffect(() => {
     //getProject(match.params.id);
 
-    socket.emit("setproject", projectId);
-
+    //socket.emit("setproject", projectId);
+    socket.emit("requestproject", projectId);
     socket.on("project", msg => {
       setProject(msg);
     });

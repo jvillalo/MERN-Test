@@ -20,7 +20,7 @@ const ProjectList = ({ projects, getProject }) => {
         >
           Load project
         </button>
-        <Link to={`projects/${proj._id}`} className="btn btn-primary">
+        <Link to={`/projects/${proj._id}`} className="btn btn-primary">
           Go to project
         </Link>
       </td>

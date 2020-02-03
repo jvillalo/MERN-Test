@@ -54,6 +54,30 @@ io.on("connection", function(socket) {
     //io.emit("model", model);
   });
 
+  socket.on("requestproject", async function(msg) {
+    //console.log(msg);
+    proj = msg;
+    socket.room = msg;
+    socket.join(msg);
+    //console.log(`Project: ${proj}`);
+    //console.log(`USER: ${msg.user}`);
+    console.log(`new connection to model ${socket.room}`);
+
+    try {
+      let pro = await Project.findOne({ _id: msg });
+      if (pro) {
+        io.to(socket.room).emit("project", pro);
+        //console.log(`HERE!!!! ${modelToSend}`);
+      } else {
+        console.log("NOT WORKING");
+      }
+    } catch (err) {
+      console.error(err.message);
+      res.status(500).send("Server error");
+    }
+    //io.emit("model", model);
+  });
+
   socket.on("setproject", async function(msg) {
     //console.log(msg);
     proj = msg;
@@ -62,10 +86,10 @@ io.on("connection", function(socket) {
       let pro = await Project.findOne({ _id: proj });
       if (!pro) {
         io.to(proj).emit("project", "");
+      } else {
+        console.log("project sent");
+        io.to(proj).emit("project", pro);
       }
-
-      io.to(proj).emit("project", pro);
-
       //console.log(`HERE!!!! ${modelToSend}`);
     } catch (err) {
       console.error(err.message);
