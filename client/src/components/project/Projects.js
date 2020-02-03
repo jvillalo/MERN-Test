@@ -6,12 +6,13 @@ import { connect } from "react-redux";
 import Spinner from "../layout/Spinner";
 
 import ProjectList from "./ProjectList";
-import { getProjects } from "../../actions/projects";
+import { getProjects, getProject } from "../../actions/projects";
 const Projects = ({
   auth: { user },
 
   projects: { projects, loading },
-  getProjects
+  getProjects,
+  getProject
 }) => {
   useEffect(() => {
     getProjects();
@@ -26,7 +27,7 @@ const Projects = ({
 
       {projects !== null ? (
         <Fragment>
-          <ProjectList projects={projects} />
+          <ProjectList projects={projects} getProject={getProject} />
         </Fragment>
       ) : (
         <Fragment>
@@ -42,7 +43,8 @@ const Projects = ({
 
 Projects.propTypes = {
   getProjects: PropTypes.func.isRequired,
-  auth: PropTypes.object.isRequired
+  auth: PropTypes.object.isRequired,
+  getProject: PropTypes.func.isRequired
 };
 
 const mapStateToProps = state => ({
@@ -50,4 +52,4 @@ const mapStateToProps = state => ({
   projects: state.projects
 });
 
-export default connect(mapStateToProps, { getProjects })(Projects);
+export default connect(mapStateToProps, { getProjects, getProject })(Projects);

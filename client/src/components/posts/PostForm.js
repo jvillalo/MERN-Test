@@ -12,7 +12,8 @@ const PostForm = ({
   auth: { user },
   post: { post },
   socket,
-  chat
+  chat,
+  projectId
 }) => {
   const [text, setText] = useState("");
 
@@ -38,7 +39,7 @@ const PostForm = ({
           var chats = post;
           chats.comments.unshift(newComment);
 
-          socket.emit("chatupdate", chats);
+          socket.emit("chatupdate", { chats: chats, room: projectId });
           //getPosts(chat);
           setText("");
           //getPosts(modelId);

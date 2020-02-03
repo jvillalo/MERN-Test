@@ -5,13 +5,21 @@ import { connect } from "react-redux";
 import { deleteExperience } from "../../actions/profile";
 import { Link } from "react-router-dom";
 
-const ProjectList = ({ projects }) => {
+const ProjectList = ({ projects, getProject }) => {
   const projs = projects.map(proj => (
     <tr key={proj._id}>
       <td>{proj.name}</td>
       <td className="hide-sm">{proj.description}</td>
 
       <td>
+        <button
+          className="btn btn-danger"
+          onClick={() => {
+            getProject(proj._id);
+          }}
+        >
+          Load project
+        </button>
         <Link to={`projects/${proj._id}`} className="btn btn-primary">
           Go to project
         </Link>

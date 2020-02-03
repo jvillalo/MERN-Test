@@ -18,9 +18,6 @@ router.post(
     [
       check("project", "Text is required")
         .not()
-        .isEmpty(),
-      check("model", "Model is required")
-        .not()
         .isEmpty()
     ]
   ],
@@ -34,8 +31,7 @@ router.post(
       //const user = await User.findById(req.user.id).select('-password');
 
       const newChat = new Chat({
-        project: req.body.project,
-        model: req.body.model
+        project: req.body.project
       });
 
       /*

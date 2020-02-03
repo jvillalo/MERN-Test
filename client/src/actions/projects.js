@@ -68,7 +68,14 @@ export const createProject = (name, description, history) => async dispatch => {
   }
 };
 
-export const branchModel = (projectId, model) => async dispatch => {
+export const setProject = project => async dispatch => {
+  dispatch({
+    type: GET_PROJECT,
+    payload: project
+  });
+};
+
+export const branchModel = (projectId, model, socket) => async dispatch => {
   try {
     dispatch({
       type: COMMIT_MODEL
@@ -91,6 +98,8 @@ export const branchModel = (projectId, model) => async dispatch => {
       postText,
       config
     );
+    socket.emit("setproject", projectId);
+    socket.disconnect();
     //alert(res);
 
     dispatch({
@@ -111,7 +120,8 @@ export const createModel = (
   projectId,
   name,
   json,
-  history
+  history,
+  socket
 ) => async dispatch => {
   try {
     dispatch({
@@ -135,14 +145,18 @@ export const createModel = (
       postText,
       config
     );
-    history.push(`projects/${projectId}`);
+
     //alert(res);
+    socket.emit("setproject", projectId);
+    socket.disconnect();
 
     dispatch({
       type: GET_PROJECT,
       payload: res.data
     });
-    history.push(`/projects/${projectId}`);
+    if (history != null) {
+      history.push(`/projects/${projectId}`);
+    }
     dispatch(setAlert("Branch created", "success"));
   } catch (err) {
     dispatch({
@@ -152,7 +166,7 @@ export const createModel = (
   }
 };
 
-export const commitModel = (projectId, modelId) => async dispatch => {
+export const commitModel = (projectId, modelId, socket) => async dispatch => {
   try {
     dispatch({
       type: COMMIT_MODEL
@@ -160,7 +174,8 @@ export const commitModel = (projectId, modelId) => async dispatch => {
     const res = await axios.get(
       `/api/projects/${projectId}/commitmodel/${modelId}`
     );
-
+    socket.emit("setproject", projectId);
+    socket.disconnect();
     dispatch({
       type: GET_PROJECT,
       payload: res.data
@@ -189,7 +204,7 @@ export const removeModel = (projectId, modelId) => async dispatch => {
   }
 };
 
-export const addUsers = (projectId, userId, role) => async dispatch => {
+export const addUsers = (projectId, userId, role,socket) => async dispatch => {
   try {
     dispatch({
       type: COMMIT_MODEL
@@ -211,7 +226,8 @@ export const addUsers = (projectId, userId, role) => async dispatch => {
       postText,
       config
     );
-
+    socket.emit("setproject", projectId);
+    socket.disconnect();
     const res = await axios.get(`/api/projects/${projectId}`);
     dispatch({
       type: GET_PROJECT,

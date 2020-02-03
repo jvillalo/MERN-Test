@@ -28,6 +28,7 @@ import NewProject from "./components/project/NewProject";
 import Users from "./components/users/Users";
 import Models from "./components/model/Models";
 import DisplayModel from "./components/model/DisplayModel";
+import ProjectLanding from "./components/project/ProjectLanding";
 if (localStorage.token) {
   setAuthToken(localStorage.token);
 }
@@ -78,7 +79,11 @@ const App = () => {
               />
               <PrivateRoute exact path="/posts" component={Posts} />
               <PrivateRoute exact path="/projects" component={Projects} />
-              <PrivateRoute exact path="/projects/:id" component={Project} />
+              <PrivateRoute
+                exact
+                path="/projects/:id"
+                component={ProjectLanding}
+              />
               <PrivateRoute
                 exact
                 path="/projects/models/:id"

@@ -10,37 +10,60 @@ import Posts from "../posts/Posts";
 //import CommentItem from '../post/CommentItem';
 import { getProject, setProject } from "../../actions/projects";
 import { publishModel } from "../../actions/models";
-import Users from "./Users";
 import io from "socket.io-client";
 
 const Project = ({
-  projectId,
   publishModel,
   getProject,
   projects: { project, loading },
   match,
-  setProject,
-  socket
+  setProject
 }) => {
-  //var socket = io();
-
+  var socket = io();
+  var test = 0;
+  var pro = null;
   useEffect(() => {
+    if (project === null) {
+      //getProject(match.params.id);
+    }
     //getProject(match.params.id);
-
-    socket.emit("setproject", projectId);
+    socket.on("reconn", msg => {
+      socket.emit("reconnection", match.params.id);
+    });
+    socket.emit("setproject", match.params.id);
 
     socket.on("project", msg => {
+      alert("KKKK");
       setProject(msg);
     });
   }, []);
 
-  return loading || project === null ? (
-    <Spinner />
+  return project === null ? (
+    pro - <Spinner />
   ) : (
     <Fragment>
       <table>
         <tr>
           <td>
+            <Link to="/projects" className="btn">
+              Back To Projects
+            </Link>
+            <button
+              className="btn btn-danger"
+              onClick={() => {
+                socket.disconnect();
+              }}
+            >
+              disconnect
+            </button>
+            <button
+              className="btn btn-danger"
+              onClick={() => {
+                socket.emit("setproject", match.params.id);
+              }}
+            >
+              Emit
+            </button>
             <br></br>
             <br></br>
             <br></br>
@@ -50,13 +73,18 @@ const Project = ({
                 project={project}
                 id={project._id}
                 publishModel={publishModel}
-                socket={socket}
               />
               <Link to="/users" className="btn">
                 Add New Participants
               </Link>
               <ProjectUsers users={project.users} />
-              <Users socket={socket} />
+              <Posts
+                projectId={project._id}
+                modelId={match.params.id}
+                socket={socket}
+                room={match.params.id}
+                test={test}
+              />
             </div>
           </td>
           <td>

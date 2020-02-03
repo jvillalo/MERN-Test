@@ -2,6 +2,7 @@ import React, { Fragment } from "react";
 import PropTypes from "prop-types";
 import Moment from "react-moment";
 import { connect } from "react-redux";
+import Models from "./Models";
 import {
   branchModel,
   commitModel,
@@ -9,7 +10,7 @@ import {
   getProject,
   createModel
 } from "../../actions/projects";
-import { Link } from "react-router-dom";
+import { Link, withRouter } from "react-router-dom";
 
 const ProjectModels = ({
   project,
@@ -19,7 +20,9 @@ const ProjectModels = ({
   removeModel,
   getProject,
   createModel,
-  publishModel
+  publishModel,
+  socket,
+  history
 }) => {
   const models = project.models;
 
@@ -35,6 +38,7 @@ const ProjectModels = ({
             <Link to={`models/${mod._id}`} className="btn btn-primary">
               View model
             </Link>
+
             <button
               className="btn btn-danger"
               onClick={() => publishModel("Mod1", "Lorem ipsum", id, mod.json)}
@@ -44,19 +48,27 @@ const ProjectModels = ({
           </td>
         ) : (
           <td>
-            <Link to={`models/${mod._id}`} className="btn btn-primary">
-              Edit model
-            </Link>
             <button
               className="btn btn-danger"
-              onClick={() => branchModel(id, mod)}
+              onClick={() => {
+                history.push(`models/${mod._id}`);
+                socket.disconnect();
+              }}
+            >
+              EDIT MODEL
+            </button>
+            <button
+              className="btn btn-danger"
+              onClick={() => {
+                branchModel(id, mod, socket);
+              }}
             >
               Branch
             </button>
             {mod.parent != null ? (
               <button
                 className="btn btn-danger"
-                onClick={() => commit(models, mod, project)}
+                onClick={() => commit(models, mod, project, socket)}
               >
                 Commit
               </button>
@@ -77,8 +89,8 @@ const ProjectModels = ({
         </td>
       </tr>
     ));
-  const commit = (models, mod, project) => {
-    commitModel(project._id, mod._id);
+  const commit = (models, mod, project, socket) => {
+    commitModel(project._id, mod._id, socket);
     //removeModel(project._id, mod._id);
   };
   return (
@@ -92,7 +104,9 @@ const ProjectModels = ({
               createModel(
                 id,
                 "mod1",
-                `[{"name":"mod1","lockedByUser": 0,"levels":[]}]`
+                `[{"name":"mod1","lockedByUser": 0,"levels":[]}]`,
+                null,
+                socket
               )
             }
           >
@@ -101,6 +115,7 @@ const ProjectModels = ({
           <Link to="/models" className="btn">
             Import Model
           </Link>
+          <Models socket={socket} />
         </div>
       ) : (
         ""
@@ -139,4 +154,4 @@ export default connect(null, {
   commitModel,
   removeModel,
   createModel
-})(ProjectModels);
+})(withRouter(ProjectModels));

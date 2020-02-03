@@ -105,7 +105,7 @@ export const deletePost = id => async dispatch => {
   }
 };
 
-export const createChat = (projectId, modelId) => async dispatch => {
+export const createChat = (projectId) => async dispatch => {
   try {
     const config = {
       headers: {
@@ -113,8 +113,7 @@ export const createChat = (projectId, modelId) => async dispatch => {
       }
     };
     const postText = {
-      project: projectId,
-      model: modelId
+      project: projectId
     };
 
     const res = await axios.post("/api/chats", postText, config);

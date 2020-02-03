@@ -6,10 +6,7 @@ const ChatSchema = new Schema({
     type: String,
     required: true
   },
-  model: {
-    type: String,
-    required: true
-  },
+ 
   comments: [
     {
       user: {

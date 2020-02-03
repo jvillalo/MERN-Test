@@ -11,8 +11,9 @@ import { getProject } from "../../actions/projects";
 import TestModel from "../TestModel";
 import "../../../src/App.css";
 import io from "socket.io-client";
+import Project from "./Project";
 
-const Model = ({
+const ProjectLanding = ({
   auth,
   projects: { project, loading },
   match,
@@ -28,16 +29,6 @@ const Model = ({
     });
   }, []);
 
-  var authorized = false;
-  project.users.map(usr => {
-    if (usr.user == auth.user._id) {
-      if (usr.role == "Administrator" || usr.role == "Collaborator") {
-        authorized = true;
-      } else {
-        authorized = false;
-      }
-    }
-  });
   /*
   if (authorized) {
     project.models.map(mod => {
@@ -56,29 +47,25 @@ const Model = ({
       <button
         className="btn btn-danger"
         onClick={() => {
+          history.push(`/projects/`);
           socket.disconnect();
-          history.push(`/projects/${project._id}`);
         }}
       >
-        Back To Project
+        Back to Dashboard
       </button>
       <br></br>
       <br></br>
 
       <div className="mod">
-        <TestModel
-          userId={auth.user._id}
-          modelId={match.params.id}
-          projectId={project._id}
-          editAuthorized={authorized}
-          getPosts={getPosts}
+        <Project
+          projectId={match.params.id}
           socket={socket}
-          room={match.params.id}
+
           //editAuthorized={model.parent == null ? true : false}
         />
 
         <Posts
-          projectId={project._id}
+          projectId={match.params.id}
           modelId={match.params.id}
           socket={socket}
           room={match.params.id}
@@ -88,7 +75,7 @@ const Model = ({
   );
 };
 
-Model.propTypes = {
+ProjectLanding.propTypes = {
   projects: PropTypes.object.isRequired,
   auth: PropTypes.object.isRequired,
   getPosts: PropTypes.func.isRequired
@@ -99,4 +86,6 @@ const mapStateToProps = state => ({
   auth: state.auth
 });
 
-export default connect(mapStateToProps, { getPosts })(withRouter(Model));
+export default connect(mapStateToProps, { getPosts })(
+  withRouter(ProjectLanding)
+);

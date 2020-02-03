@@ -12,8 +12,9 @@ const Model = require("./models/Model");
 //const app = express();
 
 io.on("connection", function(socket) {
-  console.log("a user connected");
+  console.log("a user connected" + socket.room);
   socket.emit("reconn");
+
   socket.on("disconnect", function() {
     console.log("user disconnected");
   });
@@ -53,7 +54,27 @@ io.on("connection", function(socket) {
     //io.emit("model", model);
   });
 
-  socket.on("chatrequest", async function(msg) {
+  socket.on("setproject", async function(msg) {
+    //console.log(msg);
+    proj = msg;
+
+    try {
+      let pro = await Project.findOne({ _id: proj });
+      if (!pro) {
+        io.to(proj).emit("project", "");
+      }
+
+      io.to(proj).emit("project", pro);
+
+      //console.log(`HERE!!!! ${modelToSend}`);
+    } catch (err) {
+      console.error(err.message);
+      res.status(500).send("Server error");
+    }
+    //io.emit("model", model);
+  });
+
+  socket.on("join", async function(msg) {
     //console.log(msg + "=========================================");
     socket.room = msg;
     socket.join(msg);
@@ -61,15 +82,30 @@ io.on("connection", function(socket) {
     //socket.join(msg);
     //console.log(`Project: ${proj}`);
     //console.log(`USER: ${msg.user}`);
+    console.log(`new project connection to model ${socket.room}`);
+
+    //io.emit("model", model);
+  });
+
+  socket.on("chatrequest", async function(msg) {
+    //console.log(msg + "=========================================");
+
+    socket.room = msg.model;
+    socket.join(msg.model);
+
+    //socket.room = msg;
+    //socket.join(msg);
+    //console.log(`Project: ${proj}`);
+    //console.log(`USER: ${msg.user}`);
     console.log(`new chat connection to model ${socket.room}`);
 
     try {
-      let cht = await Chat.findOne({ model: msg });
+      let cht = await Chat.findOne({ project: msg.project });
       if (cht) {
         io.to(socket.room).emit("chat", cht);
       } else {
         io.to(socket.room).emit("chat", "no chat available");
-        //console.log(`HERE!!!! ${cht}`);
+        console.log(`HERE!!!! ${cht}`);
       }
     } catch (err) {
       console.error(err.message);
@@ -86,7 +122,7 @@ io.on("connection", function(socket) {
     //socket.join(msg);
     //console.log(`Project: ${proj}`);
     //console.log(`USER: ${msg.user}`);
-    console.log(`new chat connection to model ${socket.room}`);
+    console.log(`new  re-connection to model ${socket.room}`);
 
     //io.emit("model", model);
   });
@@ -129,14 +165,17 @@ io.on("connection", function(socket) {
     //console.log("------------------------------------");
     //user = msg.user;
     //console.log(msg);
-    cht = msg;
-    io.to(socket.room).emit("chat", msg);
+    cht = msg.chats;
+
+    console.log("------->" + socket.room);
+    io.to(msg.room).emit("chat", cht);
+
     //console.log(`sent chat to members of model ${socket.room}`);
     //io.emit("model", model);
     try {
       let cht2 = await Chat.findOneAndUpdate(
-        { model: msg.model },
-        { $set: msg }
+        { project: msg.room },
+        { $set: cht }
       );
 
       //console.log(`updated: ${cht2}`);
