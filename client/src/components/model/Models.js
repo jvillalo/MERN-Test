@@ -27,16 +27,13 @@ const Models = ({
       ) : (
         <Fragment>
           <h1>Models</h1>
-          <Link to={`/projects/${project._id}`} className="btn">
-            Back To Project
-          </Link>
+
           <div className="profiles">
             {models.length > 0 ? (
               models.map(model => (
                 <ModelItem
                   key={model._id}
                   model={model}
-                  projectId={project._id}
                   publishModel={publishModel}
                   loaading={loading}
                   createModel={createModel}

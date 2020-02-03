@@ -8,7 +8,7 @@ export const getModels = () => async dispatch => {
     dispatch({
       type: SET_LOADING
     });
-    const res = await axios.get("/api/models");
+    const res = await axios.get("/api/models/");
     dispatch({
       type: GET_MODELS,
       payload: res.data
@@ -21,8 +21,7 @@ export const getModels = () => async dispatch => {
   }
 };
 
-
-export const getModelById = (ModelId) => async dispatch => {
+export const getModelById = ModelId => async dispatch => {
   try {
     dispatch({
       type: SET_LOADING
@@ -39,7 +38,6 @@ export const getModelById = (ModelId) => async dispatch => {
     });
   }
 };
-
 
 export const publishModel = (
   name,

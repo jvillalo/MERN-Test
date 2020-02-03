@@ -24,7 +24,7 @@ const Posts = ({
   var chat = null;
   useEffect(() => {
     //getPosts(modelId);
-    alert("AAAARGH");
+
     socket.emit("chatrequest", {
       model: room,
       project: projectId

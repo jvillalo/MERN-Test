@@ -7,23 +7,36 @@ import { logout } from "../../actions/auth";
 const Navbar = ({ auth: { isAuthenticated, loading }, logout }) => {
   const authLinks = (
     <ul>
+      
       <li>
-        <a onClick={logout} href="#!">
-          <i className="fas fa-sign-out-alt" /> Logout
-        </a>
+        <Link to="/models">
+          <i className="fas fa-user" />
+          Models
+        </Link>
       </li>
-
       <li>
         <Link to="/projects">
           <i className="fas fa-user" />
           Dashboard
         </Link>
       </li>
+      
+      <li>
+        <a onClick={logout} href="#!">
+          <i className="fas fa-sign-out-alt" /> Logout
+        </a>
+      </li>
     </ul>
   );
 
   const guestLinks = (
     <ul>
+      <li>
+        <Link to="/models">
+          <i className="fas fa-user" />
+          Models
+        </Link>
+      </li>
       <li>
         <Link to="/register">Register</Link>
       </li>

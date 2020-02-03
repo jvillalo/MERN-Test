@@ -10,22 +10,10 @@ const ProjectList = ({ projects, getProject }) => {
     <tr key={proj._id}>
       <td>{proj.name}</td>
       <td className="hide-sm">{proj.description}</td>
-
       <td>
-        <button
-          className="btn btn-danger"
-          onClick={() => {
-            getProject(proj._id);
-          }}
-        >
-          Load project
-        </button>
         <Link to={`/projects/${proj._id}`} className="btn btn-primary">
           Go to project
         </Link>
-      </td>
-      <td>
-        <button className="btn btn-danger">Delete</button>
       </td>
     </tr>
   ));

@@ -53,6 +53,7 @@ const App = () => {
               <Route exact path="/profiles" component={Profiles} />
               <Route exact path="/profile/:id" component={Profile} />
               <Route exact path="/models/:id" component={DisplayModel} />
+              <Route exact path="/models" component={Models} />
               <PrivateRoute
                 exact
                 path="/create-project"
@@ -61,7 +62,7 @@ const App = () => {
               <PrivateRoute exact path="/users" component={Users} />
               <PrivateRoute exact path="/dashboard" component={Projects} />
               <PrivateRoute exact path="/posts/:id" component={Post} />
-              <PrivateRoute exact path="/models" component={Models} />
+
               <PrivateRoute
                 exact
                 path="/add-experience"
