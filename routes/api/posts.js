@@ -4,7 +4,6 @@ const { check, validationResult } = require("express-validator");
 const auth = require("../../middleware/auth");
 const Post = require("../../models/Post");
 const User = require("../../models/User");
-const Profile = require("../../models/Profile");
 
 router.post(
   "/",
@@ -29,7 +28,6 @@ router.post(
       const newPost = new Post({
         text: req.body.text,
         name: user.name,
-        avatar: user.avatar,
         user: req.user.id
       });
       const post = await newPost.save();
@@ -156,7 +154,6 @@ router.post(
       const newComment = {
         text: req.body.text,
         name: user.name,
-        avatar: user.avatar,
         user: req.user.id
       };
       post.comments.unshift(newComment);
@@ -193,7 +190,6 @@ router.post(
       const newComment = {
         text: req.body.text,
         name: user.name,
-        avatar: user.avatar,
         user: req.user.id
       };
       post.comments.unshift(newComment);

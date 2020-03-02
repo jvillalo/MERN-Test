@@ -15,14 +15,13 @@ router.get("/", auth, async (req, res) => {
     console.error(err.message);
     res.status(500).send("Server error");
   }
-  //res.send("Auth route");
 });
 
 router.post(
   "/",
   [
-    check("email", "Please include a valid email").isEmail(),
-    check("password", "Please include a valid password").exists()
+    check("email", "Invalid email").isEmail(),
+    check("password", "Invalid password").exists()
   ],
   async (req, res) => {
     const errors = validationResult(req);
@@ -36,7 +35,7 @@ router.post(
       if (!user) {
         return res
           .status(400)
-          .json({ errors: [{ msg: "Invalid credentials" }] });
+          .json({ errors: [{ msg: "Wrong credentials" }] });
       }
 
       const isMatch = await bcrypt.compare(password, user.password);
@@ -46,16 +45,16 @@ router.post(
           .json({ errors: [{ msg: "Invalid credentials" }] });
       }
 
-      const payload = {
-        user: {
-          id: user.id
-        }
-      };
+     
 
       jwt.sign(
-        payload,
-        config.get("jwtSecret"),
-        { expiresIn: 3600000 },
+        {
+          user: {
+            id: user.id
+          }
+        },
+        "mysecrettoken",
+        { expiresIn: 50000 },
         (err, token) => {
           if (err) throw err;
           res.json({ token });

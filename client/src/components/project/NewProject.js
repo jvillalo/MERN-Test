@@ -49,7 +49,7 @@ const NewProject = ({ createProject, history }) => {
             name="description"
             cols="30"
             rows="5"
-            placeholder="Job Description"
+            placeholder="Project Description"
             value={description}
             onChange={e => onChange(e)}
           ></textarea>

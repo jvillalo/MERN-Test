@@ -7,23 +7,22 @@ import { logout } from "../../actions/auth";
 const Navbar = ({ auth: { isAuthenticated, loading }, logout }) => {
   const authLinks = (
     <ul>
-      
       <li>
         <Link to="/models">
-          <i className="fas fa-user" />
+          <i />
           Models
         </Link>
       </li>
       <li>
         <Link to="/projects">
-          <i className="fas fa-user" />
+          <i />
           Dashboard
         </Link>
       </li>
-      
+
       <li>
         <a onClick={logout} href="#!">
-          <i className="fas fa-sign-out-alt" /> Logout
+          <i className="fas fa-sign-out-alt" />
         </a>
       </li>
     </ul>
@@ -49,9 +48,7 @@ const Navbar = ({ auth: { isAuthenticated, loading }, logout }) => {
   return (
     <nav className="navbar bg-dark">
       <h1>
-        <Link to="/">
-          <i className="fas fa-code"></i> NiteOwl
-        </Link>
+        <Link to="/">Niteowl</Link>
       </h1>
       {!loading && (
         <Fragment>{isAuthenticated ? authLinks : guestLinks}</Fragment>

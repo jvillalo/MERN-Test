@@ -6,6 +6,8 @@ import Models from "./Models";
 import {
   branchModel,
   commitModel,
+  restoreModel,
+  newCommit,
   removeModel,
   getProject,
   createModel
@@ -17,6 +19,8 @@ const ProjectModels = ({
   id,
   branchModel,
   commitModel,
+  restoreModel,
+  newCommit,
   removeModel,
   getProject,
   createModel,
@@ -33,23 +37,27 @@ const ProjectModels = ({
       <tr key={mod._id}>
         <td>{mod.name}</td>
 
-        {index + 1 !== models.length ? (
+        {!mod.parent ? (
           <td>
             <Link to={`models/${mod._id}`} className="btn btn-primary">
               View model
             </Link>
 
             <button
-              className="btn btn-danger"
+              className="btn"
               onClick={() => publishModel("Mod1", "Lorem ipsum", id, mod.json)}
             >
               Publish
+            </button>
+
+            <button className="btn" onClick={() => version(id, mod, socket)}>
+              Use version
             </button>
           </td>
         ) : (
           <td>
             <button
-              className="btn btn-danger"
+              className="btn"
               onClick={() => {
                 history.push(`models/${mod._id}`);
                 socket.disconnect();
@@ -57,18 +65,11 @@ const ProjectModels = ({
             >
               EDIT MODEL
             </button>
-            <button
-              className="btn btn-danger"
-              onClick={() => {
-                branchModel(id, mod, socket);
-              }}
-            >
-              Branch
-            </button>
+
             {mod.parent != null ? (
               <button
                 className="btn btn-danger"
-                onClick={() => commit(models, mod, project, socket)}
+                onClick={() => newCommit(id, mod, socket)}
               >
                 Commit
               </button>
@@ -83,12 +84,21 @@ const ProjectModels = ({
             </button>
           </td>
         )}
-
-       
       </tr>
     ));
   const commit = (models, mod, project, socket) => {
     commitModel(project._id, mod._id, socket);
+
+    //removeModel(project._id, mod._id);
+  };
+
+  const version = (id, mod, socket) => {
+    if (project.models.size > 1) {
+      restoreModel(id, mod, socket);
+    } else {
+      alert(project.models.size);
+      branchModel(id, mod, socket);
+    }
     //removeModel(project._id, mod._id);
   };
   return (
@@ -143,13 +153,16 @@ ProjectModels.propTypes = {
   commitModel: PropTypes.func.isRequired,
   removeModel: PropTypes.func.isRequired,
   getProject: PropTypes.func.isRequired,
-  createModel: PropTypes.func.isRequired
+  createModel: PropTypes.func.isRequired,
+  restoreModel: PropTypes.func.isRequired
 };
 
 export default connect(null, {
   getProject,
   branchModel,
   commitModel,
+  newCommit,
   removeModel,
-  createModel
+  createModel,
+  restoreModel
 })(withRouter(ProjectModels));

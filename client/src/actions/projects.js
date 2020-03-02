@@ -75,6 +75,47 @@ export const setProject = project => async dispatch => {
   });
 };
 
+export const newCommit = (projectId, model, socket) => async dispatch => {
+  try {
+    dispatch({
+      type: COMMIT_MODEL
+    });
+
+    const config = {
+      headers: {
+        "Content-Type": "application/json"
+      }
+    };
+
+    const postText = {
+      name: model.name,
+      json: model.json,
+      parent: null
+    };
+
+    const res = await axios.post(
+      `/api/projects/${projectId}/models`,
+      postText,
+      config
+    );
+    socket.emit("setproject", projectId);
+    socket.disconnect();
+    //alert(res);
+
+    dispatch({
+      type: GET_PROJECT,
+      payload: res.data
+    });
+
+    dispatch(setAlert("Branch created", "success"));
+  } catch (err) {
+    dispatch({
+      type: PROJECT_ERROR,
+      payload: { msg: err.response.statusText, status: err.response.status }
+    });
+  }
+};
+
 export const branchModel = (projectId, model, socket) => async dispatch => {
   try {
     dispatch({
@@ -88,7 +129,7 @@ export const branchModel = (projectId, model, socket) => async dispatch => {
     };
 
     const postText = {
-      name: `${model.name} branch`,
+      name: `${model.name}`,
       json: model.json,
       parent: model._id
     };
@@ -190,6 +231,30 @@ export const commitModel = (projectId, modelId, socket) => async dispatch => {
   }
 };
 
+export const restoreModel = (projectId, modelId, socket) => async dispatch => {
+  try {
+    dispatch({
+      type: COMMIT_MODEL
+    });
+    const res = await axios.get(
+      `/api/projects/${projectId}/restoremodel/${modelId}`
+    );
+    socket.emit("setproject", projectId);
+    socket.disconnect();
+    dispatch({
+      type: GET_PROJECT,
+      payload: res.data
+    });
+
+    dispatch(setAlert("Branch commited", "success"));
+  } catch (err) {
+    dispatch({
+      type: PROJECT_ERROR,
+      payload: { msg: err.response.statusText, status: err.response.status }
+    });
+  }
+};
+
 export const removeModel = (projectId, modelId) => async dispatch => {
   try {
     alert(`/api/projects/${projectId}/models/${modelId}`);
@@ -204,7 +269,7 @@ export const removeModel = (projectId, modelId) => async dispatch => {
   }
 };
 
-export const addUsers = (projectId, userId, role,socket) => async dispatch => {
+export const addUsers = (projectId, userId, role, socket) => async dispatch => {
   try {
     dispatch({
       type: COMMIT_MODEL

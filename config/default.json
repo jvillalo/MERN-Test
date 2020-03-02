@@ -1,4 +1,4 @@
 {
-  "mongoURI": "mongodb+srv://Jorge:Password@devconnector-gd1b5.mongodb.net/test?retryWrites=true&w=majority",
+  "mongoConn": "mongodb+srv://Jorge:Password@devconnector-gd1b5.mongodb.net/test?retryWrites=true&w=majority",
   "jwtSecret": "mysecrettoken"
 }

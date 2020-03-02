@@ -32,7 +32,6 @@ const PostForm = ({
           const newComment = {
             text: text,
             name: user.name,
-            avatar: user.avatar,
             user: user._id,
             date: Date.now()
           };

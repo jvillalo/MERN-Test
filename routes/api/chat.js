@@ -4,12 +4,11 @@ const { check, validationResult } = require("express-validator/check");
 const auth = require("../../middleware/auth");
 
 const Post = require("../../models/Post");
-const Profile = require("../../models/Profile");
 const Project = require("../../models/Project");
 const User = require("../../models/User");
 const Chat = require("../../models/Chat");
-// @route    POST api/posts
-// @desc     Create a post
+// @route    POST api/chat
+// @desc     Create a chat
 // @access   Private
 router.post(
   "/",
@@ -34,15 +33,6 @@ router.post(
         project: req.body.project
       });
 
-      /*
-      const newPost = new Post({
-        text: req.body.text,
-        name: user.name,
-        avatar: user.avatar,
-        user: req.user.id
-      });
-      */
-
       const chat = await newChat.save();
 
       res.json(chat);
@@ -66,8 +56,8 @@ router.get("/", auth, async (req, res) => {
   }
 });
 
-// @route    GET api/posts/:id
-// @desc     Get post by ID
+// @route    GET api/chat/:modelid
+// @desc     Get chat by ID
 // @access   Private
 router.get("/:modelid", auth, async (req, res) => {
   try {
@@ -86,8 +76,8 @@ router.get("/:modelid", auth, async (req, res) => {
   }
 });
 
-// @route    DELETE api/posts/:id
-// @desc     Delete a post
+// @route    DELETE api/chat/:id
+// @desc     Delete a chat
 // @access   Private
 router.delete("/:id", auth, async (req, res) => {
   try {
@@ -116,62 +106,6 @@ router.delete("/:id", auth, async (req, res) => {
 // @route    PUT api/posts/like/:id
 // @desc     Like a post
 // @access   Private
-router.put("/like/:id", auth, async (req, res) => {
-  try {
-    const post = await Post.findById(req.params.id);
-
-    // Check if the post has already been liked
-    if (
-      post.likes.filter(like => like.user.toString() === req.user.id).length > 0
-    ) {
-      return res.status(400).json({ msg: "Post already liked" });
-    }
-
-    post.likes.unshift({ user: req.user.id });
-
-    await post.save();
-
-    res.json(post.likes);
-  } catch (err) {
-    console.error(err.message);
-    res.status(500).send("Server Error");
-  }
-});
-
-// @route    PUT api/posts/unlike/:id
-// @desc     Like a post
-// @access   Private
-router.put("/unlike/:id", auth, async (req, res) => {
-  try {
-    const post = await Post.findById(req.params.id);
-
-    // Check if the post has already been liked
-    if (
-      post.likes.filter(like => like.user.toString() === req.user.id).length ===
-      0
-    ) {
-      return res.status(400).json({ msg: "Post has not yet been liked" });
-    }
-
-    // Get remove index
-    const removeIndex = post.likes
-      .map(like => like.user.toString())
-      .indexOf(req.user.id);
-
-    post.likes.splice(removeIndex, 1);
-
-    await post.save();
-
-    res.json(post.likes);
-  } catch (err) {
-    console.error(err.message);
-    res.status(500).send("Server Error");
-  }
-});
-
-// @route    POST api/posts/comment/:id
-// @desc     Comment on a post
-// @access   Private
 router.post(
   "/comment/:modelid",
   [
@@ -195,7 +129,6 @@ router.post(
       const newComment = {
         text: req.body.text,
         name: user.name,
-        avatar: user.avatar,
         user: req.user.id
       };
 

@@ -1,4 +1,5 @@
-/* Global Styles */
+/* CSS created with the guidance of Brad Traversy through th youtube tutorial https://www.youtube.com/watch?v=IFM9hbapeA0&list=PLillGF-Rfqba3xeEvDzIcUCxwMlGiewfV*/
+
 :root {
   --primary-color: #17a2b8;
   --dark-color: #343a40;
@@ -52,7 +53,6 @@ img {
   left: 0;
 }
 
-/* Text Styles*/
 .x-large {
   font-size: 4rem;
   line-height: 1.2;
@@ -108,7 +108,6 @@ img {
   padding: 3rem 0;
 }
 
-/* Margin */
 .m {
   margin: 0.5rem;
 }
@@ -233,7 +232,6 @@ img {
   margin: 1.5rem 0;
 }
 
-/* Overlay */
 .dark-overlay {
   background-color: rgba(0, 0, 0, 0.7);
   position: absolute;
@@ -243,15 +241,8 @@ img {
   height: 100%;
 }
 
-/* Forms */
 .form .form-group {
   margin: 1.2rem 0;
-}
-
-.form .form-text {
-  display: block;
-  margin-top: 0.3rem;
-  color: #888;
 }
 
 .form input[type="text"],
@@ -307,7 +298,6 @@ button {
   background: var(--light-color);
 }
 
-/* Navbar */
 .navbar {
   display: flex;
   justify-content: space-between;
@@ -317,8 +307,7 @@ button {
   z-index: 1;
   width: 100%;
   top: 0;
-  border-bottom: solid 1px var(--primary-color);
-  opacity: 0.9;
+  opacity: 1;
 }
 
 .navbar ul {
@@ -332,18 +321,11 @@ button {
 }
 
 .navbar a:hover {
-  color: var(--primary-color);
+  color: lightgreen;
 }
 
 .navbar .welcome span {
   margin-right: 0.6rem;
-}
-
-/* Landing Page */
-.landing {
-  position: relative;
-  background: url("./img/login.jpg") no-repeat center center/cover;
-  height: 100vh;
 }
 
 .landing-inner {
@@ -358,7 +340,6 @@ button {
   text-align: center;
 }
 
-/* Profiles Page */
 .profile {
   display: grid;
   grid-template-columns: 2fr 4fr 2fr;
@@ -369,7 +350,6 @@ button {
   margin-bottom: 1rem;
 }
 
-/* Profile Page */
 .profile-grid {
   display: grid;
   grid-template-areas:
@@ -462,7 +442,6 @@ button {
   flex-basis: 20%;
 }
 
-/* Posts Page */
 .post-form .post-form-header {
   background: var(--primary-color);
 }
@@ -475,7 +454,6 @@ button {
 .postsdiv {
   position: relative;
   height: 22vh;
-  /* width: 40vw;*/
   left: 0;
   padding: 10;
 }
@@ -571,7 +549,6 @@ button {
   margin-bottom: 0.5rem;
 }
 
-/* Mobile Styles */
 @media (max-width: 700px) {
   .container {
     margin-top: 8rem;
@@ -581,7 +558,6 @@ button {
     display: none;
   }
 
-  /* Text Styles */
   .x-large {
     font-size: 3rem;
   }
@@ -594,7 +570,6 @@ button {
     font-size: 1rem;
   }
 
-  /* Navbar */
   .navbar {
     display: block;
     text-align: center;

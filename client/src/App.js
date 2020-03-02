@@ -10,17 +10,10 @@ import { Provider } from "react-redux";
 import store from "./store";
 import { loadUser } from "./actions/auth";
 import setAuthToken from "./utils/setAuthToken";
-import Dashboard from "./components/dashboard/Dashboard";
 import PrivateRoute from "./components/routing/PrivateRoute";
-import CreateProfile from "./components/profile-forms/CreateProfile";
-import EditProfile from "./components/profile-forms/EditProfile";
-import AddExperience from "./components/profile-forms/AddExperience";
-import Profiles from "./components/profiles/Profiles";
 import Posts from "./components/posts/Posts";
-import Profile from "./components/profile/Profile";
 import Post from "./components/posts/Post";
 import TestModel from "./components/TestModel";
-import MxGraphGridEditor from "./components/MxGraphGridEditor";
 import Projects from "./components/project/Projects";
 import Project from "./components/project/Project";
 import Model from "./components/model/Model";
@@ -50,8 +43,6 @@ const App = () => {
               <Alert />
               <Route exact path="/register" component={Register} />
               <Route exact path="/login" component={Login} />
-              <Route exact path="/profiles" component={Profiles} />
-              <Route exact path="/profile/:id" component={Profile} />
               <Route exact path="/models/:id" component={DisplayModel} />
               <Route exact path="/models" component={Models} />
               <PrivateRoute
@@ -62,22 +53,6 @@ const App = () => {
               <PrivateRoute exact path="/users" component={Users} />
               <PrivateRoute exact path="/dashboard" component={Projects} />
               <PrivateRoute exact path="/posts/:id" component={Post} />
-
-              <PrivateRoute
-                exact
-                path="/add-experience"
-                component={AddExperience}
-              />
-              <PrivateRoute
-                exact
-                path="/create-profile"
-                component={CreateProfile}
-              />
-              <PrivateRoute
-                exact
-                path="/edit-profile"
-                component={EditProfile}
-              />
               <PrivateRoute exact path="/posts" component={Posts} />
               <PrivateRoute exact path="/projects" component={Projects} />
               <PrivateRoute
