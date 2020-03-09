@@ -54,7 +54,16 @@ const ProjectModels = ({
           {role === "Administrator" && (
             <button
               className="btn"
-              onClick={() => publishModel("Mod1", "Lorem ipsum", id, mod.json)}
+              onClick={() => {
+                var name = prompt("Please enter the model's name", "mod1");
+                var desc = prompt(
+                  "Please enter the model's description",
+                  "desc"
+                );
+                if (name != "" || desc != "") {
+                  publishModel(name, desc, id, mod.json);
+                }
+              }}
             >
               Publish
             </button>

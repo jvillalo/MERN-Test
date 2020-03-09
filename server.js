@@ -160,29 +160,41 @@ io.on("connection", function(socket) {
 
   socket.on("modelupdate", async function(msg) {
     //console.log(msg);
+
     try {
       let proj = await Project.findOne({ _id: msg.project });
 
       if (proj) {
-        model = msg.updateModel;
-        const payload = {
-          json: model,
-          version: 0
-        };
-        io.to(msg.model).emit("model", payload);
-        console.log(`sent model to members of model ${socket.room}`);
-
-        proj.models.map(mod => {
+        proj.models.map(async mod => {
           if (mod._id == msg.model) {
-            mod.json = model;
-            mod.version = 0;
+            console.log("=======versions: " + mod.version + " " + msg.version);
+            if (mod.version === msg.version) {
+              model = msg.updateModel;
+              const newversion = mod.version + 1;
+              const payload = {
+                json: model,
+                version: newversion
+              };
+              io.to(msg.model).emit("model", payload);
+              console.log(`sent model to members of model ${socket.room}`);
+
+              mod.json = model;
+              mod.version = newversion;
+
+              let proj2 = await Project.findOneAndUpdate(
+                { _id: msg.project },
+                { $set: proj }
+              );
+            } else {
+              const payload = {
+                json: mod.json,
+                version: mod.version
+              };
+              console.log(`Wrong version`);
+              socket.emit("model", payload);
+            }
           }
         });
-
-        let proj2 = await Project.findOneAndUpdate(
-          { _id: msg.project },
-          { $set: proj }
-        );
 
         //console.log("updated");
         if (msg.log) {

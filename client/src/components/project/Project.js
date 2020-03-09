@@ -1,4 +1,4 @@
-import React, { Fragment, useEffect } from "react";
+import React, { Fragment, useEffect, useState } from "react";
 import PropTypes from "prop-types";
 import { Link } from "react-router-dom";
 import { connect } from "react-redux";
@@ -44,6 +44,10 @@ const Project = ({
     });
   }, []);
 
+  const [displayUsers, setDisplayUsers] = useState({
+    display: false
+  });
+
   return loading || project === null ? (
     <Spinner />
   ) : (
@@ -63,9 +67,7 @@ const Project = ({
                 socket={socket}
                 user={user}
               />
-              <Link to="/users" className="btn">
-                Add New Participants
-              </Link>
+
               <ProjectUsers
                 users={project.users}
                 project={project._id}
@@ -74,7 +76,15 @@ const Project = ({
                 socket={socket}
                 removeUser={removeUser}
               />
-              <Users socket={socket} />
+              <button
+                className="btn"
+                onClick={() =>
+                  setDisplayUsers({ display: !displayUsers.display })
+                }
+              >
+                Add New Participants
+              </button>
+              {displayUsers.display ? <Users socket={socket} /> : ""}
             </div>
           </td>
           <td>

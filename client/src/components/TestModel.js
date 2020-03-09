@@ -96,7 +96,7 @@ class TestModel extends Component {
       if (this.graph.getSelectionCell()) {
         selected = this.graph.getSelectionCell().getId();
       }
-      alert("model received");
+
       this.setState({
         json: msg.json,
         selectedCell: selected,
@@ -469,7 +469,8 @@ class TestModel extends Component {
         model: that.props.modelId,
         user: that.props.userId,
         project: that.props.projectId,
-        updateModel: that.modelo.toJSON()
+        updateModel: that.modelo.toJSON(),
+        version: that.state.version
       });
     });
 
@@ -485,7 +486,8 @@ class TestModel extends Component {
         model: that.props.modelId,
         user: that.props.userId,
         project: that.props.projectId,
-        updateModel: that.modelo.toJSON()
+        updateModel: that.modelo.toJSON(),
+        version: that.state.version
       });
     });
   }
@@ -551,7 +553,8 @@ class TestModel extends Component {
                 model: that.props.modelId,
                 user: that.props.userId,
                 project: that.props.projectId,
-                updateModel: that.modelo.toJSON()
+                updateModel: that.modelo.toJSON(),
+                version: that.state.version
               });
             });
           }
@@ -573,7 +576,8 @@ class TestModel extends Component {
               model: that.props.modelId,
               user: that.props.userId,
               project: that.props.projectId,
-              updateModel: that.modelo.toJSON()
+              updateModel: that.modelo.toJSON(),
+              version: that.state.version
             });
           });
         }
@@ -595,7 +599,8 @@ class TestModel extends Component {
               model: that.props.modelId,
               user: that.props.userId,
               project: that.props.projectId,
-              updateModel: that.modelo.toJSON()
+              updateModel: that.modelo.toJSON(),
+              version: that.state.version
             });
           });
         }
@@ -617,7 +622,8 @@ class TestModel extends Component {
               model: that.props.modelId,
               user: that.props.userId,
               project: that.props.projectId,
-              updateModel: that.modelo.toJSON()
+              updateModel: that.modelo.toJSON(),
+              version: that.state.version
             });
           });
         }
@@ -884,7 +890,8 @@ class TestModel extends Component {
               model: that.props.modelId,
               user: that.props.userId,
               project: that.props.projectId,
-              updateModel: that.modelo.toJSON()
+              updateModel: that.modelo.toJSON(),
+              version: that.state.version
             });
           });
         }
@@ -932,7 +939,8 @@ class TestModel extends Component {
         user: this.props.userId,
         project: this.props.projectId,
         updateModel: this.modelo.toJSON(),
-        log: newComment
+        log: newComment,
+        version: this.state.version
       });
 
       //modelo.fromJSON(this.state.json);
@@ -1011,7 +1019,8 @@ class TestModel extends Component {
         user: that.props.userId,
         project: that.props.projectId,
         updateModel: that.modelo.toJSON(),
-        log: newComment
+        log: newComment,
+        version: that.state.version
       });
       wnd.destroy();
     });
@@ -1151,7 +1160,8 @@ class TestModel extends Component {
         model: that.props.modelId,
         user: that.props.userId,
         project: that.props.projectId,
-        updateModel: that.modelo.toJSON()
+        updateModel: that.modelo.toJSON(),
+        version: that.state.version
       });
       wnd.destroy();
     });
@@ -1313,7 +1323,8 @@ class TestModel extends Component {
         model: that.props.modelId,
         user: that.props.userId,
         project: that.props.projectId,
-        updateModel: that.modelo.toJSON()
+        updateModel: that.modelo.toJSON(),
+        version: that.state.version
       });
       wnd.destroy();
     });
@@ -1441,7 +1452,8 @@ class TestModel extends Component {
         model: that.props.modelId,
         user: that.props.userId,
         project: that.props.projectId,
-        updateModel: that.modelo.toJSON()
+        updateModel: that.modelo.toJSON(),
+        version: that.state.version
       });
       wnd.destroy();
     });
@@ -1542,7 +1554,8 @@ class TestModel extends Component {
         model: that.props.modelId,
         user: that.props.userId,
         project: that.props.projectId,
-        updateModel: that.modelo.toJSON()
+        updateModel: that.modelo.toJSON(),
+        version: that.state.version
       });
       wnd.destroy();
     });
@@ -1632,7 +1645,8 @@ class TestModel extends Component {
         model: that.props.modelId,
         user: that.props.userId,
         project: that.props.projectId,
-        updateModel: that.modelo.toJSON()
+        updateModel: that.modelo.toJSON(),
+        version: that.state.version
       });
       wnd.destroy();
     });
@@ -1729,7 +1743,8 @@ class TestModel extends Component {
         model: that.props.modelId,
         user: that.props.userId,
         project: that.props.projectId,
-        updateModel: that.modelo.toJSON()
+        updateModel: that.modelo.toJSON(),
+        version: that.state.version
       });
 
       wnd.destroy();
@@ -1835,7 +1850,8 @@ class TestModel extends Component {
         user: that.props.userId,
         project: that.props.projectId,
         updateModel: that.modelo.toJSON(),
-        log: newComment
+        log: newComment,
+        version: that.state.version
       });
       wnd.destroy();
       return conn1;
@@ -1936,7 +1952,8 @@ class TestModel extends Component {
         user: that.props.userId,
         project: that.props.projectId,
         updateModel: that.modelo.toJSON(),
-        log: newComment
+        log: newComment,
+        version: that.state.version
       });
       wnd.destroy();
     });
@@ -2040,7 +2057,8 @@ class TestModel extends Component {
         model: that.props.modelId,
         user: that.props.userId,
         project: that.props.projectId,
-        updateModel: that.modelo.toJSON()
+        updateModel: that.modelo.toJSON(),
+        version: that.state.version
       });
       wnd.destroy();
     });
@@ -2139,7 +2157,8 @@ class TestModel extends Component {
         model: that.props.modelId,
         user: that.props.userId,
         project: that.props.projectId,
-        updateModel: that.modelo.toJSON()
+        updateModel: that.modelo.toJSON(),
+        version: that.state.version
       });
       wnd.destroy();
     });
@@ -2233,7 +2252,8 @@ class TestModel extends Component {
         model: that.props.modelId,
         user: that.props.userId,
         project: that.props.projectId,
-        updateModel: that.modelo.toJSON()
+        updateModel: that.modelo.toJSON(),
+        version: that.state.version
       });
       wnd.destroy();
     });
@@ -2353,7 +2373,8 @@ class TestModel extends Component {
         model: that.props.modelId,
         user: that.props.userId,
         project: that.props.projectId,
-        updateModel: that.modelo.toJSON()
+        updateModel: that.modelo.toJSON(),
+        version: that.state.version
       });
       wnd.destroy();
     });
