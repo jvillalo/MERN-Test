@@ -11,7 +11,7 @@ import Inheritance from "./Classes/Inheritance";
 import Subtype from "./Classes/Subtype";
 import Supertype from "./Classes/Supertype";
 import socketIOClient from "socket.io-client";
-import properties from "./images/properties.gif"
+import properties from "./images/properties.gif";
 import "./common.css";
 import "./mxgraph.css";
 import { Link } from "react-router-dom";
@@ -68,7 +68,8 @@ class TestModel extends Component {
       currentNode: null,
       currentTask: "",
       reload: false,
-      selectedCell: 0
+      selectedCell: 0,
+      version: 0
     };
 
     this.loadGraph = this.loadGraph.bind(this);
@@ -95,9 +96,11 @@ class TestModel extends Component {
       if (this.graph.getSelectionCell()) {
         selected = this.graph.getSelectionCell().getId();
       }
+      alert("model received");
       this.setState({
-        json: msg,
-        selectedCell: selected
+        json: msg.json,
+        selectedCell: selected,
+        version: msg.version
       });
 
       this.reload();
@@ -129,24 +132,22 @@ class TestModel extends Component {
 
     mxEvent.disableContextMenu(container);
     this.setGraphSetting(this.graph, this.modelo);
-    var btn1 = mxUtils.button('+', function()
-    {
+    var btn1 = mxUtils.button("+", function() {
       that.graph.zoomIn();
     });
-    btn1.style.position = 'absolute';
-    btn1.style.marginLeft = '0px';
-    btn1.style.top='30px'
+    btn1.style.position = "absolute";
+    btn1.style.marginLeft = "0px";
+    btn1.style.top = "30px";
     document.body.appendChild(btn1);
-    var btn2 = mxUtils.button('-', function()
-    {
+    var btn2 = mxUtils.button("-", function() {
       that.graph.zoomOut();
-    })
+    });
 
-    btn2.style.position = 'absolute';
-    btn2. style.marginLeft = '10px';
-    btn2.style.top='30px'
+    btn2.style.position = "absolute";
+    btn2.style.marginLeft = "10px";
+    btn2.style.top = "30px";
     document.body.appendChild(btn2);
-   
+
     this.paint(this.graph);
 
     //modelo.works();
@@ -173,7 +174,7 @@ class TestModel extends Component {
     graph.setCellsEditable(true);
     graph.setEnabled(that.props.editAuthorized);
     graph.graphHandler.setRemoveCellsFromParent(false);
-    graph.setAllowDanglingEdges(false)
+    graph.setAllowDanglingEdges(false);
     graph.setDisconnectOnMove(false);
     graph.foldingEnabled = true;
     graph.recursiveResize = true;
@@ -184,9 +185,9 @@ class TestModel extends Component {
 
     graph.isPart = function(cell) {
       var state = this.view.getState(cell);
-      var style = (state != null) ? state.style : this.getCellStyle(cell);
+      var style = state != null ? state.style : this.getCellStyle(cell);
 
-      return style['constituent'] == '1';
+      return style["constituent"] == "1";
     };
 
     // Redirects selection to parent
@@ -198,87 +199,84 @@ class TestModel extends Component {
       mxGraph.prototype.selectCellForEvent.apply(this, arguments);
     };
 
-
-    mxConnectionHandler.prototype.isConnectableCell = function(cell)
-    {
-      if (cell!=null){
+    mxConnectionHandler.prototype.isConnectableCell = function(cell) {
+      if (cell != null) {
         var cellId = cell.getId();
         //alert(cellId)
-        if(that.modelo.getObjectById(cellId)){
-        var style = that.modelo.getObjectById(cellId).kind;
-        
-        if (style == 'entity'||style == 'connection'||style == 'inheritance') {
-          return true;
-        }else{ 
-          return false;
+        if (that.modelo.getObjectById(cellId)) {
+          var style = that.modelo.getObjectById(cellId).kind;
+
+          if (
+            style == "entity" ||
+            style == "connection" ||
+            style == "inheritance"
+          ) {
+            return true;
+          } else {
+            return false;
+          }
         }
-      }}
+      }
     };
-    mxConnectionHandler.prototype.isValidTarget = function(cell)
-    {
-      
-      if (cell!=null){
-       
+    mxConnectionHandler.prototype.isValidTarget = function(cell) {
+      if (cell != null) {
         var cellId = cell.getId();
         var style = that.modelo.getObjectById(cellId).kind;
-        
-        if (style == 'entity'||style == 'connection'||style == 'inheritance') {
-          
+
+        if (
+          style == "entity" ||
+          style == "connection" ||
+          style == "inheritance"
+        ) {
           return true;
-        }else{
-          
+        } else {
           return false;
         }
       }
     };
 
-
-    mxConnectionHandler.prototype.connect = function(source, target, evt, dropTarget)
-    {
-
-      if (target!=null){
+    mxConnectionHandler.prototype.connect = function(
+      source,
+      target,
+      evt,
+      dropTarget
+    ) {
+      if (target != null) {
         var cellId = source.getId();
-        var src=that.modelo.getObjectById(cellId);
+        var src = that.modelo.getObjectById(cellId);
         var style = src.kind;
         var cellId2 = target.getId();
-        var trg=that.modelo.getObjectById(cellId2);
+        var trg = that.modelo.getObjectById(cellId2);
         var styletrg = trg.kind;
 
-        if (that.modelo.getLevelById(source.getParent().getId())==that.modelo.getLevelById(target.getParent().getId())) {
-          if (style == 'entity' && styletrg == 'connection'){
-            that.connectTo(source,trg);
-          }else{
-            if (style == 'entity' && styletrg == 'inheritance'){
-
-              that.subtype(source,'subtype',trg);
-            }else{
-              if (style == 'inheritance' && styletrg == 'entity'){
-                that.subtype(target,'supertype',src);
-              }else{
-                if (style == 'connection' && styletrg == 'entity'){
-                  that.connectTo(target,src);
-
-                }else{
-
-                    if (style == 'entity' && styletrg == 'entity'){
-                      alert("dsdsd")
-                      that.newQuickConnection(cellId,src,trg)
-                    }
-
+        if (
+          that.modelo.getLevelById(source.getParent().getId()) ==
+          that.modelo.getLevelById(target.getParent().getId())
+        ) {
+          if (style == "entity" && styletrg == "connection") {
+            that.connectTo(source, trg);
+          } else {
+            if (style == "entity" && styletrg == "inheritance") {
+              that.subtype(source, "subtype", trg);
+            } else {
+              if (style == "inheritance" && styletrg == "entity") {
+                that.subtype(target, "supertype", src);
+              } else {
+                if (style == "connection" && styletrg == "entity") {
+                  that.connectTo(target, src);
+                } else {
+                  if (style == "entity" && styletrg == "entity") {
+                    alert("dsdsd");
+                    that.newQuickConnection(cellId, src, trg);
+                  }
                 }
               }
             }
           }
-        }else{
-          
+        } else {
         }
       }
     };
-
-
-
-
-
 
     graph.setHtmlLabels(true);
 
@@ -475,28 +473,21 @@ class TestModel extends Component {
       });
     });
 
-    
-
-    
-
     graph.addListener(mxEvent.CELLS_RESIZED, function(sender, evt) {
-      if(graph.getSelectionCell()){
-      that.setState({ selectedCell: graph.getSelectionCell().getId() });
+      if (graph.getSelectionCell()) {
+        that.setState({ selectedCell: graph.getSelectionCell().getId() });
       }
       that.modelo.updatePosition();
 
       //this.setState({ json: modelo.toJSON(), reload: true });
-      
+
       that.props.socket.emit("modelupdate", {
         model: that.props.modelId,
         user: that.props.userId,
         project: that.props.projectId,
         updateModel: that.modelo.toJSON()
       });
-      
     });
-
-
   }
 
   createPopupMenu(graph, menu, cell, evt, model) {
@@ -509,62 +500,52 @@ class TestModel extends Component {
     background.style.background = "black";
     mxUtils.setOpacity(background, 50);
     document.body.appendChild(background);
-    
-    background.addEventListener('click', function(evt) {
+
+    background.addEventListener("click", function(evt) {
       mxEffects.fadeOut(background, 50, true, 10, 30, true);
-      menu.hideMenu()
+      menu.hideMenu();
     });
-    
+
     const that = this;
     if (cell) {
       var container = ReactDOM.findDOMNode(this.refs.divGraph);
-      container.overflow="hidden";
+      container.overflow = "hidden";
       var cellId = cell.getId();
-			if (cellId == 2) {
-				menu.addItem('New Level', properties, function () {
-          
+      if (cellId == 2) {
+        menu.addItem("New Level", properties, function() {
           that.newLevel();
           mxEffects.fadeOut(background, 50, true, 10, 30, true);
-				});
-				menu.addItem('New Level (At position 0)', properties, function () {
+        });
+        menu.addItem("New Level (At position 0)", properties, function() {
           that.newLevel(0);
           mxEffects.fadeOut(background, 50, true, 10, 30, true);
-				});
+        });
+      } else {
+        var style = that.modelo.getObjectById(cellId).kind;
 
-				
-
-
-			}else {
-				var style = that.modelo.getObjectById(cellId).kind;
-
-
-				if (style == 'level') {
-
-
-					menu.addItem('New Entity', properties, function () {
+        if (style == "level") {
+          menu.addItem("New Entity", properties, function() {
             that.newEntity();
             mxEffects.fadeOut(background, 50, true, 10, 30, true);
-
-					});
-					menu.addItem('New Connection', properties, function () {
+          });
+          menu.addItem("New Connection", properties, function() {
             that.newConnection();
             mxEffects.fadeOut(background, 50, true, 10, 30, true);
-					});
-					menu.addItem('New Inheritance', properties, function () {
+          });
+          menu.addItem("New Inheritance", properties, function() {
             that.newInheritance();
             mxEffects.fadeOut(background, 50, true, 10, 30, true);
-					});
+          });
 
-					var lvl=that.modelo.getObjectById(cellId).levelno;
+          var lvl = that.modelo.getObjectById(cellId).levelno;
 
-					if (lvl==that.modelo.levels.length-1) {
-						menu.addItem('Delete', properties, function () {
-
-							//var cell = graph.getSelectionCells();
-							//var id = cell[0].getId();
+          if (lvl == that.modelo.levels.length - 1) {
+            menu.addItem("Delete", properties, function() {
+              //var cell = graph.getSelectionCells();
+              //var id = cell[0].getId();
               mxEffects.fadeOut(background, 50, true, 10, 30, true);
               that.modelo.updatePosition();
-							that.modelo.remove(cellId);
+              that.modelo.remove(cellId);
               that.modelo.build();
               that.props.socket.emit("modelupdate", {
                 model: that.props.modelId,
@@ -572,22 +553,21 @@ class TestModel extends Component {
                 project: that.props.projectId,
                 updateModel: that.modelo.toJSON()
               });
-						});
-					}
-				}
+            });
+          }
+        }
 
-				if (style == 'connection') {
-					menu.addItem('Properties', properties, function () {
-
+        if (style == "connection") {
+          menu.addItem("Properties", properties, function() {
             that.editConnection();
             mxEffects.fadeOut(background, 50, true, 10, 30, true);
-					});
-					menu.addItem('Delete', properties, function () {
+          });
+          menu.addItem("Delete", properties, function() {
             mxEffects.fadeOut(background, 50, true, 10, 30, true);
-						//var cell = graph.getSelectionCells();
-						//var id = cell[0].getId();
-						that.modelo.updatePosition();
-						that.modelo.remove(cellId);
+            //var cell = graph.getSelectionCells();
+            //var id = cell[0].getId();
+            that.modelo.updatePosition();
+            that.modelo.remove(cellId);
             that.modelo.build();
             that.props.socket.emit("modelupdate", {
               model: that.props.modelId,
@@ -595,26 +575,21 @@ class TestModel extends Component {
               project: that.props.projectId,
               updateModel: that.modelo.toJSON()
             });
-					});
+          });
+        }
 
-
-				}
-
-
-				if (style == 'inheritance') {
-					menu.addItem('Properties', properties, function () {
-
+        if (style == "inheritance") {
+          menu.addItem("Properties", properties, function() {
             that.editInheritance();
             mxEffects.fadeOut(background, 50, true, 10, 30, true);
-					});
+          });
 
-					menu.addItem('Delete', properties, function () {
-
-						//var cell = graph.getSelectionCells();
+          menu.addItem("Delete", properties, function() {
+            //var cell = graph.getSelectionCells();
             //var id = cell[0].getId();
             mxEffects.fadeOut(background, 50, true, 10, 30, true);
-						that.modelo.updatePosition();
-						that.modelo.remove(cellId);
+            that.modelo.updatePosition();
+            that.modelo.remove(cellId);
             that.modelo.build();
             that.props.socket.emit("modelupdate", {
               model: that.props.modelId,
@@ -622,24 +597,21 @@ class TestModel extends Component {
               project: that.props.projectId,
               updateModel: that.modelo.toJSON()
             });
-					});
+          });
+        }
 
-
-				}
-
-				if (style == 'subtype') {
-					menu.addItem('Properties', properties, function () {
-
+        if (style == "subtype") {
+          menu.addItem("Properties", properties, function() {
             that.showProperties();
             mxEffects.fadeOut(background, 50, true, 10, 30, true);
-					});
+          });
 
-					menu.addItem('Delete', properties, function () {
+          menu.addItem("Delete", properties, function() {
             mxEffects.fadeOut(background, 50, true, 10, 30, true);
-						//var cell = graph.getSelectionCells();
-						//var id = cell[0].getId();
-						that.modelo.updatePosition();
-						that.modelo.remove(cellId);
+            //var cell = graph.getSelectionCells();
+            //var id = cell[0].getId();
+            that.modelo.updatePosition();
+            that.modelo.remove(cellId);
             that.modelo.build();
             that.props.socket.emit("modelupdate", {
               model: that.props.modelId,
@@ -647,201 +619,266 @@ class TestModel extends Component {
               project: that.props.projectId,
               updateModel: that.modelo.toJSON()
             });
-					});
+          });
+        }
 
-
-				}
-
-
-				if (style == 'entity') {
-					menu.addItem('Properties', properties, function () {
-
+        if (style == "entity") {
+          menu.addItem("Properties", properties, function() {
             that.editEntity();
             mxEffects.fadeOut(background, 50, true, 10, 30, true);
-					});
-					menu.addItem('New Attribute', properties, function () {
+          });
+          menu.addItem("New Attribute", properties, function() {
             that.addNewAttribute();
             mxEffects.fadeOut(background, 50, true, 10, 30, true);
-					});
-					menu.addItem('New Method', properties, function () {
+          });
+          menu.addItem("New Method", properties, function() {
             that.addNewMethod();
             mxEffects.fadeOut(background, 50, true, 10, 30, true);
-					});
+          });
 
-
-					menu.addItem('Connect to ->', properties, function () {
-            that.connectTo(cell);
-            mxEffects.fadeOut(background, 50, true, 10, 30, true);
-					}, null, null, true);
-
-					menu.addItem('Supertype ->', properties, function () {
-            that.subtype(cell, 'supertype');
-            mxEffects.fadeOut(background, 50, true, 10, 30, true);
-					}, null, null, true);
-
-					menu.addItem('Subtype ->', properties, function () {
-            that.subtype(cell, 'subtype');
-            mxEffects.fadeOut(background, 50, true, 10, 30, true);
-					}, null, null, true);
-
-					var ent = that.modelo.getObjectById(cellId);
-					if ((ent.levelNo < (that.modelo.levels.length - 1))) {
-						menu.addItem('Instantiate v', properties, function () {
-
-
-              that.instEntity();
+          menu.addItem(
+            "Connect to ->",
+            properties,
+            function() {
+              that.connectTo(cell);
               mxEffects.fadeOut(background, 50, true, 10, 30, true);
-						}, null, null, true);
-					}
+            },
+            null,
+            null,
+            true
+          );
 
-					if (ent.levelNo > 0) {
-						menu.addItem('Upstantiate ^', properties, function () {
+          menu.addItem(
+            "Supertype ->",
+            properties,
+            function() {
+              that.subtype(cell, "supertype");
               mxEffects.fadeOut(background, 50, true, 10, 30, true);
-              var found = false;
-							for (let k = 0; k < that.modelo.levels[ent.levelNo - 1].entities.length; k++) {
-								if (that.modelo.levels[ent.levelNo - 1].entities[k].name == ent.directType) {
+            },
+            null,
+            null,
+            true
+          );
 
+          menu.addItem(
+            "Subtype ->",
+            properties,
+            function() {
+              that.subtype(cell, "subtype");
+              mxEffects.fadeOut(background, 50, true, 10, 30, true);
+            },
+            null,
+            null,
+            true
+          );
 
-									found = true;
-									break;
-								}
-
-							}
-							if (!found) {
-								that.upEntity();
-							} else {
-								alert("This entity already has a parent");
-							}
-						}, null, null, true);
-
-					}
-
-
-					if (ent.directType == '') {
-						if (true) {
-							menu.addItem('Increase Potency', properties, function () {
-
-
-								var j, k, z, l;
-								var found = true;
-								var dt = ent.name;
-								z = ent.potency;
-								ent.potency++;
-
-								var list1 = [], list2 = [];
-								list1.push(dt);
-
-								for (j = ent.levelNo + 1; j < that.modelo.levels.length; j++) {
-									found = false;
-									for (l = 0; l < list1.length; l++) {
-
-										for (k = 0; k < that.modelo.levels[j].entities.length; k++) {
-											if (that.modelo.levels[j].entities[k].directType == list1[l]) {
-												that.modelo.levels[j].entities[k].potency = z;
-												list2.push(that.modelo.levels[j].entities[k].name);
-
-												found = true;
-											}
-										}
-
-
-									}
-
-									z--;
-									if (found) {
-										var list1 = Array.from(list2);
-									}
-								}
-
-								that.modelo.updatePosition();
-								that.modelo.build();
-
-							}, null, null, true);
-						}
-					}
-
-
-					var found = false;
-					if (ent.levelNo < that.modelo.levels.length - 1) {
-						for (let k = 0; k < that.modelo.levels[ent.levelNo + 1].entities.length; k++) {
-							if (that.modelo.levels[ent.levelNo + 1].entities[k].directType == ent.name) {
-
-
-								found = true;
-								break;
-							}
-
-						}
-					}
-					if (!found) {
-						if (ent.potency > 0) {
-							menu.addItem('Decrease Potency', properties, function () {
+          var ent = that.modelo.getObjectById(cellId);
+          if (ent.levelNo < that.modelo.levels.length - 1) {
+            menu.addItem(
+              "Instantiate v",
+              properties,
+              function() {
+                that.instEntity();
                 mxEffects.fadeOut(background, 50, true, 10, 30, true);
+              },
+              null,
+              null,
+              true
+            );
+          }
 
-								var j, k, z, l;
-								var found = true;
-								var dt = ent.directType;
-								var nm = ent.name;
-								var entTop;
-								//ent.potency--;
-								//z=ent.potency;
+          if (ent.levelNo > 0) {
+            menu.addItem(
+              "Upstantiate ^",
+              properties,
+              function() {
+                mxEffects.fadeOut(background, 50, true, 10, 30, true);
+                var found = false;
+                for (
+                  let k = 0;
+                  k < that.modelo.levels[ent.levelNo - 1].entities.length;
+                  k++
+                ) {
+                  if (
+                    that.modelo.levels[ent.levelNo - 1].entities[k].name ==
+                    ent.directType
+                  ) {
+                    found = true;
+                    break;
+                  }
+                }
+                if (!found) {
+                  that.upEntity();
+                } else {
+                  alert("This entity already has a parent");
+                }
+              },
+              null,
+              null,
+              true
+            );
+          }
 
-								for (j = ent.levelNo; j >= 0; j--) {
-									for (k = 0; k < that.modelo.levels[j].entities.length; k++) {
-										if (that.modelo.levels[j].entities[k].name == nm) {
-											if (that.modelo.levels[j].entities[k].directType != '') {
-												nm = that.modelo.levels[j].entities[k].directType;
-											} else {
-												entTop = that.modelo.levels[j].entities[k];
-												break;
-											}
-										}
-									}
-								}
+          if (ent.directType == "") {
+            if (true) {
+              menu.addItem(
+                "Increase Potency",
+                properties,
+                function() {
+                  var j, k, z, l;
+                  var found = true;
+                  var dt = ent.name;
+                  z = ent.potency;
+                  ent.potency++;
 
+                  var list1 = [],
+                    list2 = [];
+                  list1.push(dt);
 
-								var list1 = [], list2 = [];
-								list1.push(entTop.name);
-								entTop.potency--;
-								for (j = entTop.levelNo + 1; j < that.modelo.levels.length; j++) {
-									found = false;
-									for (l = 0; l < list1.length; l++) {
+                  for (
+                    j = ent.levelNo + 1;
+                    j < that.modelo.levels.length;
+                    j++
+                  ) {
+                    found = false;
+                    for (l = 0; l < list1.length; l++) {
+                      for (
+                        k = 0;
+                        k < that.modelo.levels[j].entities.length;
+                        k++
+                      ) {
+                        if (
+                          that.modelo.levels[j].entities[k].directType ==
+                          list1[l]
+                        ) {
+                          that.modelo.levels[j].entities[k].potency = z;
+                          list2.push(that.modelo.levels[j].entities[k].name);
 
-										for (k = 0; k < that.modelo.levels[j].entities.length; k++) {
-											if (that.modelo.levels[j].entities[k].directType == list1[l]) {
-												that.modelo.levels[j].entities[k].potency--;
-												list2.push(that.modelo.levels[j].entities[k].name);
+                          found = true;
+                        }
+                      }
+                    }
 
-												found = true;
-											}
-										}
+                    z--;
+                    if (found) {
+                      var list1 = Array.from(list2);
+                    }
+                  }
 
+                  that.modelo.updatePosition();
+                  that.modelo.build();
+                },
+                null,
+                null,
+                true
+              );
+            }
+          }
 
-									}
+          var found = false;
+          if (ent.levelNo < that.modelo.levels.length - 1) {
+            for (
+              let k = 0;
+              k < that.modelo.levels[ent.levelNo + 1].entities.length;
+              k++
+            ) {
+              if (
+                that.modelo.levels[ent.levelNo + 1].entities[k].directType ==
+                ent.name
+              ) {
+                found = true;
+                break;
+              }
+            }
+          }
+          if (!found) {
+            if (ent.potency > 0) {
+              menu.addItem(
+                "Decrease Potency",
+                properties,
+                function() {
+                  mxEffects.fadeOut(background, 50, true, 10, 30, true);
 
+                  var j, k, z, l;
+                  var found = true;
+                  var dt = ent.directType;
+                  var nm = ent.name;
+                  var entTop;
+                  //ent.potency--;
+                  //z=ent.potency;
 
-									if (found) {
-										var list1 = Array.from(list2);
-									} else {
-										break;
-									}
-								}
+                  for (j = ent.levelNo; j >= 0; j--) {
+                    for (
+                      k = 0;
+                      k < that.modelo.levels[j].entities.length;
+                      k++
+                    ) {
+                      if (that.modelo.levels[j].entities[k].name == nm) {
+                        if (
+                          that.modelo.levels[j].entities[k].directType != ""
+                        ) {
+                          nm = that.modelo.levels[j].entities[k].directType;
+                        } else {
+                          entTop = that.modelo.levels[j].entities[k];
+                          break;
+                        }
+                      }
+                    }
+                  }
 
-								that.modelo.updatePosition();
-								that.modelo.build();
+                  var list1 = [],
+                    list2 = [];
+                  list1.push(entTop.name);
+                  entTop.potency--;
+                  for (
+                    j = entTop.levelNo + 1;
+                    j < that.modelo.levels.length;
+                    j++
+                  ) {
+                    found = false;
+                    for (l = 0; l < list1.length; l++) {
+                      for (
+                        k = 0;
+                        k < that.modelo.levels[j].entities.length;
+                        k++
+                      ) {
+                        if (
+                          that.modelo.levels[j].entities[k].directType ==
+                          list1[l]
+                        ) {
+                          that.modelo.levels[j].entities[k].potency--;
+                          list2.push(that.modelo.levels[j].entities[k].name);
 
-							}, null, null, true);
-						}
-					} else {
-						//alert("This entity already has a parent");
-					}
+                          found = true;
+                        }
+                      }
+                    }
 
-					menu.addItem('Delete', properties, function () {
+                    if (found) {
+                      var list1 = Array.from(list2);
+                    } else {
+                      break;
+                    }
+                  }
+
+                  that.modelo.updatePosition();
+                  that.modelo.build();
+                },
+                null,
+                null,
+                true
+              );
+            }
+          } else {
+            //alert("This entity already has a parent");
+          }
+
+          menu.addItem("Delete", properties, function() {
             mxEffects.fadeOut(background, 50, true, 10, 30, true);
-						//var cell = graph.getSelectionCells();
-						//var id = cell[0].getId();
-						that.modelo.updatePosition();
-						that.modelo.remove(cellId);
+            //var cell = graph.getSelectionCells();
+            //var id = cell[0].getId();
+            that.modelo.updatePosition();
+            that.modelo.remove(cellId);
             that.modelo.build();
             that.props.socket.emit("modelupdate", {
               model: that.props.modelId,
@@ -849,16 +886,11 @@ class TestModel extends Component {
               project: that.props.projectId,
               updateModel: that.modelo.toJSON()
             });
-					});
-				}
-
-
-			}
-		} else {
-
-
-
-		}
+          });
+        }
+      }
+    } else {
+    }
   }
   newLevel(where) {
     // Creates a form for the user object inside
@@ -888,11 +920,19 @@ class TestModel extends Component {
       //this.setState({ json: modelo.toJSON(), reload: true });
 
       //this.socket.emit("modelupdate", this.modelo.toJSON());
+      var newComment = {
+        text: "New Level created",
+        name: this.props.userName,
+        user: this.props.userId,
+        date: Date.now()
+      };
+
       this.props.socket.emit("modelupdate", {
         model: this.props.modelId,
         user: this.props.userId,
         project: this.props.projectId,
-        updateModel: this.modelo.toJSON()
+        updateModel: this.modelo.toJSON(),
+        log: newComment
       });
 
       //modelo.fromJSON(this.state.json);
@@ -913,7 +953,7 @@ class TestModel extends Component {
 
     var parent = this.graph.getDefaultParent();
 
-    wnd = this.showModalWindow("New Level", form.table, 240, 240,true,true);
+    wnd = this.showModalWindow("New Level", form.table, 240, 240, true, true);
   }
 
   reload = () => {
@@ -959,11 +999,19 @@ class TestModel extends Component {
       that.modelo.updatePosition();
       that.modelo.levels[idInModel].addEntity(entity1);
       //that.socket.emit("modelupdate", that.modelo.toJSON());
+      var newComment = {
+        text: "New Entity created",
+        name: that.props.userName,
+        user: that.props.userId,
+        date: Date.now()
+      };
+
       that.props.socket.emit("modelupdate", {
         model: that.props.modelId,
         user: that.props.userId,
         project: that.props.projectId,
-        updateModel: that.modelo.toJSON()
+        updateModel: that.modelo.toJSON(),
+        log: newComment
       });
       wnd.destroy();
     });
@@ -1017,73 +1065,88 @@ class TestModel extends Component {
     wnd.setVisible(true);
   };
 
-  upEntity=()=>{
-const that=this
-		var testw=document.createElement('div');
-		testw.style.position = 'absolute';
-		testw.style.overflow = 'hidden';
-		//outline.style.left = '60px';
-		testw.style.top = '0px';
-		testw.style.left = '0px';
-		testw.style.width = '200px';
-		testw.style.height = '500px';
-		var wnd=null;
-		//var countryList=document.createElement("select");
-		//var countryOption = new Option ("jjjj", "jjj");
-		//countryList.options.add (countryOption);
-		var nameField = document.createElement("input");
+  upEntity = () => {
+    const that = this;
+    var testw = document.createElement("div");
+    testw.style.position = "absolute";
+    testw.style.overflow = "hidden";
+    //outline.style.left = '60px';
+    testw.style.top = "0px";
+    testw.style.left = "0px";
+    testw.style.width = "200px";
+    testw.style.height = "500px";
+    var wnd = null;
+    //var countryList=document.createElement("select");
+    //var countryOption = new Option ("jjjj", "jjj");
+    //countryList.options.add (countryOption);
+    var nameField = document.createElement("input");
 
+    var okbutton = mxUtils.button("ok", function(evt) {
+      //entity1.styleText=('image='+imageField.value);
+      //alert(""+entity1.styleText);
+      var cell = that.graph.getSelectionCells();
+      var entId = cell[0].getId();
+      var ent = that.modelo.getObjectById(entId);
+      var found = false;
+      //if((ent.levelNo<(modelo.levels.length-1))){
+      //if(ent.potency>0){
+      //var entity1 = new Entity(nameField.value,(ent.potency-1),ent.name,ent.styleText);
+      //}else{
+      for (
+        let k = 0;
+        k < that.modelo.levels[ent.levelNo - 1].entities.length;
+        k++
+      ) {
+        if (
+          that.modelo.levels[ent.levelNo - 1].entities[k].name == ent.directType
+        ) {
+          found = true;
+          break;
+        }
+      }
 
+      if (!found) {
+        var entity1 = new Entity(
+          nameField.value,
+          ent.potency + 1,
+          "",
+          ent.styleText
+        );
+        ent.directType = entity1.name;
 
+        var i;
+        for (i = 0; i < ent.attributes.length; i++) {
+          if (ent.attributes[i].durability > 0) {
+            var att1 = new Attribute(
+              ent.attributes[i].name,
+              ent.attributes[i].type,
+              ent.attributes[i].value,
+              ent.attributes[i].durability - 1,
+              ent.attributes[i].mutability
+            );
+            entity1.addAttribute(att1);
+          }
+        }
+        for (i = 0; i < ent.methods.length; i++) {
+          if (ent.methods[i].durability > 0) {
+            var mtd1 = new Method(
+              ent.methods[i].name,
+              ent.methods[i].signature,
+              ent.methods[i].body,
+              ent.methods[i].durability - 1
+            );
+            entity1.addMethod(mtd1);
+          }
+        }
 
-		var okbutton = mxUtils.button('ok', function(evt) {
+        that.modelo.updatePosition();
+        that.modelo.levels[ent.levelNo - 1].addEntity(entity1);
 
-			//entity1.styleText=('image='+imageField.value);
-			//alert(""+entity1.styleText);
-			var cell = that.graph.getSelectionCells();
-			var entId = cell[0].getId();
-			var ent = that.modelo.getObjectById(entId);
-			var found=false;
-			//if((ent.levelNo<(modelo.levels.length-1))){
-			//if(ent.potency>0){
-			//var entity1 = new Entity(nameField.value,(ent.potency-1),ent.name,ent.styleText);
-			//}else{
-			for(let k=0;k<that.modelo.levels[ent.levelNo-1].entities.length;k++){
-				if(that.modelo.levels[ent.levelNo-1].entities[k].name==ent.directType){
+        that.modelo.build();
+      } else {
+        alert("This entity already has a parent on the deeper level");
+      }
 
-					found=true;
-					break;
-
-				}
-
-			}
-
-			if (!found){
-				var entity1 = new Entity(nameField.value,(ent.potency+1),"",ent.styleText);
-				ent.directType=entity1.name;
-
-				var i;
-				for(i=0;i<ent.attributes.length;i++){
-					if (ent.attributes[i].durability>0){
-						var att1 = new Attribute(ent.attributes[i].name,ent.attributes[i].type,ent.attributes[i].value,(ent.attributes[i].durability-1), ent.attributes[i].mutability);
-						entity1.addAttribute(att1);
-					}
-				}
-				for(i=0;i<ent.methods.length;i++){
-					if (ent.methods[i].durability>0){
-						var mtd1 = new Method(ent.methods[i].name, ent.methods[i].signature,ent.methods[i].body,(ent.methods[i].durability-1));
-						entity1.addMethod(mtd1);
-					}
-				}
-
-
-				that.modelo.updatePosition();
-				that.modelo.levels[(ent.levelNo-1)].addEntity(entity1);
-
-				that.modelo.build();
-			}else{
-				alert("This entity already has a parent on the deeper level");
-			}
       that.props.socket.emit("modelupdate", {
         model: that.props.modelId,
         user: that.props.userId,
@@ -1091,233 +1154,221 @@ const that=this
         updateModel: that.modelo.toJSON()
       });
       wnd.destroy();
+    });
+    var cancelButton = mxUtils.button("cancel", function(evt) {
+      wnd.destroy();
+    });
 
+    testw.appendChild(document.createTextNode("Name: "));
+    testw.appendChild(nameField);
+    testw.appendChild(document.createElement("br"));
+    testw.appendChild(okbutton);
+    testw.appendChild(cancelButton);
+    var x = Math.max(0, document.body.scrollWidth / 2 - 200 / 2);
+    var y = Math.max(
+      10,
+      (document.body.scrollHeight || document.documentElement.scrollHeight) /
+        2 -
+        (200 * 2) / 3
+    );
+    wnd = new mxWindow("New Entity", testw, x, y, 200, 200, true, true);
+    wnd.setMaximizable(false);
+    wnd.setMinimizable(false);
+    wnd.setResizable(true);
+    wnd.setVisible(true);
+    wnd.setResizable(false);
 
-		});
-		var cancelButton = mxUtils.button('cancel', function(evt) {
-			wnd.destroy();
-		});
+    var background = document.createElement("div");
+    background.style.position = "absolute";
+    background.style.left = "0px";
+    background.style.top = "0px";
+    background.style.right = "0px";
+    background.style.bottom = "0px";
+    background.style.background = "black";
+    mxUtils.setOpacity(background, 50);
+    document.body.appendChild(background);
 
-		testw.appendChild(document.createTextNode("Name: "));
-		testw.appendChild(nameField);
-		testw.appendChild(document.createElement("br"));
-		testw.appendChild(okbutton);
-		testw.appendChild(cancelButton);
-		var x = Math.max(0, document.body.scrollWidth / 2 - 200 / 2);
-		var y = Math.max(10, (document.body.scrollHeight ||
-				document.documentElement.scrollHeight) / 2 - 200 * 2 / 3);
-		wnd = new mxWindow('New Entity', testw, x, y, 200, 200, true, true);
-		wnd.setMaximizable(false);
-		wnd.setMinimizable(false);
-		wnd.setResizable(true);
-		wnd.setVisible(true);
-		wnd.setResizable(false);
+    // Fades the background out after after the window has been closed
+    wnd.addListener(mxEvent.DESTROY, function(evt) {
+      mxEffects.fadeOut(background, 50, true, 10, 30, true);
+    });
 
+    wnd.setVisible(true);
+  };
 
-		var background = document.createElement('div');
-		background.style.position = 'absolute';
-		background.style.left = '0px';
-		background.style.top = '0px';
-		background.style.right = '0px';
-		background.style.bottom = '0px';
-		background.style.background = 'black';
-		mxUtils.setOpacity(background, 50);
-		document.body.appendChild(background);
+  instEntity = () => {
+    const that = this;
+    var testw = document.createElement("div");
+    testw.style.position = "absolute";
+    testw.style.overflow = "hidden";
+    //outline.style.left = '60px';
+    testw.style.top = "0px";
+    testw.style.left = "0px";
+    testw.style.width = "200px";
+    testw.style.height = "500px";
+    var wnd = null;
+    //var countryList=document.createElement("select");
+    //var countryOption = new Option ("jjjj", "jjj");
+    //countryList.options.add (countryOption);
+    var nameField = document.createElement("input");
 
+    var okbutton = mxUtils.button("ok", function(evt) {
+      //entity1.styleText=('image='+imageField.value);
+      //alert(""+entity1.styleText);
+      var cell = that.graph.getSelectionCells();
+      var entId = cell[0].getId();
+      var ent = that.modelo.getObjectById(entId);
 
+      //if((ent.levelNo<(modelo.levels.length-1))){
+      //if(ent.potency>0){
+      //var entity1 = new Entity(nameField.value,(ent.potency-1),ent.name,ent.styleText);
+      //}else{
+      if (ent.potency > 0) {
+        var entity1 = new Entity(
+          nameField.value,
+          ent.potency - 1,
+          ent.name,
+          ent.styleText
+        );
+      } else {
+        var entity1 = new Entity(nameField.value, 0, ent.name, ent.styleText);
 
-		// Fades the background out after after the window has been closed
-		wnd.addListener(mxEvent.DESTROY, function(evt) {
-			mxEffects.fadeOut(background, 50, true,
-					10, 30, true);
-		});
+        //entity1.potency++;
+        var j, k, z, l;
+        var found = true;
+        var dt = entity1.directType;
+        z = entity1.potency;
+        for (j = ent.levelNo; j >= 0; j--) {
+          if (!found) {
+            z--;
+            break;
+          }
+          found = false;
+          z++;
+          for (k = 0; k < that.modelo.levels[j].entities.length; k++) {
+            if (that.modelo.levels[j].entities[k].name == dt) {
+              that.modelo.levels[j].entities[k].potency = z;
+              if (that.modelo.levels[j].entities[k].directType != "") {
+                dt = that.modelo.levels[j].entities[k].directType;
+              }
+              found = true;
+            }
+          }
+        }
 
-		wnd.setVisible(true);
+        var list1 = [],
+          list2 = [];
+        list1.push(dt);
+        //alert(""+dt);
+        for (j = 0; j < that.modelo.levels.length; j++) {
+          found = false;
+          for (l = 0; l < list1.length; l++) {
+            for (k = 0; k < that.modelo.levels[j].entities.length; k++) {
+              if (that.modelo.levels[j].entities[k].directType == list1[l]) {
+                that.modelo.levels[j].entities[k].potency = z;
+                list2.push(that.modelo.levels[j].entities[k].name);
 
-	};
+                found = true;
+              }
+            }
+          }
 
+          z--;
+          if (found) {
+            var list1 = Array.from(list2);
+          }
+        }
+      }
 
+      var i;
+      for (i = 0; i < ent.attributes.length; i++) {
+        if (ent.attributes[i].durability > 0) {
+          var att1 = new Attribute(
+            ent.attributes[i].name,
+            ent.attributes[i].type,
+            ent.attributes[i].value,
+            ent.attributes[i].durability - 1,
+            ent.attributes[i].mutability
+          );
+          entity1.addAttribute(att1);
+        }
+      }
+      for (i = 0; i < ent.methods.length; i++) {
+        if (ent.methods[i].durability > 0) {
+          var mtd1 = new Method(
+            ent.methods[i].name,
+            ent.methods[i].signature,
+            ent.methods[i].body,
+            ent.methods[i].durability - 1
+          );
+          entity1.addMethod(mtd1);
+        }
+      }
 
+      that.modelo.updatePosition();
+      that.modelo.levels[ent.levelNo + 1].addEntity(entity1);
 
-
-   instEntity=()=>{
-const that=this
-		var testw=document.createElement('div');
-		testw.style.position = 'absolute';
-		testw.style.overflow = 'hidden';
-		//outline.style.left = '60px';
-		testw.style.top = '0px';
-		testw.style.left = '0px';
-		testw.style.width = '200px';
-		testw.style.height = '500px';
-		var wnd=null;
-		//var countryList=document.createElement("select");
-		//var countryOption = new Option ("jjjj", "jjj");
-		//countryList.options.add (countryOption);
-		var nameField = document.createElement("input");
-
-
-
-
-		var okbutton = mxUtils.button('ok', function(evt) {
-
-			//entity1.styleText=('image='+imageField.value);
-			//alert(""+entity1.styleText);
-			var cell = that.graph.getSelectionCells();
-			var entId = cell[0].getId();
-			var ent = that.modelo.getObjectById(entId);
-
-			//if((ent.levelNo<(modelo.levels.length-1))){
-			//if(ent.potency>0){
-			//var entity1 = new Entity(nameField.value,(ent.potency-1),ent.name,ent.styleText);
-			//}else{
-			if(ent.potency>0){
-				var entity1 = new Entity(nameField.value,(ent.potency-1),ent.name,ent.styleText);
-			}else{
-				var entity1 = new Entity(nameField.value,0,ent.name,ent.styleText);
-
-
-				//entity1.potency++;
-				var j,k,z,l;
-				var found=true;
-				var dt=entity1.directType;
-				z=entity1.potency;
-				for (j=(ent.levelNo);j>=0;j--){
-					if (!found){
-						z--;
-						break;
-
-					}
-					found=false;
-					z++;
-					for(k=0;k<that.modelo.levels[j].entities.length;k++){
-						if(that.modelo.levels[j].entities[k].name==dt){
-							that.modelo.levels[j].entities[k].potency=z;
-							if(that.modelo.levels[j].entities[k].directType!=""){
-								dt=that.modelo.levels[j].entities[k].directType;
-							}
-							found=true;
-
-						}
-
-					}
-				}
-
-
-				var list1=[],list2=[];
-				list1.push(dt);
-				//alert(""+dt);
-				for (j=0;j<that.modelo.levels.length;j++){
-					found=false;
-					for (l=0;l<list1.length;l++){
-
-						for(k=0;k<that.modelo.levels[j].entities.length;k++){
-							if(that.modelo.levels[j].entities[k].directType==list1[l]){
-								that.modelo.levels[j].entities[k].potency=z;
-								list2.push(that.modelo.levels[j].entities[k].name);
-
-								found=true;
-							}
-						}
-
-
-					}
-
-					z--;
-					if(found){
-						var list1 = Array.from(list2);
-					}
-				}
-
-
-			}
-
-
-			var i;
-			for(i=0;i<ent.attributes.length;i++){
-				if (ent.attributes[i].durability>0){
-					var att1 = new Attribute(ent.attributes[i].name,ent.attributes[i].type,ent.attributes[i].value,(ent.attributes[i].durability-1), ent.attributes[i].mutability);
-					entity1.addAttribute(att1);
-				}
-			}
-			for(i=0;i<ent.methods.length;i++){
-				if (ent.methods[i].durability>0){
-					var mtd1 = new Method(ent.methods[i].name, ent.methods[i].signature,ent.methods[i].body,(ent.methods[i].durability-1));
-					entity1.addMethod(mtd1);
-				}
-			}
-
-
-			that.modelo.updatePosition();
-			that.modelo.levels[(ent.levelNo+1)].addEntity(entity1);
-
-			that.modelo.build();
+      that.modelo.build();
       that.props.socket.emit("modelupdate", {
         model: that.props.modelId,
         user: that.props.userId,
         project: that.props.projectId,
         updateModel: that.modelo.toJSON()
       });
-			wnd.destroy();
+      wnd.destroy();
+    });
+    var cancelButton = mxUtils.button("cancel", function(evt) {
+      wnd.destroy();
+    });
 
+    testw.appendChild(document.createTextNode("Name: "));
+    testw.appendChild(nameField);
+    testw.appendChild(document.createElement("br"));
+    testw.appendChild(okbutton);
+    testw.appendChild(cancelButton);
+    var x = Math.max(0, document.body.scrollWidth / 2 - 200 / 2);
+    var y = Math.max(
+      10,
+      (document.body.scrollHeight || document.documentElement.scrollHeight) /
+        2 -
+        (200 * 2) / 3
+    );
+    wnd = new mxWindow("New Entity", testw, x, y, 200, 200, true, true);
+    wnd.setMaximizable(false);
+    wnd.setMinimizable(false);
+    wnd.setResizable(true);
+    wnd.setVisible(true);
+    wnd.setResizable(false);
 
-		});
-		var cancelButton = mxUtils.button('cancel', function(evt) {
-			wnd.destroy();
-		});
+    var background = document.createElement("div");
+    background.style.position = "absolute";
+    background.style.left = "0px";
+    background.style.top = "0px";
+    background.style.right = "0px";
+    background.style.bottom = "0px";
+    background.style.background = "black";
+    mxUtils.setOpacity(background, 50);
+    document.body.appendChild(background);
 
-		testw.appendChild(document.createTextNode("Name: "));
-		testw.appendChild(nameField);
-		testw.appendChild(document.createElement("br"));
-		testw.appendChild(okbutton);
-		testw.appendChild(cancelButton);
-		var x = Math.max(0, document.body.scrollWidth / 2 - 200 / 2);
-		var y = Math.max(10, (document.body.scrollHeight ||
-				document.documentElement.scrollHeight) / 2 - 200 * 2 / 3);
-		wnd = new mxWindow('New Entity', testw, x, y, 200, 200, true, true);
-		wnd.setMaximizable(false);
-		wnd.setMinimizable(false);
-		wnd.setResizable(true);
-		wnd.setVisible(true);
-		wnd.setResizable(false);
+    // Fades the background out after after the window has been closed
+    wnd.addListener(mxEvent.DESTROY, function(evt) {
+      mxEffects.fadeOut(background, 50, true, 10, 30, true);
+    });
 
+    wnd.setVisible(true);
+  };
 
-		var background = document.createElement('div');
-		background.style.position = 'absolute';
-		background.style.left = '0px';
-		background.style.top = '0px';
-		background.style.right = '0px';
-		background.style.bottom = '0px';
-		background.style.background = 'black';
-		mxUtils.setOpacity(background, 50);
-		document.body.appendChild(background);
-
-
-
-		// Fades the background out after after the window has been closed
-		wnd.addListener(mxEvent.DESTROY, function(evt) {
-			mxEffects.fadeOut(background, 50, true,
-					10, 30, true);
-		});
-
-		wnd.setVisible(true);
-
-	};
-
-
-
-
-  addNewAttribute=()=>{
-const that=this
-    var testw=document.createElement('div');
-    testw.style.position = 'absolute';
-    testw.style.overflow = 'hidden';
+  addNewAttribute = () => {
+    const that = this;
+    var testw = document.createElement("div");
+    testw.style.position = "absolute";
+    testw.style.overflow = "hidden";
     //outline.style.left = '60px';
-    testw.style.top = '0px';
-    testw.style.left = '0px';
-    testw.style.width = '200px';
-    testw.style.height = '500px';
-    var wnd=null;
+    testw.style.top = "0px";
+    testw.style.left = "0px";
+    testw.style.width = "200px";
+    testw.style.height = "500px";
+    var wnd = null;
     //var countryList=document.createElement("select");
     //var countryOption = new Option ("jjjj", "jjj");
     //countryList.options.add (countryOption);
@@ -1327,63 +1378,61 @@ const that=this
     var durabilityField = document.createElement("input");
     var mutabilityField = document.createElement("input");
 
-
-
-
-    var okbutton = mxUtils.button('ok', function(evt) {
-
-
-      var att1 = new Attribute(nameField.value,typeField.value,valueField.value,durabilityField.value, mutabilityField.value);
+    var okbutton = mxUtils.button("ok", function(evt) {
+      var att1 = new Attribute(
+        nameField.value,
+        typeField.value,
+        valueField.value,
+        durabilityField.value,
+        mutabilityField.value
+      );
       var cell = that.graph.getSelectionCells();
-
 
       var entityId = cell[0].getId();
       var parentEntity = that.modelo.getEntityById(entityId);
 
-
-
       that.modelo.updatePosition();
       parentEntity.addAttribute(att1);
-      var j,k,z,l;
-      var found=true;
-      var dt=parentEntity.directType;
-      z=durabilityField.value;
-      y=mutabilityField.value;
-      var list1=[],list2=[];
+      var j, k, z, l;
+      var found = true;
+      var dt = parentEntity.directType;
+      z = durabilityField.value;
+      y = mutabilityField.value;
+      var list1 = [],
+        list2 = [];
       list1.push(dt);
 
-      for (j=0;j<that.modelo.levels.length;j++){
-        found=false;
-        for (l=0;l<list1.length;l++){
-
-          for(k=0;k<that.modelo.levels[j].entities.length;k++){
-            if(that.modelo.levels[j].entities[k].directType==list1[l]){
-              var att = new Attribute(nameField.value,typeField.value,valueField.value,z,y);
-              if(att.durability>=0&&j>parentEntity.levelNo){
+      for (j = 0; j < that.modelo.levels.length; j++) {
+        found = false;
+        for (l = 0; l < list1.length; l++) {
+          for (k = 0; k < that.modelo.levels[j].entities.length; k++) {
+            if (that.modelo.levels[j].entities[k].directType == list1[l]) {
+              var att = new Attribute(
+                nameField.value,
+                typeField.value,
+                valueField.value,
+                z,
+                y
+              );
+              if (att.durability >= 0 && j > parentEntity.levelNo) {
                 that.modelo.levels[j].entities[k].addAttribute(att);
-                if(att.mutability<0){
-                  att.mutability=0;
+                if (att.mutability < 0) {
+                  att.mutability = 0;
                 }
               }
 
               list2.push(that.modelo.levels[j].entities[k].name);
-              found=true;
+              found = true;
             }
           }
-
-
         }
 
         z--;
         y--;
-        if(found){
+        if (found) {
           var list1 = Array.from(list2);
         }
       }
-
-
-
-
 
       //var idInModel=modelo.getLevelById(levelId);
       //modelo.levels[idInModel].addEntity(entity1);
@@ -1395,9 +1444,8 @@ const that=this
         updateModel: that.modelo.toJSON()
       });
       wnd.destroy();
-
     });
-    var cancelButton = mxUtils.button('cancel', function(evt) {
+    var cancelButton = mxUtils.button("cancel", function(evt) {
       wnd.destroy();
     });
 
@@ -1419,163 +1467,142 @@ const that=this
     testw.appendChild(okbutton);
     testw.appendChild(cancelButton);
     var x = Math.max(0, document.body.scrollWidth / 2 - 200 / 2);
-    var y = Math.max(10, (document.body.scrollHeight ||
-        document.documentElement.scrollHeight) / 2 - 200 * 2 / 3);
-    wnd = new mxWindow('New Attribute', testw, x, y, 200, 200, true, true);
+    var y = Math.max(
+      10,
+      (document.body.scrollHeight || document.documentElement.scrollHeight) /
+        2 -
+        (200 * 2) / 3
+    );
+    wnd = new mxWindow("New Attribute", testw, x, y, 200, 200, true, true);
     wnd.setMaximizable(false);
     wnd.setMinimizable(false);
     wnd.setResizable(true);
     wnd.setVisible(true);
     wnd.setResizable(false);
 
-
-    var background = document.createElement('div');
-    background.style.position = 'absolute';
-    background.style.left = '0px';
-    background.style.top = '0px';
-    background.style.right = '0px';
-    background.style.bottom = '0px';
-    background.style.background = 'black';
+    var background = document.createElement("div");
+    background.style.position = "absolute";
+    background.style.left = "0px";
+    background.style.top = "0px";
+    background.style.right = "0px";
+    background.style.bottom = "0px";
+    background.style.background = "black";
     mxUtils.setOpacity(background, 50);
     document.body.appendChild(background);
 
-
-
     // Fades the background out after after the window has been closed
     wnd.addListener(mxEvent.DESTROY, function(evt) {
-      mxEffects.fadeOut(background, 50, true,
-          10, 30, true);
+      mxEffects.fadeOut(background, 50, true, 10, 30, true);
     });
 
     wnd.setVisible(true);
+  };
 
+  subtype = (cell, role, trg) => {
+    const that = this;
 
+    var testw = document.createElement("div");
+    testw.style.position = "absolute";
+    testw.style.overflow = "hidden";
+    //outline.style.left = '60px';
+    testw.style.top = "0px";
+    testw.style.left = "0px";
+    testw.style.width = "200px";
+    testw.style.height = "500px";
+    var wnd = null;
+    //var countryList=document.createElement("select");
+    //var countryOption = new Option ("jjjj", "jjj");
+    //countryList.options.add (countryOption);
+    var subtsList = document.createElement("select");
+    var levelId = cell.getParent().getId();
+    var idInModel = that.modelo.getLevelById(levelId);
+    var subts = that.modelo.levels[idInModel].inheritances;
+    var i;
 
-  }
+    for (i = 0; i < subts.length; i++) {
+      var subtp = subts[i];
+      subtsList.options.add(new Option("   " + subtp.name + "  ", i));
+    }
 
+    var nameField = document.createElement("input");
 
-   subtype=(cell,role,trg)=> {
-const that=this
+    var okbutton = mxUtils.button("ok", function(evt) {
+      var entityId = cell.getId();
+      var entity = that.modelo.getEntityById(entityId);
+      var target = trg;
 
-		var testw=document.createElement('div');
-		testw.style.position = 'absolute';
-		testw.style.overflow = 'hidden';
-		//outline.style.left = '60px';
-		testw.style.top = '0px';
-		testw.style.left = '0px';
-		testw.style.width = '200px';
-		testw.style.height = '500px';
-		var wnd=null;
-		//var countryList=document.createElement("select");
-		//var countryOption = new Option ("jjjj", "jjj");
-		//countryList.options.add (countryOption);
-		var subtsList=document.createElement("select");
-		var levelId = cell.getParent().getId();
-		var idInModel = that.modelo.getLevelById(levelId);
-		var subts = that.modelo.levels[idInModel].inheritances;
-		var i;
-
-		for (i = 0; i < subts.length; i++) {
-
-			var subtp = subts[i];
-			subtsList.options.add(new Option (("   "+subtp.name+"  "),i));
-
-
-
-		}
-
-
-
-		var nameField = document.createElement("input");
-
-
-
-
-		var okbutton = mxUtils.button('ok', function(evt) {
-
-
-			var entityId = cell.getId();
-			var entity = that.modelo.getEntityById(entityId);
-			var target=trg;
-
-			if (trg==null){
-				target=subts[subtsList.value];
-			}
-			var sub1 = new Subtype(nameField.value, entity, target,role);
-			that.modelo.updatePosition();
-			that.modelo.levels[idInModel].addSubtype(sub1);
-			that.modelo.build();
+      if (trg == null) {
+        target = subts[subtsList.value];
+      }
+      var sub1 = new Subtype(nameField.value, entity, target, role);
+      that.modelo.updatePosition();
+      that.modelo.levels[idInModel].addSubtype(sub1);
+      that.modelo.build();
       that.props.socket.emit("modelupdate", {
         model: that.props.modelId,
         user: that.props.userId,
         project: that.props.projectId,
         updateModel: that.modelo.toJSON()
       });
-			wnd.destroy();
+      wnd.destroy();
+    });
+    var cancelButton = mxUtils.button("cancel", function(evt) {
+      wnd.destroy();
+    });
 
-		});
-		var cancelButton = mxUtils.button('cancel', function(evt) {
-			wnd.destroy();
-		});
+    testw.appendChild(document.createTextNode("Name: "));
+    testw.appendChild(nameField);
+    testw.appendChild(document.createElement("br"));
+    if (trg == null) {
+      testw.appendChild(document.createTextNode("Inheritance: "));
+      testw.appendChild(subtsList);
+      testw.appendChild(document.createElement("br"));
+    }
+    testw.appendChild(okbutton);
+    testw.appendChild(cancelButton);
+    var x = Math.max(0, document.body.scrollWidth / 2 - 200 / 2);
+    var y = Math.max(
+      10,
+      (document.body.scrollHeight || document.documentElement.scrollHeight) /
+        2 -
+        (200 * 2) / 3
+    );
+    wnd = new mxWindow("Connect to", testw, x, y, 200, 200, true, true);
+    wnd.setMaximizable(false);
+    wnd.setMinimizable(false);
+    wnd.setResizable(true);
+    wnd.setVisible(true);
+    wnd.setResizable(false);
 
-		testw.appendChild(document.createTextNode("Name: "));
-		testw.appendChild(nameField);
-		testw.appendChild(document.createElement("br"));
-		if (trg==null){
-			testw.appendChild(document.createTextNode("Inheritance: "));
-			testw.appendChild(subtsList);
-			testw.appendChild(document.createElement("br"));
-		}
-		testw.appendChild(okbutton);
-		testw.appendChild(cancelButton);
-		var x = Math.max(0, document.body.scrollWidth / 2 - 200 / 2);
-		var y = Math.max(10, (document.body.scrollHeight ||
-				document.documentElement.scrollHeight) / 2 - 200 * 2 / 3);
-		wnd = new mxWindow('Connect to', testw, x, y, 200, 200, true, true);
-		wnd.setMaximizable(false);
-		wnd.setMinimizable(false);
-		wnd.setResizable(true);
-		wnd.setVisible(true);
-		wnd.setResizable(false);
+    var background = document.createElement("div");
+    background.style.position = "absolute";
+    background.style.left = "0px";
+    background.style.top = "0px";
+    background.style.right = "0px";
+    background.style.bottom = "0px";
+    background.style.background = "black";
+    mxUtils.setOpacity(background, 50);
+    document.body.appendChild(background);
 
+    // Fades the background out after after the window has been closed
+    wnd.addListener(mxEvent.DESTROY, function(evt) {
+      mxEffects.fadeOut(background, 50, true, 10, 30, true);
+    });
 
-		var background = document.createElement('div');
-		background.style.position = 'absolute';
-		background.style.left = '0px';
-		background.style.top = '0px';
-		background.style.right = '0px';
-		background.style.bottom = '0px';
-		background.style.background = 'black';
-		mxUtils.setOpacity(background, 50);
-		document.body.appendChild(background);
+    wnd.setVisible(true);
+  };
 
-
-
-		// Fades the background out after after the window has been closed
-		wnd.addListener(mxEvent.DESTROY, function(evt) {
-			mxEffects.fadeOut(background, 50, true,
-					10, 30, true);
-		});
-
-		wnd.setVisible(true);
-
-
-	};
-  
-  
-  
-  addNewMethod=()=>{
-
-const that=this
-    var testw=document.createElement('div');
-    testw.style.position = 'absolute';
-    testw.style.overflow = 'hidden';
+  addNewMethod = () => {
+    const that = this;
+    var testw = document.createElement("div");
+    testw.style.position = "absolute";
+    testw.style.overflow = "hidden";
     //outline.style.left = '60px';
-    testw.style.top = '0px';
-    testw.style.left = '0px';
-    testw.style.width = '200px';
-    testw.style.height = '500px';
-    var wnd=null;
+    testw.style.top = "0px";
+    testw.style.left = "0px";
+    testw.style.width = "200px";
+    testw.style.height = "500px";
+    var wnd = null;
     //var countryList=document.createElement("select");
     //var countryOption = new Option ("jjjj", "jjj");
     //countryList.options.add (countryOption);
@@ -1584,17 +1611,15 @@ const that=this
     var bodyField = document.createElement("input");
     var durabilityField = document.createElement("input");
 
-
-
-
-
-    var okbutton = mxUtils.button('ok', function(evt) {
-
-
-     var mtd1 = new Method(nameField.value, signatureField.value,bodyField.value,durabilityField.value);
+    var okbutton = mxUtils.button("ok", function(evt) {
+      var mtd1 = new Method(
+        nameField.value,
+        signatureField.value,
+        bodyField.value,
+        durabilityField.value
+      );
 
       var cell = that.graph.getSelectionCells();
-
 
       var entityId = cell[0].getId();
       var parentEntity = that.modelo.getEntityById(entityId);
@@ -1610,9 +1635,8 @@ const that=this
         updateModel: that.modelo.toJSON()
       });
       wnd.destroy();
-
     });
-    var cancelButton = mxUtils.button('cancel', function(evt) {
+    var cancelButton = mxUtils.button("cancel", function(evt) {
       wnd.destroy();
     });
 
@@ -1631,82 +1655,76 @@ const that=this
     testw.appendChild(okbutton);
     testw.appendChild(cancelButton);
     var x = Math.max(0, document.body.scrollWidth / 2 - 200 / 2);
-    var y = Math.max(10, (document.body.scrollHeight ||
-        document.documentElement.scrollHeight) / 2 - 200 * 2 / 3);
-    wnd = new mxWindow('New Attribute', testw, x, y, 200, 200, true, true);
+    var y = Math.max(
+      10,
+      (document.body.scrollHeight || document.documentElement.scrollHeight) /
+        2 -
+        (200 * 2) / 3
+    );
+    wnd = new mxWindow("New Attribute", testw, x, y, 200, 200, true, true);
     wnd.setMaximizable(false);
     wnd.setMinimizable(false);
     wnd.setResizable(true);
     wnd.setVisible(true);
     wnd.setResizable(false);
 
-
-    var background = document.createElement('div');
-    background.style.position = 'absolute';
-    background.style.left = '0px';
-    background.style.top = '0px';
-    background.style.right = '0px';
-    background.style.bottom = '0px';
-    background.style.background = 'black';
+    var background = document.createElement("div");
+    background.style.position = "absolute";
+    background.style.left = "0px";
+    background.style.top = "0px";
+    background.style.right = "0px";
+    background.style.bottom = "0px";
+    background.style.background = "black";
     mxUtils.setOpacity(background, 50);
     document.body.appendChild(background);
 
-
-
     // Fades the background out after after the window has been closed
     wnd.addListener(mxEvent.DESTROY, function(evt) {
-      mxEffects.fadeOut(background, 50, true,
-          10, 30, true);
+      mxEffects.fadeOut(background, 50, true, 10, 30, true);
     });
 
     wnd.setVisible(true);
+  };
 
+  newQuickConnection = (idInModel, entity1, entity2) => {
+    const that = this;
+    var testw = document.createElement("div");
+    testw.style.position = "absolute";
+    testw.style.overflow = "hidden";
+    //outline.style.left = '60px';
+    testw.style.top = "0px";
+    testw.style.left = "0px";
+    testw.style.width = "200px";
+    testw.style.height = "500px";
+    var wnd = null;
+    //var countryList=document.createElement("select");
+    //var countryOption = new Option ("jjjj", "jjj");
+    //countryList.options.add (countryOption);
+    var nameField = document.createElement("input");
+    var labelField = document.createElement("input");
+    var potencyField = document.createElement("input");
+    var directTypeField = document.createElement("input");
 
+    var okbutton = mxUtils.button("ok", function(evt) {
+      var conn1 = new Connection(
+        nameField.value,
+        potencyField.value,
+        directTypeField.value,
+        labelField.value
+      );
+      var cell = that.graph.getSelectionCells();
 
-
-  }
-  
-   newQuickConnection=(idInModel,entity1,entity2)=> {
-    const that=this
-    var testw=document.createElement('div');
-		testw.style.position = 'absolute';
-		testw.style.overflow = 'hidden';
-		//outline.style.left = '60px';
-		testw.style.top = '0px';
-		testw.style.left = '0px';
-		testw.style.width = '200px';
-		testw.style.height = '500px';
-		var wnd=null;
-		//var countryList=document.createElement("select");
-		//var countryOption = new Option ("jjjj", "jjj");
-		//countryList.options.add (countryOption);
-		var nameField = document.createElement("input");
-		var labelField = document.createElement("input");
-		var potencyField = document.createElement("input");
-		var directTypeField = document.createElement("input");
-
-
-
-		var okbutton = mxUtils.button('ok', function(evt) {
-
-			var conn1 = new Connection(nameField.value,potencyField.value,directTypeField.value,labelField.value);
-			var cell = that.graph.getSelectionCells();
-
-
-			var levelId = entity1.levelNo;
-      alert(levelId)
-			that.modelo.updatePosition();
-			that.modelo.levels[levelId].addConnection(conn1);
-			let end1 = new ConnectionEnd("", entity1, conn1,"",1,1,1);
-			that.modelo.levels[levelId].addConnectionEnd(end1);
-			let end2 = new ConnectionEnd("", entity2, conn1,"",1,1,1);
-			that.modelo.levels[levelId].addConnectionEnd(end2);
-
-
-
+      var levelId = entity1.levelNo;
+      alert(levelId);
+      that.modelo.updatePosition();
+      that.modelo.levels[levelId].addConnection(conn1);
+      let end1 = new ConnectionEnd("", entity1, conn1, "", 1, 1, 1);
+      that.modelo.levels[levelId].addConnectionEnd(end1);
+      let end2 = new ConnectionEnd("", entity2, conn1, "", 1, 1, 1);
+      that.modelo.levels[levelId].addConnectionEnd(end2);
 
       that.modelo.build();
-      
+
       that.props.socket.emit("modelupdate", {
         model: that.props.modelId,
         user: that.props.userId,
@@ -1714,70 +1732,60 @@ const that=this
         updateModel: that.modelo.toJSON()
       });
 
+      wnd.destroy();
 
+      return conn1;
+    });
+    var cancelButton = mxUtils.button("cancel", function(evt) {
+      wnd.destroy();
+    });
 
-			wnd.destroy();
+    testw.appendChild(document.createTextNode("Name: "));
+    testw.appendChild(nameField);
+    testw.appendChild(document.createElement("br"));
+    testw.appendChild(document.createTextNode("Label: "));
+    testw.appendChild(labelField);
+    testw.appendChild(document.createElement("br"));
+    testw.appendChild(document.createTextNode("Potency: "));
+    testw.appendChild(potencyField);
+    testw.appendChild(document.createElement("br"));
+    testw.appendChild(document.createTextNode("Direct type: "));
+    testw.appendChild(directTypeField);
+    testw.appendChild(document.createElement("br"));
+    testw.appendChild(okbutton);
+    testw.appendChild(cancelButton);
+    var x = Math.max(0, document.body.scrollWidth / 2 - 200 / 2);
+    var y = Math.max(
+      10,
+      (document.body.scrollHeight || document.documentElement.scrollHeight) /
+        2 -
+        (200 * 2) / 3
+    );
+    wnd = new mxWindow("New Connection", testw, x, y, 200, 200, true, true);
+    wnd.setMaximizable(false);
+    wnd.setMinimizable(false);
+    wnd.setResizable(true);
+    wnd.setVisible(true);
+    wnd.setResizable(false);
 
+    var background = document.createElement("div");
+    background.style.position = "absolute";
+    background.style.left = "0px";
+    background.style.top = "0px";
+    background.style.right = "0px";
+    background.style.bottom = "0px";
+    background.style.background = "black";
+    mxUtils.setOpacity(background, 50);
+    document.body.appendChild(background);
 
+    // Fades the background out after after the window has been closed
+    wnd.addListener(mxEvent.DESTROY, function(evt) {
+      mxEffects.fadeOut(background, 50, true, 10, 30, true);
+    });
 
+    wnd.setVisible(true);
+  };
 
-			return conn1;
-
-		});
-		var cancelButton = mxUtils.button('cancel', function(evt) {
-			wnd.destroy();
-		});
-
-		testw.appendChild(document.createTextNode("Name: "));
-		testw.appendChild(nameField);
-		testw.appendChild(document.createElement("br"));
-		testw.appendChild(document.createTextNode("Label: "));
-		testw.appendChild(labelField);
-		testw.appendChild(document.createElement("br"));
-		testw.appendChild(document.createTextNode("Potency: "));
-		testw.appendChild(potencyField);
-		testw.appendChild(document.createElement("br"));
-		testw.appendChild(document.createTextNode("Direct type: "));
-		testw.appendChild(directTypeField);
-		testw.appendChild(document.createElement("br"));
-		testw.appendChild(okbutton);
-		testw.appendChild(cancelButton);
-		var x = Math.max(0, document.body.scrollWidth / 2 - 200 / 2);
-		var y = Math.max(10, (document.body.scrollHeight ||
-				document.documentElement.scrollHeight) / 2 - 200 * 2 / 3);
-		wnd = new mxWindow('New Connection', testw, x, y, 200, 200, true, true);
-		wnd.setMaximizable(false);
-		wnd.setMinimizable(false);
-		wnd.setResizable(true);
-		wnd.setVisible(true);
-		wnd.setResizable(false);
-
-
-		var background = document.createElement('div');
-		background.style.position = 'absolute';
-		background.style.left = '0px';
-		background.style.top = '0px';
-		background.style.right = '0px';
-		background.style.bottom = '0px';
-		background.style.background = 'black';
-		mxUtils.setOpacity(background, 50);
-		document.body.appendChild(background);
-
-
-
-		// Fades the background out after after the window has been closed
-		wnd.addListener(mxEvent.DESTROY, function(evt) {
-			mxEffects.fadeOut(background, 50, true,
-					10, 30, true);
-		});
-
-		wnd.setVisible(true);
-	};
-
-
-
-
-  
   newConnection = () => {
     const that = this;
     var testw = document.createElement("div");
@@ -1814,11 +1822,20 @@ const that=this
       that.modelo.updatePosition();
       that.modelo.levels[idInModel].addConnection(conn1);
       that.modelo.build();
+
+      var newComment = {
+        text: "New Connection created",
+        name: that.props.userName,
+        user: that.props.userId,
+        date: Date.now()
+      };
+
       that.props.socket.emit("modelupdate", {
         model: that.props.modelId,
         user: that.props.userId,
         project: that.props.projectId,
-        updateModel: that.modelo.toJSON()
+        updateModel: that.modelo.toJSON(),
+        log: newComment
       });
       wnd.destroy();
       return conn1;
@@ -1873,604 +1890,596 @@ const that=this
     wnd.setVisible(true);
   };
 
- 
-  newInheritance=()=> {
+  newInheritance = () => {
     const that = this;
-		var testw=document.createElement('div');
-		testw.style.position = 'absolute';
-		testw.style.overflow = 'hidden';
-		//outline.style.left = '60px';
-		testw.style.top = '0px';
-		testw.style.left = '0px';
-		testw.style.width = '200px';
-		testw.style.height = '500px';
-		var wnd=null;
-		//var countryList=document.createElement("select");
-		//var countryOption = new Option ("jjjj", "jjj");
-		//countryList.options.add (countryOption);
-		var nameField = document.createElement("input");
-		var completeField = document.createElement("input");
-		var disjointField = document.createElement("input");
-
-
-
-
-		var okbutton = mxUtils.button('ok', function(evt) {
-
-			let inh1 = new Inheritance(nameField.value,completeField.value,disjointField.value);
-
-			//entity1.styleText=('image='+imageField.value);
-			//alert(""+entity1.styleText);
-			var cell = that.graph.getSelectionCells();
-			var levelId = cell[0].getId();
-			var idInModel = that.modelo.getLevelById(levelId);
-			that.modelo.updatePosition();
-			that.modelo.levels[idInModel].addInheritance(inh1);
-      that.modelo.build();
-      that.props.socket.emit("modelupdate", {
-        model: that.props.modelId,
-        user: that.props.userId,
-        project: that.props.projectId,
-        updateModel: that.modelo.toJSON()
-      });
-			wnd.destroy();
-
-		});
-		var cancelButton = mxUtils.button('cancel', function(evt) {
-			wnd.destroy();
-		});
-
-		testw.appendChild(document.createTextNode("Name: "));
-		testw.appendChild(nameField);
-		testw.appendChild(document.createElement("br"));
-		testw.appendChild(document.createTextNode("Complete: "));
-		testw.appendChild(completeField);
-		testw.appendChild(document.createElement("br"));
-		testw.appendChild(document.createTextNode("Disjoint: "));
-		testw.appendChild(disjointField);
-		testw.appendChild(document.createElement("br"));
-
-		testw.appendChild(okbutton);
-		testw.appendChild(cancelButton);
-		var x = Math.max(0, document.body.scrollWidth / 2 - 200 / 2);
-		var y = Math.max(10, (document.body.scrollHeight ||
-				document.documentElement.scrollHeight) / 2 - 200 * 2 / 3);
-		wnd = new mxWindow('New Inheritance', testw, x, y, 200, 200, true, true);
-		wnd.setMaximizable(false);
-		wnd.setMinimizable(false);
-		wnd.setResizable(true);
-		wnd.setVisible(true);
-		wnd.setResizable(false);
-
-
-		var background = document.createElement('div');
-		background.style.position = 'absolute';
-		background.style.left = '0px';
-		background.style.top = '0px';
-		background.style.right = '0px';
-		background.style.bottom = '0px';
-		background.style.background = 'black';
-		mxUtils.setOpacity(background, 50);
-		document.body.appendChild(background);
-
-
-
-		// Fades the background out after after the window has been closed
-		wnd.addListener(mxEvent.DESTROY, function(evt) {
-			mxEffects.fadeOut(background, 50, true,
-					10, 30, true);
-		});
-
-		wnd.setVisible(true);
-	};
-
-
-editEntity=()=>{
-  const that = this;
-		var testw=document.createElement('div');
-		testw.style.position = 'absolute';
-		testw.style.overflow = 'hidden';
-		//outline.style.left = '60px';
-		testw.style.top = '0px';
-		testw.style.left = '0px';
-		testw.style.width = '200px';
-		testw.style.height = '500px';
-		var wnd=null;
-		//var countryList=document.createElement("select");
-		//var countryOption = new Option ("jjjj", "jjj");
-		//countryList.options.add (countryOption);
-		var nameField = document.createElement("input");
-		var potencyField = document.createElement("input");
-		var directTypeField = document.createElement("input");
-		var imageField = document.createElement("input");
-
-
-
-		var okbutton = mxUtils.button('ok', function(evt) {
-
-
-
-			//entity1.styleText=('image='+imageField.value);
-			//alert(""+entity1.styleText);
-			var ent=that.modelo.getObjectById(that.graph.getSelectionCells()[0].getId());
-			var pname=ent.name;
-			ent.name=nameField.value;
-			//modelo.getObjectById(graph.getSelectionCells()[0].getId()).potency=potencyField.value;
-			//modelo.getObjectById(graph.getSelectionCells()[0].getId()).directType=directTypeField.value;
-			ent.styleText=imageField.value;
-			if (ent.levelNo<(that.modelo.levels.length-1)){
-				var i;
-				for(i=0;i<that.modelo.levels[ent.levelNo+1].entities.length;i++){
-					if (that.modelo.levels[ent.levelNo+1].entities[i].directType==pname){
-						that.modelo.levels[ent.levelNo+1].entities[i].directType=ent.name;
-					}
-				}
-			}
-
-			that.modelo.updatePosition();
-      that.modelo.build();
-      that.props.socket.emit("modelupdate", {
-        model: that.props.modelId,
-        user: that.props.userId,
-        project: that.props.projectId,
-        updateModel: that.modelo.toJSON()
-      });
-			wnd.destroy();
-
-		});
-		var cancelButton = mxUtils.button('cancel', function(evt) {
-			wnd.destroy();
-		});
-		var entity1 = that.modelo.getObjectById(that.graph.getSelectionCells()[0].getId());
-		testw.appendChild(document.createTextNode("Name: "));
-		nameField.value=entity1.name;
-		testw.appendChild(nameField);
-		//testw.appendChild(document.createElement("br"));
-		//testw.appendChild(document.createTextNode("Potency: "));
-		//potencyField.value=entity1.potency;
-		//testw.appendChild(potencyField);
-		//testw.appendChild(document.createElement("br"));
-		//testw.appendChild(document.createTextNode("Direct type: "));
-		//directTypeField.value=entity1.directType;
-		//testw.appendChild(directTypeField);
-		testw.appendChild(document.createElement("br"));
-		testw.appendChild(document.createTextNode("Image URL: "));
-		imageField.value=entity1.styleText;
-		testw.appendChild(imageField);
-		testw.appendChild(document.createElement("br"));
-		testw.appendChild(okbutton);
-		testw.appendChild(cancelButton);
-		var x = Math.max(0, document.body.scrollWidth / 2 - 200 / 2);
-		var y = Math.max(10, (document.body.scrollHeight ||
-				document.documentElement.scrollHeight) / 2 - 200 * 2 / 3);
-		wnd = new mxWindow(entity1.name, testw, x, y, 200, 200, true, true);
-		wnd.setMaximizable(false);
-		wnd.setMinimizable(false);
-		wnd.setResizable(true);
-		wnd.setVisible(true);
-		wnd.setResizable(false);
-
-
-		var background = document.createElement('div');
-		background.style.position = 'absolute';
-		background.style.left = '0px';
-		background.style.top = '0px';
-		background.style.right = '0px';
-		background.style.bottom = '0px';
-		background.style.background = 'black';
-		mxUtils.setOpacity(background, 50);
-		document.body.appendChild(background);
-
-
-
-		// Fades the background
-		wnd.addListener(mxEvent.DESTROY, function(evt) {
-			mxEffects.fadeOut(background, 50, true,
-					10, 30, true);
-		});
-
-		wnd.setVisible(true);
-
-	};
-
-
-
-
-   editConnection=()=> {
-    const that = this;
-		var testw=document.createElement('div');
-		testw.style.position = 'absolute';
-		testw.style.overflow = 'hidden';
-		//outline.style.left = '60px';
-		testw.style.top = '0px';
-		testw.style.left = '0px';
-		testw.style.width = '200px';
-		testw.style.height = '500px';
-		var wnd=null;
-		//var countryList=document.createElement("select");
-		//var countryOption = new Option ("jjjj", "jjj");
-		//countryList.options.add (countryOption);
-		var nameField = document.createElement("input");
-		var labelField = document.createElement("input");
-		var potencyField = document.createElement("input");
-		var directTypeField = document.createElement("input");
-
-
-
-		var okbutton = mxUtils.button('ok', function(evt) {
-
-
-			that.modelo.getObjectById(that.graph.getSelectionCells()[0].getId()).name=nameField.value;
-			that.modelo.getObjectById(that.graph.getSelectionCells()[0].getId()).label=labelField.value;
-			that.modelo.getObjectById(that.graph.getSelectionCells()[0].getId()).potency=potencyField.value;
-			that.modelo.getObjectById(that.graph.getSelectionCells()[0].getId()).directType=directTypeField.value;
-
-
-			that.modelo.updatePosition();
-      that.modelo.build();
-      that.props.socket.emit("modelupdate", {
-        model: that.props.modelId,
-        user: that.props.userId,
-        project: that.props.projectId,
-        updateModel: that.modelo.toJSON()
-      });
-			wnd.destroy();
-
-		});
-		var cancelButton = mxUtils.button('cancel', function(evt) {
-			wnd.destroy();
-		});
-		let conn1=that.modelo.getObjectById(that.graph.getSelectionCells()[0].getId());
-		testw.appendChild(document.createTextNode("Name: "));
-		nameField.value=conn1.name;
-		testw.appendChild(nameField);
-		testw.appendChild(document.createElement("br"));
-		testw.appendChild(document.createTextNode("Label: "));
-		labelField.value=conn1.label;
-		testw.appendChild(labelField);
-		testw.appendChild(document.createElement("br"));
-		testw.appendChild(document.createTextNode("Potency: "));
-		potencyField.value=conn1.potency;
-		testw.appendChild(potencyField);
-		testw.appendChild(document.createElement("br"));
-		testw.appendChild(document.createTextNode("Direct type: "));
-		directTypeField.value=conn1.directType;
-		testw.appendChild(directTypeField);
-		testw.appendChild(document.createElement("br"));
-		testw.appendChild(okbutton);
-		testw.appendChild(cancelButton);
-		var x = Math.max(0, document.body.scrollWidth / 2 - 200 / 2);
-		var y = Math.max(10, (document.body.scrollHeight ||
-				document.documentElement.scrollHeight) / 2 - 200 * 2 / 3);
-		wnd = new mxWindow(conn1.name, testw, x, y, 200, 200, true, true);
-		wnd.setMaximizable(false);
-		wnd.setMinimizable(false);
-		wnd.setResizable(true);
-		wnd.setVisible(true);
-		wnd.setResizable(false);
-
-
-		var background = document.createElement('div');
-		background.style.position = 'absolute';
-		background.style.left = '0px';
-		background.style.top = '0px';
-		background.style.right = '0px';
-		background.style.bottom = '0px';
-		background.style.background = 'black';
-		mxUtils.setOpacity(background, 50);
-		document.body.appendChild(background);
-
-
-
-		// Fades the background out after after the window has been closed
-		wnd.addListener(mxEvent.DESTROY, function(evt) {
-			mxEffects.fadeOut(background, 50, true,
-					10, 30, true);
-		});
-
-		wnd.setVisible(true);
-	};
-
-
-
-  editInheritance=() =>{
-    const that = this;
-		var testw=document.createElement('div');
-		testw.style.position = 'absolute';
-		testw.style.overflow = 'hidden';
-		//outline.style.left = '60px';
-		testw.style.top = '0px';
-		testw.style.left = '0px';
-		testw.style.width = '200px';
-		testw.style.height = '500px';
-		var wnd=null;
-		//var countryList=document.createElement("select");
-		//var countryOption = new Option ("jjjj", "jjj");
-		//countryList.options.add (countryOption);
-		var nameField = document.createElement("input");
-		var completeField = document.createElement("input");
-		var disjointField = document.createElement("input");
-
-
-
-
-		var okbutton = mxUtils.button('ok', function(evt) {
-			that.modelo.getObjectById(that.graph.getSelectionCells()[0].getId()).name=nameField.value;
-			that.modelo.getObjectById(that.graph.getSelectionCells()[0].getId()).complete=completeField.value;
-			that.modelo.getObjectById(that.graph.getSelectionCells()[0].getId()).disjoint=disjointField.value;
-			that.modelo.updatePosition();
-      that.modelo.build();
-      that.props.socket.emit("modelupdate", {
-        model: that.props.modelId,
-        user: that.props.userId,
-        project: that.props.projectId,
-        updateModel: that.modelo.toJSON()
-      });
-			wnd.destroy();
-
-		});
-		var cancelButton = mxUtils.button('cancel', function(evt) {
-			wnd.destroy();
-		});
-		var inh1=that.modelo.getObjectById(that.graph.getSelectionCells()[0].getId());
-		testw.appendChild(document.createTextNode("Name: "));
-		nameField.value=inh1.name;
-		testw.appendChild(nameField);
-		testw.appendChild(document.createElement("br"));
-		testw.appendChild(document.createTextNode("Complete: "));
-		completeField.value=inh1.complete;
-		testw.appendChild(completeField);
-		testw.appendChild(document.createElement("br"));
-		testw.appendChild(document.createTextNode("Disjoint: "));
-		disjointField.value=inh1.disjoint;
-		testw.appendChild(disjointField);
-		testw.appendChild(document.createElement("br"));
-
-		testw.appendChild(okbutton);
-		testw.appendChild(cancelButton);
-		var x = Math.max(0, document.body.scrollWidth / 2 - 200 / 2);
-		var y = Math.max(10, (document.body.scrollHeight ||
-				document.documentElement.scrollHeight) / 2 - 200 * 2 / 3);
-		wnd = new mxWindow(inh1.name, testw, x, y, 200, 200, true, true);
-		wnd.setMaximizable(false);
-		wnd.setMinimizable(false);
-		wnd.setResizable(true);
-		wnd.setVisible(true);
-		wnd.setResizable(false);
-
-
-		var background = document.createElement('div');
-		background.style.position = 'absolute';
-		background.style.left = '0px';
-		background.style.top = '0px';
-		background.style.right = '0px';
-		background.style.bottom = '0px';
-		background.style.background = 'black';
-		mxUtils.setOpacity(background, 50);
-		document.body.appendChild(background);
-
-
-
-		// Fades the background out after after the window has been closed
-		wnd.addListener(mxEvent.DESTROY, function(evt) {
-			mxEffects.fadeOut(background, 50, true,
-					10, 30, true);
-		});
-
-		wnd.setVisible(true);
-	};
-
-
-
-
-
-
-
-
- connectTo=(cell,target) =>{
-  const that = this;
-		var testw=document.createElement('div');
-		testw.style.position = 'absolute';
-		testw.style.overflow = 'hidden';
-		//outline.style.left = '60px';
-		testw.style.top = '0px';
-		testw.style.left = '0px';
-		testw.style.width = '200px';
-		testw.style.height = '500px';
-		var wnd=null;
-		//var countryList=document.createElement("select");
-		//var countryOption = new Option ("jjjj", "jjj");
-		//countryList.options.add (countryOption);
-		var connectionsList=document.createElement("select");
-		var levelId = cell.getParent().getId();
-
-		var idInModel = that.modelo.getLevelById(levelId);
-
-		var conns = that.modelo.levels[idInModel].connections;
-		var i;
-
-		for (i = 0; i < conns.length; i++) {
-
-			var connection = conns[i];
-			//var connOption = new Option (i, ("   "+connection.name+"  "));
-			connectionsList.options.add(new Option (("   "+connection.name+"  "),i));
-
-
-
-
-		}
-
-
-
-		var nameField = document.createElement("input");
-		var roleField = document.createElement("input");
-		var navigableField = document.createElement("input");
-		var lowerField = document.createElement("input");
-		var upperField = document.createElement("input");
-
-
-
-		var okbutton = mxUtils.button('ok', function(evt) {
-
-
-			var entityId = cell.getId();
-			var entity = that.modelo.getEntityById(entityId);
-			//alert(""+connectionsList.value);
-			var connection;
-
-			if (target!=null){
-				connection=target;
-			}else{
-				connection=conns[connectionsList.value];
-			}
-			let end1 = new ConnectionEnd(nameField.value, entity, connection,roleField.value,navigableField.value,lowerField.value,upperField.value);
+    var testw = document.createElement("div");
+    testw.style.position = "absolute";
+    testw.style.overflow = "hidden";
+    //outline.style.left = '60px';
+    testw.style.top = "0px";
+    testw.style.left = "0px";
+    testw.style.width = "200px";
+    testw.style.height = "500px";
+    var wnd = null;
+    //var countryList=document.createElement("select");
+    //var countryOption = new Option ("jjjj", "jjj");
+    //countryList.options.add (countryOption);
+    var nameField = document.createElement("input");
+    var completeField = document.createElement("input");
+    var disjointField = document.createElement("input");
+
+    var okbutton = mxUtils.button("ok", function(evt) {
+      let inh1 = new Inheritance(
+        nameField.value,
+        completeField.value,
+        disjointField.value
+      );
+
+      //entity1.styleText=('image='+imageField.value);
+      //alert(""+entity1.styleText);
+      var cell = that.graph.getSelectionCells();
+      var levelId = cell[0].getId();
+      var idInModel = that.modelo.getLevelById(levelId);
       that.modelo.updatePosition();
-			that.modelo.levels[idInModel].addConnectionEnd(end1);
-			that.modelo.build();
+      that.modelo.levels[idInModel].addInheritance(inh1);
+      that.modelo.build();
+
+      var newComment = {
+        text: "New Inheritance created",
+        name: that.props.userName,
+        user: that.props.userId,
+        date: Date.now()
+      };
+
+      that.props.socket.emit("modelupdate", {
+        model: that.props.modelId,
+        user: that.props.userId,
+        project: that.props.projectId,
+        updateModel: that.modelo.toJSON(),
+        log: newComment
+      });
+      wnd.destroy();
+    });
+    var cancelButton = mxUtils.button("cancel", function(evt) {
+      wnd.destroy();
+    });
+
+    testw.appendChild(document.createTextNode("Name: "));
+    testw.appendChild(nameField);
+    testw.appendChild(document.createElement("br"));
+    testw.appendChild(document.createTextNode("Complete: "));
+    testw.appendChild(completeField);
+    testw.appendChild(document.createElement("br"));
+    testw.appendChild(document.createTextNode("Disjoint: "));
+    testw.appendChild(disjointField);
+    testw.appendChild(document.createElement("br"));
+
+    testw.appendChild(okbutton);
+    testw.appendChild(cancelButton);
+    var x = Math.max(0, document.body.scrollWidth / 2 - 200 / 2);
+    var y = Math.max(
+      10,
+      (document.body.scrollHeight || document.documentElement.scrollHeight) /
+        2 -
+        (200 * 2) / 3
+    );
+    wnd = new mxWindow("New Inheritance", testw, x, y, 200, 200, true, true);
+    wnd.setMaximizable(false);
+    wnd.setMinimizable(false);
+    wnd.setResizable(true);
+    wnd.setVisible(true);
+    wnd.setResizable(false);
+
+    var background = document.createElement("div");
+    background.style.position = "absolute";
+    background.style.left = "0px";
+    background.style.top = "0px";
+    background.style.right = "0px";
+    background.style.bottom = "0px";
+    background.style.background = "black";
+    mxUtils.setOpacity(background, 50);
+    document.body.appendChild(background);
+
+    // Fades the background out after after the window has been closed
+    wnd.addListener(mxEvent.DESTROY, function(evt) {
+      mxEffects.fadeOut(background, 50, true, 10, 30, true);
+    });
+
+    wnd.setVisible(true);
+  };
+
+  editEntity = () => {
+    const that = this;
+    var testw = document.createElement("div");
+    testw.style.position = "absolute";
+    testw.style.overflow = "hidden";
+    //outline.style.left = '60px';
+    testw.style.top = "0px";
+    testw.style.left = "0px";
+    testw.style.width = "200px";
+    testw.style.height = "500px";
+    var wnd = null;
+    //var countryList=document.createElement("select");
+    //var countryOption = new Option ("jjjj", "jjj");
+    //countryList.options.add (countryOption);
+    var nameField = document.createElement("input");
+    var potencyField = document.createElement("input");
+    var directTypeField = document.createElement("input");
+    var imageField = document.createElement("input");
+
+    var okbutton = mxUtils.button("ok", function(evt) {
+      //entity1.styleText=('image='+imageField.value);
+      //alert(""+entity1.styleText);
+      var ent = that.modelo.getObjectById(
+        that.graph.getSelectionCells()[0].getId()
+      );
+      var pname = ent.name;
+      ent.name = nameField.value;
+      //modelo.getObjectById(graph.getSelectionCells()[0].getId()).potency=potencyField.value;
+      //modelo.getObjectById(graph.getSelectionCells()[0].getId()).directType=directTypeField.value;
+      ent.styleText = imageField.value;
+      if (ent.levelNo < that.modelo.levels.length - 1) {
+        var i;
+        for (
+          i = 0;
+          i < that.modelo.levels[ent.levelNo + 1].entities.length;
+          i++
+        ) {
+          if (
+            that.modelo.levels[ent.levelNo + 1].entities[i].directType == pname
+          ) {
+            that.modelo.levels[ent.levelNo + 1].entities[i].directType =
+              ent.name;
+          }
+        }
+      }
+
+      that.modelo.updatePosition();
+      that.modelo.build();
       that.props.socket.emit("modelupdate", {
         model: that.props.modelId,
         user: that.props.userId,
         project: that.props.projectId,
         updateModel: that.modelo.toJSON()
       });
-			wnd.destroy();
+      wnd.destroy();
+    });
+    var cancelButton = mxUtils.button("cancel", function(evt) {
+      wnd.destroy();
+    });
+    var entity1 = that.modelo.getObjectById(
+      that.graph.getSelectionCells()[0].getId()
+    );
+    testw.appendChild(document.createTextNode("Name: "));
+    nameField.value = entity1.name;
+    testw.appendChild(nameField);
+    //testw.appendChild(document.createElement("br"));
+    //testw.appendChild(document.createTextNode("Potency: "));
+    //potencyField.value=entity1.potency;
+    //testw.appendChild(potencyField);
+    //testw.appendChild(document.createElement("br"));
+    //testw.appendChild(document.createTextNode("Direct type: "));
+    //directTypeField.value=entity1.directType;
+    //testw.appendChild(directTypeField);
+    testw.appendChild(document.createElement("br"));
+    testw.appendChild(document.createTextNode("Image URL: "));
+    imageField.value = entity1.styleText;
+    testw.appendChild(imageField);
+    testw.appendChild(document.createElement("br"));
+    testw.appendChild(okbutton);
+    testw.appendChild(cancelButton);
+    var x = Math.max(0, document.body.scrollWidth / 2 - 200 / 2);
+    var y = Math.max(
+      10,
+      (document.body.scrollHeight || document.documentElement.scrollHeight) /
+        2 -
+        (200 * 2) / 3
+    );
+    wnd = new mxWindow(entity1.name, testw, x, y, 200, 200, true, true);
+    wnd.setMaximizable(false);
+    wnd.setMinimizable(false);
+    wnd.setResizable(true);
+    wnd.setVisible(true);
+    wnd.setResizable(false);
 
-		});
-		var cancelButton = mxUtils.button('cancel', function(evt) {
-			wnd.destroy();
-		});
+    var background = document.createElement("div");
+    background.style.position = "absolute";
+    background.style.left = "0px";
+    background.style.top = "0px";
+    background.style.right = "0px";
+    background.style.bottom = "0px";
+    background.style.background = "black";
+    mxUtils.setOpacity(background, 50);
+    document.body.appendChild(background);
 
-		testw.appendChild(document.createTextNode("Name: "));
-		testw.appendChild(nameField);
-		testw.appendChild(document.createElement("br"));
-		if (target!=null){
+    // Fades the background
+    wnd.addListener(mxEvent.DESTROY, function(evt) {
+      mxEffects.fadeOut(background, 50, true, 10, 30, true);
+    });
 
-		}else{
+    wnd.setVisible(true);
+  };
 
-
-			testw.appendChild(document.createTextNode("Connection: "));
-			testw.appendChild(connectionsList);
-			testw.appendChild(document.createElement("br"));
-		}
-		testw.appendChild(document.createTextNode("Role Name: "));
-		testw.appendChild(roleField);
-		testw.appendChild(document.createElement("br"));
-		testw.appendChild(document.createTextNode("navigableFrom: "));
-		testw.appendChild(navigableField);
-		testw.appendChild(document.createElement("br"));
-		testw.appendChild(document.createTextNode("Lower: "));
-		testw.appendChild(lowerField);
-		testw.appendChild(document.createElement("br"));
-		testw.appendChild(document.createTextNode("Upper: "));
-		testw.appendChild(upperField);
-		testw.appendChild(document.createElement("br"));
-		testw.appendChild(okbutton);
-		testw.appendChild(cancelButton);
-		var x = Math.max(0, document.body.scrollWidth / 2 - 200 / 2);
-		var y = Math.max(10, (document.body.scrollHeight ||
-				document.documentElement.scrollHeight) / 2 - 200 * 2 / 3);
-		wnd = new mxWindow('Connect to', testw, x, y, 200, 200, true, true);
-		wnd.setMaximizable(false);
-		wnd.setMinimizable(false);
-		wnd.setResizable(true);
-		wnd.setVisible(true);
-		wnd.setResizable(false);
-
-
-		var background = document.createElement('div');
-		background.style.position = 'absolute';
-		background.style.left = '0px';
-		background.style.top = '0px';
-		background.style.right = '0px';
-		background.style.bottom = '0px';
-		background.style.background = 'black';
-		mxUtils.setOpacity(background, 50);
-		document.body.appendChild(background);
-
-
-
-		// Fades the background out after after the window has been closed
-		wnd.addListener(mxEvent.DESTROY, function(evt) {
-			mxEffects.fadeOut(background, 50, true,
-					10, 30, true);
-		});
-
-		wnd.setVisible(true);
-
-
-
-	};
-
-
-
-   showProperties=(toolbarWindow)=> {
-		// Creates a form for the user object inside
-		// the cell
+  editConnection = () => {
     const that = this;
-		var buttonEntity = mxUtils.button('', function(evt) {
-			that.newEntity();
+    var testw = document.createElement("div");
+    testw.style.position = "absolute";
+    testw.style.overflow = "hidden";
+    //outline.style.left = '60px';
+    testw.style.top = "0px";
+    testw.style.left = "0px";
+    testw.style.width = "200px";
+    testw.style.height = "500px";
+    var wnd = null;
+    //var countryList=document.createElement("select");
+    //var countryOption = new Option ("jjjj", "jjj");
+    //countryList.options.add (countryOption);
+    var nameField = document.createElement("input");
+    var labelField = document.createElement("input");
+    var potencyField = document.createElement("input");
+    var directTypeField = document.createElement("input");
 
-		});
+    var okbutton = mxUtils.button("ok", function(evt) {
+      that.modelo.getObjectById(
+        that.graph.getSelectionCells()[0].getId()
+      ).name = nameField.value;
+      that.modelo.getObjectById(
+        that.graph.getSelectionCells()[0].getId()
+      ).label = labelField.value;
+      that.modelo.getObjectById(
+        that.graph.getSelectionCells()[0].getId()
+      ).potency = potencyField.value;
+      that.modelo.getObjectById(
+        that.graph.getSelectionCells()[0].getId()
+      ).directType = directTypeField.value;
 
-		buttonEntity.style.position = 'absolute';
-		buttonEntity.style.left = '5px';
-		buttonEntity.style.top = '135px';
-		buttonEntity.style.width = '50px';
-		buttonEntity.style.height = '35px';
-		var img = document.createElement("IMG");
-		var image=	'images/alignleft.gif';
-		img.setAttribute('src', image);
-		img.style.width = '30px';
-		img.style.height = '30px';
-		img.style.verticalAlign = 'middle';
-		img.style.marginRight = '0px';
-		img.style.marginLeft = '0px';
-		//img.style.left = '200px';
-		buttonEntity.appendChild(img);
+      that.modelo.updatePosition();
+      that.modelo.build();
+      that.props.socket.emit("modelupdate", {
+        model: that.props.modelId,
+        user: that.props.userId,
+        project: that.props.projectId,
+        updateModel: that.modelo.toJSON()
+      });
+      wnd.destroy();
+    });
+    var cancelButton = mxUtils.button("cancel", function(evt) {
+      wnd.destroy();
+    });
+    let conn1 = that.modelo.getObjectById(
+      that.graph.getSelectionCells()[0].getId()
+    );
+    testw.appendChild(document.createTextNode("Name: "));
+    nameField.value = conn1.name;
+    testw.appendChild(nameField);
+    testw.appendChild(document.createElement("br"));
+    testw.appendChild(document.createTextNode("Label: "));
+    labelField.value = conn1.label;
+    testw.appendChild(labelField);
+    testw.appendChild(document.createElement("br"));
+    testw.appendChild(document.createTextNode("Potency: "));
+    potencyField.value = conn1.potency;
+    testw.appendChild(potencyField);
+    testw.appendChild(document.createElement("br"));
+    testw.appendChild(document.createTextNode("Direct type: "));
+    directTypeField.value = conn1.directType;
+    testw.appendChild(directTypeField);
+    testw.appendChild(document.createElement("br"));
+    testw.appendChild(okbutton);
+    testw.appendChild(cancelButton);
+    var x = Math.max(0, document.body.scrollWidth / 2 - 200 / 2);
+    var y = Math.max(
+      10,
+      (document.body.scrollHeight || document.documentElement.scrollHeight) /
+        2 -
+        (200 * 2) / 3
+    );
+    wnd = new mxWindow(conn1.name, testw, x, y, 200, 200, true, true);
+    wnd.setMaximizable(false);
+    wnd.setMinimizable(false);
+    wnd.setResizable(true);
+    wnd.setVisible(true);
+    wnd.setResizable(false);
 
-		mxUtils.write(buttonEntity, ' Entity');
+    var background = document.createElement("div");
+    background.style.position = "absolute";
+    background.style.left = "0px";
+    background.style.top = "0px";
+    background.style.right = "0px";
+    background.style.bottom = "0px";
+    background.style.background = "black";
+    mxUtils.setOpacity(background, 50);
+    document.body.appendChild(background);
 
+    // Fades the background out after after the window has been closed
+    wnd.addListener(mxEvent.DESTROY, function(evt) {
+      mxEffects.fadeOut(background, 50, true, 10, 30, true);
+    });
 
-		var form = new mxForm('properties');
+    wnd.setVisible(true);
+  };
 
-		// Adds a field for the columnname
-		var nameField = form.addText('Name', 'Jorge');
-		var typeField = form.addText('Potency', '2');
+  editInheritance = () => {
+    const that = this;
+    var testw = document.createElement("div");
+    testw.style.position = "absolute";
+    testw.style.overflow = "hidden";
+    //outline.style.left = '60px';
+    testw.style.top = "0px";
+    testw.style.left = "0px";
+    testw.style.width = "200px";
+    testw.style.height = "500px";
+    var wnd = null;
+    //var countryList=document.createElement("select");
+    //var countryOption = new Option ("jjjj", "jjj");
+    //countryList.options.add (countryOption);
+    var nameField = document.createElement("input");
+    var completeField = document.createElement("input");
+    var disjointField = document.createElement("input");
 
-		var primaryKeyField = form.addCheckbox('Primary Key', true);
-		var autoIncrementField = form.addCheckbox('Auto Increment', false);
-		var combo= form.addCombo('combo',true,5);
-		form.addOption(combo,'option 1','toy',true);
-		form.addOption(combo,'option 2','1',true);
-		form.addOption(combo,'option 3','2',false);
-		form.addOption(combo,'option 4','3',false);
-		form.addOption(combo,'option 5','4',false);
+    var okbutton = mxUtils.button("ok", function(evt) {
+      that.modelo.getObjectById(
+        that.graph.getSelectionCells()[0].getId()
+      ).name = nameField.value;
+      that.modelo.getObjectById(
+        that.graph.getSelectionCells()[0].getId()
+      ).complete = completeField.value;
+      that.modelo.getObjectById(
+        that.graph.getSelectionCells()[0].getId()
+      ).disjoint = disjointField.value;
+      that.modelo.updatePosition();
+      that.modelo.build();
+      that.props.socket.emit("modelupdate", {
+        model: that.props.modelId,
+        user: that.props.userId,
+        project: that.props.projectId,
+        updateModel: that.modelo.toJSON()
+      });
+      wnd.destroy();
+    });
+    var cancelButton = mxUtils.button("cancel", function(evt) {
+      wnd.destroy();
+    });
+    var inh1 = that.modelo.getObjectById(
+      that.graph.getSelectionCells()[0].getId()
+    );
+    testw.appendChild(document.createTextNode("Name: "));
+    nameField.value = inh1.name;
+    testw.appendChild(nameField);
+    testw.appendChild(document.createElement("br"));
+    testw.appendChild(document.createTextNode("Complete: "));
+    completeField.value = inh1.complete;
+    testw.appendChild(completeField);
+    testw.appendChild(document.createElement("br"));
+    testw.appendChild(document.createTextNode("Disjoint: "));
+    disjointField.value = inh1.disjoint;
+    testw.appendChild(disjointField);
+    testw.appendChild(document.createElement("br"));
 
-		var wnd = null;
+    testw.appendChild(okbutton);
+    testw.appendChild(cancelButton);
+    var x = Math.max(0, document.body.scrollWidth / 2 - 200 / 2);
+    var y = Math.max(
+      10,
+      (document.body.scrollHeight || document.documentElement.scrollHeight) /
+        2 -
+        (200 * 2) / 3
+    );
+    wnd = new mxWindow(inh1.name, testw, x, y, 200, 200, true, true);
+    wnd.setMaximizable(false);
+    wnd.setMinimizable(false);
+    wnd.setResizable(true);
+    wnd.setVisible(true);
+    wnd.setResizable(false);
 
-		// Defines the function to be executed when the
-		// OK button is pressed in the dialog
-		var okFunction = function() {
-			//toolbarWindow.setVisible(true);
+    var background = document.createElement("div");
+    background.style.position = "absolute";
+    background.style.left = "0px";
+    background.style.top = "0px";
+    background.style.right = "0px";
+    background.style.bottom = "0px";
+    background.style.background = "black";
+    mxUtils.setOpacity(background, 50);
+    document.body.appendChild(background);
 
-			wnd.destroy();
-		}
+    // Fades the background out after after the window has been closed
+    wnd.addListener(mxEvent.DESTROY, function(evt) {
+      mxEffects.fadeOut(background, 50, true, 10, 30, true);
+    });
 
-		// Defines the function to be executed when the
-		// Cancel button is pressed in the dialog
-		var cancelFunction = function() {
-			//toolbarWindow.setVisible(true);
+    wnd.setVisible(true);
+  };
 
-			wnd.destroy();
-		}
-		form.addButtons(okFunction, cancelFunction,buttonEntity);
+  connectTo = (cell, target) => {
+    const that = this;
+    var testw = document.createElement("div");
+    testw.style.position = "absolute";
+    testw.style.overflow = "hidden";
+    //outline.style.left = '60px';
+    testw.style.top = "0px";
+    testw.style.left = "0px";
+    testw.style.width = "200px";
+    testw.style.height = "500px";
+    var wnd = null;
+    //var countryList=document.createElement("select");
+    //var countryOption = new Option ("jjjj", "jjj");
+    //countryList.options.add (countryOption);
+    var connectionsList = document.createElement("select");
+    var levelId = cell.getParent().getId();
 
-		var parent = that.graph.getDefaultParent();
+    var idInModel = that.modelo.getLevelById(levelId);
 
-		wnd = that.showModalWindow('Properties', form.table, 240, 240);
-	};
+    var conns = that.modelo.levels[idInModel].connections;
+    var i;
 
+    for (i = 0; i < conns.length; i++) {
+      var connection = conns[i];
+      //var connOption = new Option (i, ("   "+connection.name+"  "));
+      connectionsList.options.add(
+        new Option("   " + connection.name + "  ", i)
+      );
+    }
 
+    var nameField = document.createElement("input");
+    var roleField = document.createElement("input");
+    var navigableField = document.createElement("input");
+    var lowerField = document.createElement("input");
+    var upperField = document.createElement("input");
+
+    var okbutton = mxUtils.button("ok", function(evt) {
+      var entityId = cell.getId();
+      var entity = that.modelo.getEntityById(entityId);
+      //alert(""+connectionsList.value);
+      var connection;
+
+      if (target != null) {
+        connection = target;
+      } else {
+        connection = conns[connectionsList.value];
+      }
+      let end1 = new ConnectionEnd(
+        nameField.value,
+        entity,
+        connection,
+        roleField.value,
+        navigableField.value,
+        lowerField.value,
+        upperField.value
+      );
+      that.modelo.updatePosition();
+      that.modelo.levels[idInModel].addConnectionEnd(end1);
+      that.modelo.build();
+      that.props.socket.emit("modelupdate", {
+        model: that.props.modelId,
+        user: that.props.userId,
+        project: that.props.projectId,
+        updateModel: that.modelo.toJSON()
+      });
+      wnd.destroy();
+    });
+    var cancelButton = mxUtils.button("cancel", function(evt) {
+      wnd.destroy();
+    });
+
+    testw.appendChild(document.createTextNode("Name: "));
+    testw.appendChild(nameField);
+    testw.appendChild(document.createElement("br"));
+    if (target != null) {
+    } else {
+      testw.appendChild(document.createTextNode("Connection: "));
+      testw.appendChild(connectionsList);
+      testw.appendChild(document.createElement("br"));
+    }
+    testw.appendChild(document.createTextNode("Role Name: "));
+    testw.appendChild(roleField);
+    testw.appendChild(document.createElement("br"));
+    testw.appendChild(document.createTextNode("navigableFrom: "));
+    testw.appendChild(navigableField);
+    testw.appendChild(document.createElement("br"));
+    testw.appendChild(document.createTextNode("Lower: "));
+    testw.appendChild(lowerField);
+    testw.appendChild(document.createElement("br"));
+    testw.appendChild(document.createTextNode("Upper: "));
+    testw.appendChild(upperField);
+    testw.appendChild(document.createElement("br"));
+    testw.appendChild(okbutton);
+    testw.appendChild(cancelButton);
+    var x = Math.max(0, document.body.scrollWidth / 2 - 200 / 2);
+    var y = Math.max(
+      10,
+      (document.body.scrollHeight || document.documentElement.scrollHeight) /
+        2 -
+        (200 * 2) / 3
+    );
+    wnd = new mxWindow("Connect to", testw, x, y, 200, 200, true, true);
+    wnd.setMaximizable(false);
+    wnd.setMinimizable(false);
+    wnd.setResizable(true);
+    wnd.setVisible(true);
+    wnd.setResizable(false);
+
+    var background = document.createElement("div");
+    background.style.position = "absolute";
+    background.style.left = "0px";
+    background.style.top = "0px";
+    background.style.right = "0px";
+    background.style.bottom = "0px";
+    background.style.background = "black";
+    mxUtils.setOpacity(background, 50);
+    document.body.appendChild(background);
+
+    // Fades the background out after after the window has been closed
+    wnd.addListener(mxEvent.DESTROY, function(evt) {
+      mxEffects.fadeOut(background, 50, true, 10, 30, true);
+    });
+
+    wnd.setVisible(true);
+  };
+
+  showProperties = toolbarWindow => {
+    // Creates a form for the user object inside
+    // the cell
+    const that = this;
+    var buttonEntity = mxUtils.button("", function(evt) {
+      that.newEntity();
+    });
+
+    buttonEntity.style.position = "absolute";
+    buttonEntity.style.left = "5px";
+    buttonEntity.style.top = "135px";
+    buttonEntity.style.width = "50px";
+    buttonEntity.style.height = "35px";
+    var img = document.createElement("IMG");
+    var image = "images/alignleft.gif";
+    img.setAttribute("src", image);
+    img.style.width = "30px";
+    img.style.height = "30px";
+    img.style.verticalAlign = "middle";
+    img.style.marginRight = "0px";
+    img.style.marginLeft = "0px";
+    //img.style.left = '200px';
+    buttonEntity.appendChild(img);
+
+    mxUtils.write(buttonEntity, " Entity");
+
+    var form = new mxForm("properties");
+
+    // Adds a field for the columnname
+    var nameField = form.addText("Name", "Jorge");
+    var typeField = form.addText("Potency", "2");
+
+    var primaryKeyField = form.addCheckbox("Primary Key", true);
+    var autoIncrementField = form.addCheckbox("Auto Increment", false);
+    var combo = form.addCombo("combo", true, 5);
+    form.addOption(combo, "option 1", "toy", true);
+    form.addOption(combo, "option 2", "1", true);
+    form.addOption(combo, "option 3", "2", false);
+    form.addOption(combo, "option 4", "3", false);
+    form.addOption(combo, "option 5", "4", false);
+
+    var wnd = null;
+
+    // Defines the function to be executed when the
+    // OK button is pressed in the dialog
+    var okFunction = function() {
+      //toolbarWindow.setVisible(true);
+
+      wnd.destroy();
+    };
+
+    // Defines the function to be executed when the
+    // Cancel button is pressed in the dialog
+    var cancelFunction = function() {
+      //toolbarWindow.setVisible(true);
+
+      wnd.destroy();
+    };
+    form.addButtons(okFunction, cancelFunction, buttonEntity);
+
+    var parent = that.graph.getDefaultParent();
+
+    wnd = that.showModalWindow("Properties", form.table, 240, 240);
+  };
 
   showModalWindow(title, content, width, height) {
     var background = document.createElement("div");

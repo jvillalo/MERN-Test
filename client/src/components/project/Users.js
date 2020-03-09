@@ -4,13 +4,14 @@ import { connect } from "react-redux";
 import UserItem from "./UserItem";
 import Spinner from "../layout/Spinner";
 import { getUsers } from "../../actions/user";
-import { addUsers } from "../../actions/projects";
+import { addUsers, upgrade } from "../../actions/projects";
 const Users = ({
   addUsers,
   getUsers,
   users: { users, loading },
   projects: { project },
-  socket
+  socket,
+  upgrade
 }) => {
   useEffect(() => {
     getUsers();
@@ -35,6 +36,7 @@ const Users = ({
                     getUsers={getUsers}
                     loaading={loading}
                     socket={socket}
+                    upgrade={upgrade}
                   />
                 ) : (
                   ""
@@ -54,7 +56,8 @@ Users.propTypes = {
   getUsers: PropTypes.func.isRequired,
   addUsers: PropTypes.func.isRequired,
   users: PropTypes.object.isRequired,
-  projects: PropTypes.object.isRequired
+  projects: PropTypes.object.isRequired,
+  upgrade: PropTypes.func.isRequired
 };
 
 const mapStateToProps = state => ({
@@ -62,4 +65,4 @@ const mapStateToProps = state => ({
   projects: state.projects
 });
 
-export default connect(mapStateToProps, { addUsers, getUsers })(Users);
+export default connect(mapStateToProps, { addUsers, getUsers, upgrade })(Users);

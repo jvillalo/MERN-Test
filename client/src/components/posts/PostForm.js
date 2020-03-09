@@ -35,10 +35,10 @@ const PostForm = ({
             user: user._id,
             date: Date.now()
           };
-          var chats = post;
-          chats.comments.unshift(newComment);
+          //var chats = post;
+          //chats.comments.unshift(newComment);
 
-          socket.emit("chatupdate", { chats: chats, room: projectId });
+          socket.emit("chatupdate2", { chats: newComment, room: projectId });
           //getPosts(chat);
           setText("");
           //getPosts(modelId);

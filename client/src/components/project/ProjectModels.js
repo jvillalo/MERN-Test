@@ -26,84 +26,116 @@ const ProjectModels = ({
   createModel,
   publishModel,
   socket,
-  history
+  history,
+  user
 }) => {
-  const models = project.models;
+  var models = project.models;
+  var editable = null;
 
-  const mdls = models
-    .slice(0)
-    .reverse()
-    .map((mod, index) => (
-      <tr key={mod._id}>
-        <td>{mod.name}</td>
+  const index2 = project.users.map(item => item.user).indexOf(user._id);
+  const role = project.users[index2].role;
 
-        {!mod.parent ? (
-          <td>
-            <Link to={`models/${mod._id}`} className="btn btn-primary">
-              View model
-            </Link>
+  for (let i = 0; i < models.length; i++) {
+    if (models[i].parent != null) {
+      editable = models.splice(i, 1);
+      break;
+    }
+  }
 
+  const vrsns = models.slice(0).map((mod, index) => (
+    <tr key={mod._id}>
+      <td>{mod.date}</td>
+
+      {!mod.parent ? (
+        <td>
+          <Link to={`models/${mod._id}`} className="btn btn-primary">
+            View model
+          </Link>
+          {role === "Administrator" && (
             <button
               className="btn"
               onClick={() => publishModel("Mod1", "Lorem ipsum", id, mod.json)}
             >
               Publish
             </button>
-
-            <button className="btn" onClick={() => version(id, mod, socket)}>
+          )}
+          {role === "Administrator" && (
+            <button className="btn" onClick={() => version(id, mod)}>
               Use version
             </button>
-          </td>
+          )}
+        </td>
+      ) : (
+        ""
+      )}
+    </tr>
+  ));
+
+  const mdls =
+    editable &&
+    editable.slice(0).map((mod, index) => (
+      <tr key={mod._id}>
+        <td>{mod.name}</td>
+
+        {!mod.parent ? (
+          ""
         ) : (
           <td>
             <button
               className="btn"
               onClick={() => {
-                history.push(`models/${mod._id}`);
                 socket.disconnect();
+                history.push(`models/${mod._id}`);
               }}
             >
               EDIT MODEL
             </button>
-
-            {mod.parent != null ? (
+            {role === "Administrator" && (
               <button
                 className="btn btn-danger"
-                onClick={() => newCommit(id, mod, socket)}
+                //STARTS HERE
+                onClick={() => {
+                  newCommit(id, mod, socket);
+                  socket.disconnect();
+                }}
               >
                 Commit
               </button>
-            ) : (
-              ""
+            )}{" "}
+            {role === "Administrator" && (
+              <button
+                className="btn btn-danger"
+                onClick={() => {
+                  branchModel(id, mod);
+                  socket.disconnect();
+                }}
+              >
+                Discard
+              </button>
             )}
-            <button
-              className="btn btn-danger"
-              onClick={() => branchModel(id, mod)}
-            >
-              Discard
-            </button>
           </td>
         )}
       </tr>
     ));
-  const commit = (models, mod, project, socket) => {
+  const commit = (models, mod, project) => {
     commitModel(project._id, mod._id, socket);
-
+    socket.disconnect();
     //removeModel(project._id, mod._id);
   };
 
-  const version = (id, mod, socket) => {
-    if (project.models.size > 1) {
+  const version = (id, mod) => {
+    if (project.models.length > 1) {
       restoreModel(id, mod, socket);
+      socket.disconnect();
     } else {
-      alert(project.models.size);
       branchModel(id, mod, socket);
+      socket.disconnect();
     }
     //removeModel(project._id, mod._id);
   };
   return (
     <Fragment>
-      <h2 className="my-2">Models</h2>
+      <h2 className="my-2">Model</h2>
       {project.models.length === 0 ? (
         <div>
           <button
@@ -130,17 +162,28 @@ const ProjectModels = ({
       )}
 
       {project.models.length > 0 ? (
-        <table className="table">
-          <thead>
-            <tr>
-              <th>Name</th>
-              <th className="hide-sm">Id</th>
+        <Fragment>
+          <table className="table">
+            <thead>
+              <tr>
+                <th>Current Model</th>
+                <th></th>
+              </tr>
+            </thead>
+            {mdls ? <tbody>{mdls}</tbody> : ""}
+          </table>
+          <h2 className="my-2">Versions</h2>
+          <table className="table">
+            <thead>
+              <tr>
+                <th>Created on:</th>
+                <th>Versions</th>
+              </tr>
+            </thead>
 
-              <th />
-            </tr>
-          </thead>
-          <tbody>{mdls}</tbody>
-        </table>
+            <tbody>{vrsns}</tbody>
+          </table>
+        </Fragment>
       ) : (
         ""
       )}

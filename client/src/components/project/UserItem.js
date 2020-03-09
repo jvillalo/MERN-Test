@@ -18,7 +18,7 @@ const UserItem = ({
         <button
           className="btn btn-danger"
           onClick={() => {
-            addUsers(projectId, _id, "Administrator", socket);
+            addUsers(projectId, _id, "Guest", socket);
           }}
         >
           Add to project

@@ -8,7 +8,13 @@ import ProjectUsers from "./ProjectUsers";
 import Posts from "../posts/Posts";
 //import CommentForm from '../post/CommentForm';
 //import CommentItem from '../post/CommentItem';
-import { getProject, setProject } from "../../actions/projects";
+import {
+  getProject,
+  setProject,
+  upgrade,
+  downgrade,
+  removeUser
+} from "../../actions/projects";
 import { publishModel } from "../../actions/models";
 import Users from "./Users";
 import io from "socket.io-client";
@@ -18,9 +24,13 @@ const Project = ({
   publishModel,
   getProject,
   projects: { project, loading },
+  auth: { user },
   match,
   setProject,
-  socket
+  socket,
+  upgrade,
+  downgrade,
+  removeUser
 }) => {
   //var socket = io();
 
@@ -51,11 +61,19 @@ const Project = ({
                 id={project._id}
                 publishModel={publishModel}
                 socket={socket}
+                user={user}
               />
               <Link to="/users" className="btn">
                 Add New Participants
               </Link>
-              <ProjectUsers users={project.users} />
+              <ProjectUsers
+                users={project.users}
+                project={project._id}
+                upgrade={upgrade}
+                downgrade={downgrade}
+                socket={socket}
+                removeUser={removeUser}
+              />
               <Users socket={socket} />
             </div>
           </td>
@@ -74,15 +92,21 @@ Project.propTypes = {
   getProject: PropTypes.func.isRequired,
   projects: PropTypes.object.isRequired,
   publishModel: PropTypes.func.isRequired,
-  setProject: PropTypes.func.isRequired
+  setProject: PropTypes.func.isRequired,
+  upgrade: PropTypes.func.isRequired,
+  downgrade: PropTypes.func.isRequired
 };
 
 const mapStateToProps = state => ({
-  projects: state.projects
+  projects: state.projects,
+  auth: state.auth
 });
 
 export default connect(mapStateToProps, {
   publishModel,
   getProject,
-  setProject
+  setProject,
+  upgrade,
+  downgrade,
+  removeUser
 })(Project);

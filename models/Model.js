@@ -13,12 +13,11 @@ const ModelSchema = new Schema({
     type: String,
     required: true
   },
-  
-      user: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "user"
-      },
-    
+
+  user: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "user"
+  },
 
   json: {
     type: String
@@ -26,6 +25,10 @@ const ModelSchema = new Schema({
   date: {
     type: Date,
     default: Date.now
+  },
+  version: {
+    type: Number,
+    default: 0
   }
 });
 

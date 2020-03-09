@@ -257,27 +257,84 @@ router.post(
   }
 );
 
+router.put("/:id/upgrade/:user_id", auth, async (req, res) => {
+  try {
+    const project = await Project.findById(req.params.id);
+
+    //const user = project.users.find(user => user._id === req.params.user_id);
+    console.log("Here1");
+    const index2 = project.users
+      .map(item => item.user)
+      .indexOf(req.params.user_id);
+    const user = project.users[index2];
+    console.log("Here5" + index2);
+    if (!user) {
+      console.log("Here2");
+      return res.status(404).json({ msg: "user does not exist" });
+    }
+
+    console.log(project.users[index2].role);
+    if (project.users[index2].role === "Guest") {
+      project.users[index2].role = "Collaborator";
+    } else {
+      project.users[index2].role = "Administrator";
+    }
+
+    await project.save();
+    res.json(project);
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send("server error");
+  }
+});
+
+router.put("/:id/downgrade/:user_id", auth, async (req, res) => {
+  try {
+    const project = await Project.findById(req.params.id);
+
+    //const user = project.users.find(user => user._id === req.params.user_id);
+    console.log("Here1");
+    const index2 = project.users
+      .map(item => item.user)
+      .indexOf(req.params.user_id);
+    const user = project.users[index2];
+    console.log("Here5" + index2);
+    if (!user) {
+      console.log("Here2");
+      return res.status(404).json({ msg: "user does not exist" });
+    }
+
+    console.log(project.users[index2].role);
+    if (project.users[index2].role === "Administrator") {
+      project.users[index2].role = "Collaborator";
+    } else {
+      project.users[index2].role = "Guest";
+    }
+
+    await project.save();
+    res.json(project);
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send("server error");
+  }
+});
+
 router.delete("/:id/users/:user_id", auth, async (req, res) => {
   try {
-    const project = await Post.findById(req.params.id);
+    const project = await Project.findById(req.params.id);
 
-    const user = project.users.find(user => user._id === req.params.user_id);
+    //const user = project.users.find(user => user._id === req.params.user_id);
 
-    // Make sure comment exists
+    const index2 = project.users
+      .map(item => item.user)
+      .indexOf(req.params.user_id);
+    const user = project.users[index2];
+
     if (!user) {
       return res.status(404).json({ msg: "user does not exist" });
     }
 
-    // Check user
-    if (project.user.toString() !== req.user.id) {
-      return res.status(401).json({ msg: "User not authorized" });
-    }
-
-    const index = project.users
-      .map(item => item.id)
-      .indexOf(req.params.user_id);
-
-    project.users.splice(index, 1);
+    project.users.splice(index2, 1);
 
     await project.save();
     res.json(project);

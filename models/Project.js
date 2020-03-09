@@ -36,6 +36,10 @@ const ProjectSchema = new Schema({
       },
       parent: {
         type: String
+      },
+      date: {
+        type: Date,
+        default: Date.now
       }
     }
   ],

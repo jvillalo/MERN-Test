@@ -68,6 +68,7 @@ const Model = ({
       <div className="mod">
         <TestModel
           userId={auth.user._id}
+          userName={auth.user.name}
           modelId={match.params.id}
           projectId={project._id}
           editAuthorized={authorized}

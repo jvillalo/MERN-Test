@@ -306,3 +306,114 @@ export const addUsers = (projectId, userId, role, socket) => async dispatch => {
     });
   }
 };
+
+export const upgrade = (projectId, userId, socket) => async dispatch => {
+  alert("here");
+  try {
+    dispatch({
+      type: COMMIT_MODEL
+    });
+
+    const config = {
+      headers: {
+        "Content-Type": "application/json"
+      }
+    };
+
+    const postText = {
+      user: userId
+    };
+
+    const res = await axios.put(
+      `/api/projects/${projectId}/upgrade/${userId}`,
+      postText,
+      config
+    );
+    socket.emit("setproject", projectId);
+    socket.disconnect();
+    dispatch({
+      type: GET_PROJECT,
+      payload: res.data
+    });
+    //console.log(res.data);
+  } catch (err) {
+    dispatch({
+      type: PROJECT_ERROR,
+      payload: { msg: err.response.statusText, status: err.response.status }
+    });
+  }
+};
+
+export const downgrade = (projectId, userId, socket) => async dispatch => {
+  alert("here");
+  try {
+    dispatch({
+      type: COMMIT_MODEL
+    });
+
+    const config = {
+      headers: {
+        "Content-Type": "application/json"
+      }
+    };
+
+    const postText = {
+      user: userId
+    };
+
+    const res = await axios.put(
+      `/api/projects/${projectId}/downgrade/${userId}`,
+      postText,
+      config
+    );
+    socket.emit("setproject", projectId);
+    socket.disconnect();
+    dispatch({
+      type: GET_PROJECT,
+      payload: res.data
+    });
+    //console.log(res.data);
+  } catch (err) {
+    dispatch({
+      type: PROJECT_ERROR,
+      payload: { msg: err.response.statusText, status: err.response.status }
+    });
+  }
+};
+
+export const removeUser = (projectId, userId, socket) => async dispatch => {
+  alert("here");
+  try {
+    dispatch({
+      type: COMMIT_MODEL
+    });
+
+    const config = {
+      headers: {
+        "Content-Type": "application/json"
+      }
+    };
+
+    const postText = {
+      user: userId
+    };
+
+    const res = await axios.delete(
+      `/api/projects/${projectId}/users/${userId}`,
+      postText,
+      config
+    );
+    socket.emit("setproject", projectId);
+    socket.disconnect();
+    dispatch({
+      type: GET_PROJECT,
+      payload: res.data
+    });
+    //console.log(res.data);
+  } catch (err) {
+    dispatch({
+      type: PROJECT_ERROR,
+      payload: { msg: err.response.statusText, status: err.response.status }
+    });
+  }
+};
