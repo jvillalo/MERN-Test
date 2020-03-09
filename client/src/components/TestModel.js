@@ -1049,7 +1049,7 @@ class TestModel extends Component {
         2 -
         (200 * 2) / 3
     );
-    wnd = new mxWindow("New Entity", testw, x, y, 200, 200, true, true);
+    wnd = new mxWindow("New Entity", testw, x, 400, 200, 200, true, true);
     wnd.setMaximizable(false);
     wnd.setMinimizable(false);
     wnd.setResizable(true);
@@ -1181,7 +1181,7 @@ class TestModel extends Component {
         2 -
         (200 * 2) / 3
     );
-    wnd = new mxWindow("New Entity", testw, x, y, 200, 200, true, true);
+    wnd = new mxWindow("New Entity", testw, x, 400, 200, 200, true, true);
     wnd.setMaximizable(false);
     wnd.setMinimizable(false);
     wnd.setResizable(true);
@@ -1344,7 +1344,7 @@ class TestModel extends Component {
         2 -
         (200 * 2) / 3
     );
-    wnd = new mxWindow("New Entity", testw, x, y, 200, 200, true, true);
+    wnd = new mxWindow("New Entity", testw, x, 400, 200, 200, true, true);
     wnd.setMaximizable(false);
     wnd.setMinimizable(false);
     wnd.setResizable(true);
@@ -1485,7 +1485,7 @@ class TestModel extends Component {
         2 -
         (200 * 2) / 3
     );
-    wnd = new mxWindow("New Attribute", testw, x, y, 200, 200, true, true);
+    wnd = new mxWindow("New Attribute", testw, x, 400, 200, 200, true, true);
     wnd.setMaximizable(false);
     wnd.setMinimizable(false);
     wnd.setResizable(true);
@@ -1580,7 +1580,7 @@ class TestModel extends Component {
         2 -
         (200 * 2) / 3
     );
-    wnd = new mxWindow("Connect to", testw, x, y, 200, 200, true, true);
+    wnd = new mxWindow("Connect to", testw, x, 400, 200, 200, true, true);
     wnd.setMaximizable(false);
     wnd.setMinimizable(false);
     wnd.setResizable(true);
@@ -1675,7 +1675,7 @@ class TestModel extends Component {
         2 -
         (200 * 2) / 3
     );
-    wnd = new mxWindow("New Attribute", testw, x, y, 200, 200, true, true);
+    wnd = new mxWindow("New Attribute", testw, x, 400, 200, 200, true, true);
     wnd.setMaximizable(false);
     wnd.setMinimizable(false);
     wnd.setResizable(true);
@@ -1776,7 +1776,7 @@ class TestModel extends Component {
         2 -
         (200 * 2) / 3
     );
-    wnd = new mxWindow("New Connection", testw, x, y, 200, 200, true, true);
+    wnd = new mxWindow("New Connection", testw, x, 400, 200, 200, true, true);
     wnd.setMaximizable(false);
     wnd.setMinimizable(false);
     wnd.setResizable(true);
@@ -1881,7 +1881,7 @@ class TestModel extends Component {
         2 -
         (200 * 2) / 3
     );
-    wnd = new mxWindow("New Connection", testw, x, y, 200, 200, true, true);
+    wnd = new mxWindow("New Connection", testw, x, 400, 200, 200, true, true);
     wnd.setMaximizable(false);
     wnd.setMinimizable(false);
     wnd.setResizable(true);
@@ -1980,7 +1980,7 @@ class TestModel extends Component {
         2 -
         (200 * 2) / 3
     );
-    wnd = new mxWindow("New Inheritance", testw, x, y, 200, 200, true, true);
+    wnd = new mxWindow("New Inheritance", testw, x, 400, 200, 200, true, true);
     wnd.setMaximizable(false);
     wnd.setMinimizable(false);
     wnd.setResizable(true);
@@ -2093,7 +2093,7 @@ class TestModel extends Component {
         2 -
         (200 * 2) / 3
     );
-    wnd = new mxWindow(entity1.name, testw, x, y, 200, 200, true, true);
+    wnd = new mxWindow(entity1.name, testw, x, 400, 200, 200, true, true);
     wnd.setMaximizable(false);
     wnd.setMinimizable(false);
     wnd.setResizable(true);
@@ -2193,7 +2193,7 @@ class TestModel extends Component {
         2 -
         (200 * 2) / 3
     );
-    wnd = new mxWindow(conn1.name, testw, x, y, 200, 200, true, true);
+    wnd = new mxWindow(conn1.name, testw, x, 400, 200, 200, true, true);
     wnd.setMaximizable(false);
     wnd.setMinimizable(false);
     wnd.setResizable(true);
@@ -2285,7 +2285,7 @@ class TestModel extends Component {
         2 -
         (200 * 2) / 3
     );
-    wnd = new mxWindow(inh1.name, testw, x, y, 200, 200, true, true);
+    wnd = new mxWindow(inh1.name, testw, x, 400, 200, 200, true, true);
     wnd.setMaximizable(false);
     wnd.setMinimizable(false);
     wnd.setResizable(true);
@@ -2412,7 +2412,7 @@ class TestModel extends Component {
         2 -
         (200 * 2) / 3
     );
-    wnd = new mxWindow("Connect to", testw, x, y, 200, 200, true, true);
+    wnd = new mxWindow("Connect to", testw, x, 400, 200, 200, true, true);
     wnd.setMaximizable(false);
     wnd.setMinimizable(false);
     wnd.setResizable(true);
@@ -2518,13 +2518,8 @@ class TestModel extends Component {
     }
 
     var x = Math.max(0, document.body.scrollWidth / 2 - width / 2);
-    var y = Math.max(
-      10,
-      (document.body.scrollHeight || document.documentElement.scrollHeight) /
-        2 -
-        (height * 2) / 3
-    );
-    var wnd = new mxWindow(title, content, x, y, width, height, true, true);
+    var y = Math.max(10, document.documentElement.scrollHeight / 3);
+    var wnd = new mxWindow(title, content, x, 400, width, height, true, true);
 
     wnd.setClosable(false);
     wnd.setMinimizable(false);
