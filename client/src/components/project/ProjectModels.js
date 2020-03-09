@@ -60,7 +60,7 @@ const ProjectModels = ({
                   "Please enter the model's description",
                   "desc"
                 );
-                if (name != "" || desc != "") {
+                if (name != "" && name != null && desc != "" && desc != null) {
                   publishModel(name, desc, id, mod.json);
                 }
               }}
@@ -115,7 +115,7 @@ const ProjectModels = ({
               <button
                 className="btn btn-danger"
                 onClick={() => {
-                  branchModel(id, mod);
+                  removeModel(project._id, mod._id, socket);
                   socket.disconnect();
                 }}
               >

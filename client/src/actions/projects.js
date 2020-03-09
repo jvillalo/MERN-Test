@@ -246,7 +246,7 @@ export const restoreModel = (projectId, modelId, socket) => async dispatch => {
       payload: res.data
     });
 
-    dispatch(setAlert("Branch commited", "success"));
+    dispatch(setAlert("Version restored", "success"));
   } catch (err) {
     dispatch({
       type: PROJECT_ERROR,
@@ -255,12 +255,19 @@ export const restoreModel = (projectId, modelId, socket) => async dispatch => {
   }
 };
 
-export const removeModel = (projectId, modelId) => async dispatch => {
+export const removeModel = (projectId, modelId, socket) => async dispatch => {
   try {
-    alert(`/api/projects/${projectId}/models/${modelId}`);
+    //alert(`/api/projects/${projectId}/models/${modelId}`);
     const res = await axios.delete(
       `/api/projects/${projectId}/models/${modelId}`
     );
+
+    socket.emit("setproject", projectId);
+    socket.disconnect();
+    dispatch({
+      type: GET_PROJECT,
+      payload: res.data
+    });
   } catch (err) {
     dispatch({
       type: PROJECT_ERROR,

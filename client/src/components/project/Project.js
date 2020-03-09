@@ -75,15 +75,26 @@ const Project = ({
                 downgrade={downgrade}
                 socket={socket}
                 removeUser={removeUser}
+                user={user}
               />
+
               <button
                 className="btn"
-                onClick={() =>
-                  setDisplayUsers({ display: !displayUsers.display })
-                }
+                onClick={() => {
+                  const index2 = project.users
+                    .map(item => item.user)
+                    .indexOf(user._id);
+                  const role = project.users[index2].role;
+                  if (role === "Administrator") {
+                    setDisplayUsers({ display: !displayUsers.display });
+                  } else {
+                    alert("Not authorized");
+                  }
+                }}
               >
                 Add New Participants
               </button>
+
               {displayUsers.display ? <Users socket={socket} /> : ""}
             </div>
           </td>

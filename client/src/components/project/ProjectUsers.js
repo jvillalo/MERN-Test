@@ -10,40 +10,56 @@ const ProjectUsers = ({
   socket,
   project,
   downgrade,
-  removeUser
+  removeUser,
+  user
 }) => {
+  const index2 = users.map(item => item.user).indexOf(user._id);
+  const role = users[index2].role;
+
   const usrs = users.map(usr => (
     <tr key={usr._id}>
       <td>{usr.user}</td>
       <td className="hide-sm">{usr.role}</td>
       <td>
-        <button
-          className="btn btn-danger"
-          onClick={() => {
-            removeUser(project, usr.user, socket);
-            socket.disconnect();
-          }}
-        >
-          Remove
-        </button>
-        <button
-          className="btn btn-danger"
-          onClick={() => {
-            upgrade(project, usr.user, socket);
-            socket.disconnect();
-          }}
-        >
-          Upgrade
-        </button>
-        <button
-          className="btn btn-danger"
-          onClick={() => {
-            downgrade(project, usr.user, socket);
-            socket.disconnect();
-          }}
-        >
-          Downgrade
-        </button>
+        {role === "Administrator" && usr.user != user._id ? (
+          <button
+            className="btn btn-danger"
+            onClick={() => {
+              removeUser(project, usr.user, socket);
+              socket.disconnect();
+            }}
+          >
+            Remove
+          </button>
+        ) : (
+          ""
+        )}
+        {role === "Administrator" && usr.user != user._id ? (
+          <button
+            className="btn btn-danger"
+            onClick={() => {
+              upgrade(project, usr.user, socket);
+              socket.disconnect();
+            }}
+          >
+            Upgrade
+          </button>
+        ) : (
+          ""
+        )}
+        {role === "Administrator" && usr.user != user._id ? (
+          <button
+            className="btn btn-danger"
+            onClick={() => {
+              downgrade(project, usr.user, socket);
+              socket.disconnect();
+            }}
+          >
+            Downgrade
+          </button>
+        ) : (
+          ""
+        )}
       </td>
     </tr>
   ));
